@@ -108,21 +108,40 @@ private:
 };
 
 //==============================================================================
-class SumVolume : public Effect
+class SumVolumeUp : public Effect
 {
 public:
-	SumVolume ();
-	~SumVolume ();
+	SumVolumeUp  ();
+	~SumVolumeUp ();
 	
 	void processEffect (const AudioSourceChannelInfo& bufferToFill);
 
 private:
-	String type {"Volume"};
-    String name {"SumVolume"};
+    String type {"Volume"};
+    String name {"SumVolumeUp"};
     
     float reduction;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolume)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolumeUp)
+};
+
+//==============================================================================
+
+class SumVolumeDown : public Effect
+{
+public:
+	SumVolumeDown  ();
+	~SumVolumeDown ();
+	
+	void processEffect (const AudioSourceChannelInfo& bufferToFill);
+
+private:
+    String type {"Volume"};
+    String name {"SumVolumeDown"};
+    
+    float reduction;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolumeDown)
 };
 
 //==============================================================================
