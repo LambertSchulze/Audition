@@ -1,2 +1,2 @@
 # Audition
-A technical ear training software.
+A Technical Ear Training Software.
