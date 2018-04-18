@@ -43,3 +43,17 @@ void LeftSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
 		rightChannel[sample] = 0;
 	}
 }
+
+//==============================================================================
+RightSolo::RightSolo () {}
+RightSolo::~RightSolo () {}
+
+void RightSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+	float* const leftChannel = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+
+	for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+	{
+		leftChannel[sample] = 0;
+	}
+}
