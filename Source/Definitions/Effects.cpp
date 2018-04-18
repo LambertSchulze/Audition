@@ -79,10 +79,28 @@ void Mono::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SumVolume::SumVolume  () {reduction = Decibels::decibelsToGain(-2);}
-SumVolume::~SumVolume () {}
+SumVolumeUp::SumVolumeUp  () {reduction = Decibels::decibelsToGain(+2);}
+SumVolumeUp::~SumVolumeUp () {}
 
-void SumVolume::processEffect (const AudioSourceChannelInfo& bufferToFill)
+void SumVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+	for (int channel = 0; channel < 2; ++channel)
+	{
+		float* const buffer = bufferToFill.buffer->getWritePointer (channel, bufferToFill.startSample);
+
+		for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+		{
+			buffer[sample] = buffer[sample] * level;
+		}
+	}
+}
+
+//==============================================================================
+
+SumVolumeDown::SumVolumeDown  () {reduction = Decibels::decibelsToGain(-2);}
+SumVolumeDown::~SumVolumeDown () {}
+
+void SumVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 {
 	for (int channel = 0; channel < 2; ++channel)
 	{
