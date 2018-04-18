@@ -30,8 +30,8 @@ MainContentComponent::MainContentComponent()
     if (effectList.isEmpty())
     {
         effectList  .add(new NoEffect());
-        effectList  .add(new SumVolume());
-        effectList  .add(new SumVolume());
+        effectList  .add(new SumVolumeUp());
+        effectList  .add(new SumVolumeDown());
         effectList  .add(new LeftSolo());
         effectList  .add(new RightSolo());
         effectList  .add(new Mono());
