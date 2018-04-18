@@ -9,7 +9,7 @@
  */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Effect.h"
+#include "Effects.h"
 
 //==============================================================================
 Effect::Effect () {}
