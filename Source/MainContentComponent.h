@@ -14,13 +14,7 @@
 
 #include "Definitions/Definitions.h"
 #include "Definitions/AuditionLookAndFeel.cpp"
-#include "Definitions/Effect.h"
-#include "Definitions/NoEffect.h"
-#include "Definitions/SumVolume.h"
-#include "Definitions/LeftSolo.h"
-#include "Definitions/RightSolo.h"
-#include "Definitions/Mono.h"
-
+#include "Definitions/Effects.h"
 #include "ControlComponent/ControlComponent.h"
 #include "WindowContainer/WindowContainer.h"
 
