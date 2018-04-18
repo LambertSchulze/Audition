@@ -88,3 +88,21 @@ private:
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RightSolo)
 };
+
+//==============================================================================
+class Mono : public Effect
+{
+public:
+	Mono ();
+	~Mono ();
+	
+	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+
+private:
+	String type {"StereoImage"};
+    String name {"Mono"};
+    
+    float reduction;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Mono)
+};
