@@ -106,3 +106,23 @@ private:
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Mono)
 };
+
+//==============================================================================
+class SumVolume : public Effect
+{
+public:
+	SumVolume ();
+	~SumVolume ();
+	
+	void processEffect (const AudioSourceChannelInfo& bufferToFill);
+
+private:
+	String type {"Volume"};
+    String name {"SumVolume"};
+    
+    float reduction;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolume)
+};
+
+//==============================================================================
