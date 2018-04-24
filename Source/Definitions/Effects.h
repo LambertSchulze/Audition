@@ -108,6 +108,22 @@ private:
 };
 
 //==============================================================================
+class LRSwitched : public Effect
+{
+public:
+    LRSwitched ();
+    ~LRSwitched();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+private:
+    String type {"StereoImage"};
+    String name {"LRSwitched"};
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LRSwitched)
+};
+
+//==============================================================================
 class SumVolumeUp : public Effect
 {
 public:
@@ -120,13 +136,12 @@ private:
     String type {"Volume"};
     String name {"SumVolumeUp"};
     
-    float reduction;
+    float gain;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolumeUp)
 };
 
 //==============================================================================
-
 class SumVolumeDown : public Effect
 {
 public:
@@ -139,9 +154,79 @@ private:
     String type {"Volume"};
     String name {"SumVolumeDown"};
     
-    float reduction;
+    float gain;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolumeDown)
 };
 
 //==============================================================================
+class MidVolumeUp : public Effect
+{
+public:
+    MidVolumeUp  ();
+    ~MidVolumeUp ();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    
+private:
+    String type {"Volume"};
+    String name {"MidVolumeUp"};
+    
+    float gain;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidVolumeUp)
+};
+
+//==============================================================================
+class MidVolumeDown : public Effect
+{
+public:
+    MidVolumeDown  ();
+    ~MidVolumeDown ();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    
+private:
+    String type {"Volume"};
+    String name {"MidVolumeDown"};
+    
+    float gain;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidVolumeDown)
+};
+
+//==============================================================================
+class SideVolumeUp : public Effect
+{
+public:
+    SideVolumeUp  ();
+    ~SideVolumeUp ();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    
+private:
+    String type {"Volume"};
+    String name {"SideVolumeUp"};
+    
+    float gain;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SideVolumeUp)
+};
+
+//==============================================================================
+class SideVolumeDown : public Effect
+{
+public:
+    SideVolumeDown  ();
+    ~SideVolumeDown ();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    
+private:
+    String type {"Volume"};
+    String name {"SideVolumeDown"};
+    
+    float gain;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SideVolumeDown)
+};
