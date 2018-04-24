@@ -50,7 +50,7 @@ public:
 
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
 
-private:
+//private:
 	String type {"Other"};
     String name {"NoEffect"};
     
@@ -229,4 +229,24 @@ private:
     float gain;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SideVolumeDown)
+};
+
+//==============================================================================
+class Filter : public Effect
+{
+public:
+    Filter  (AudioSource*);
+    ~Filter ();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    
+private:
+    String type {"Filter"};
+    String name {"Filter"};
+    
+    AudioSource* parentSource;
+    IIRFilterAudioSource iirFilter;
+    IIRCoefficients ic;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Filter)
 };

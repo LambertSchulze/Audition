@@ -15,7 +15,8 @@
 //==============================================================================
 /*
 */
-class OverviewScreen    : public Component
+class OverviewScreen :  public Component,
+                        public Button::Listener
 {
 public:
     OverviewScreen(ValueTree&);
@@ -23,9 +24,13 @@ public:
 
     void paint (Graphics&) override;
     void resized() override;
+    
+    void buttonClicked(Button*) override;
 
 private:
-    ValueTree mainVT;
+    ValueTree mainVT, effectVT;
+    
+    OwnedArray<TextButton> buttonList;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OverviewScreen)
 };

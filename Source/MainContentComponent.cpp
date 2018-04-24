@@ -132,9 +132,16 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& treeWhosePropert
                                 treeWhosePropertyHasChanged.setProperty(IDs::TransportState, "Stopped", nullptr);}
     }
     
-    if (property == IDs::forPlayback)
+//    if (property == IDs::forPlayback)
+//    {
+//        if (treeWhosePropertyHasChanged.getProperty(property)) currentEffect = effectList[(int) treeWhosePropertyHasChanged.getProperty(IDs::Number)];
+//        //DBG ("setting an effect for playback.");
+//    }
+    
+    if (property == IDs::EffectToPlay)
     {
-        if (treeWhosePropertyHasChanged.getProperty(property)) currentEffect = effectList[(int) treeWhosePropertyHasChanged.getProperty(IDs::Number)];
+        currentEffect = effectList[(int) treeWhosePropertyHasChanged.getProperty(property)];
+        DBG (treeWhosePropertyHasChanged.getProperty(property).toString());
     }
     
     if (property == IDs::IsProcessing)
@@ -237,25 +244,25 @@ void MainContentComponent::setupProperties()
         lrswitched  .setProperty(IDs::EffectType, "Stereo Image", nullptr);
         lrswitched  .setProperty(IDs::Level, 0, nullptr);
         ValueTree midVolUp      (IDs::Effect);
-        sumVolUp    .setProperty(IDs::Number, 1, nullptr);
-        sumVolUp    .setProperty(IDs::EffectName, "Mid Vol Up", nullptr);
-        sumVolUp    .setProperty(IDs::EffectType, "Volume", nullptr);
-        sumVolUp    .setProperty(IDs::Level, 0, nullptr);
+        midVolUp    .setProperty(IDs::Number, 7, nullptr);
+        midVolUp    .setProperty(IDs::EffectName, "Mid Vol Up", nullptr);
+        midVolUp    .setProperty(IDs::EffectType, "Volume", nullptr);
+        midVolUp    .setProperty(IDs::Level, 0, nullptr);
         ValueTree midVolDown    (IDs::Effect);
-        sumVolDown  .setProperty(IDs::Number, 2, nullptr);
-        sumVolDown  .setProperty(IDs::EffectName, "Mid Vol Down", nullptr);
-        sumVolDown  .setProperty(IDs::EffectType, "Volume", nullptr);
-        sumVolDown  .setProperty(IDs::Level, 0, nullptr);
+        midVolDown  .setProperty(IDs::Number, 8, nullptr);
+        midVolDown  .setProperty(IDs::EffectName, "Mid Vol Down", nullptr);
+        midVolDown  .setProperty(IDs::EffectType, "Volume", nullptr);
+        midVolDown  .setProperty(IDs::Level, 0, nullptr);
         ValueTree sideVolUp      (IDs::Effect);
-        sumVolUp    .setProperty(IDs::Number, 1, nullptr);
-        sumVolUp    .setProperty(IDs::EffectName, "Side Vol Up", nullptr);
-        sumVolUp    .setProperty(IDs::EffectType, "Volume", nullptr);
-        sumVolUp    .setProperty(IDs::Level, 0, nullptr);
+        sideVolUp   .setProperty(IDs::Number, 9, nullptr);
+        sideVolUp   .setProperty(IDs::EffectName, "Side Vol Up", nullptr);
+        sideVolUp   .setProperty(IDs::EffectType, "Volume", nullptr);
+        sideVolUp   .setProperty(IDs::Level, 0, nullptr);
         ValueTree sideVolDown    (IDs::Effect);
-        sumVolDown  .setProperty(IDs::Number, 2, nullptr);
-        sumVolDown  .setProperty(IDs::EffectName, "Side Vol Down", nullptr);
-        sumVolDown  .setProperty(IDs::EffectType, "Volume", nullptr);
-        sumVolDown  .setProperty(IDs::Level, 0, nullptr);
+        sideVolDown .setProperty(IDs::Number, 10, nullptr);
+        sideVolDown .setProperty(IDs::EffectName, "Side Vol Down", nullptr);
+        sideVolDown .setProperty(IDs::EffectType, "Volume", nullptr);
+        sideVolDown .setProperty(IDs::Level, 0, nullptr);
         
         effectList.addChild(noEffect,       -1, nullptr);
         effectList.addChild(sumVolUp,       -1, nullptr);

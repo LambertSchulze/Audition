@@ -220,3 +220,15 @@ void SideVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
         rightChannel[sample]    = (midChannel - sideChannel) * reduction;
     }
 }
+
+//==============================================================================
+Filter::Filter  (AudioSource* as)
+:   parentSource(as),
+    iirFilter(parentSource, false)
+{}
+Filter::~Filter () {}
+
+void Filter::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+    
+}
