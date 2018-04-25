@@ -44,8 +44,9 @@ void OverviewScreen::resized()
 
 void OverviewScreen::buttonClicked (Button* button)
 {
-    String s = button->getName();
-    ValueTree selectedEffect = effectVT.getChildWithProperty(IDs::EffectName, s);
-    int selectedEffectNumber = selectedEffect.getProperty(IDs::Number);
+    // get the Number of the child with the same EffectName as the button
+    int selectedEffectNumber = effectVT.getChildWithProperty(IDs::EffectName, button->getName()).getProperty(IDs::Number);
+    
+    //set Transports Effect_To_Play to that number
     mainVT.getChildWithName(IDs::Transport).setProperty(IDs::EffectToPlay, selectedEffectNumber, nullptr);
 }

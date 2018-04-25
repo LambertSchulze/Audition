@@ -59,7 +59,7 @@ void RightSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-Mono::Mono ()	{reduction = Decibels::decibelsToGain(-2);}
+Mono::Mono ()	{reduction = 0.5;}
 Mono::~Mono () 	{}
 
 void Mono::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -96,7 +96,7 @@ void LRSwitched::processEffect(const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SumVolumeUp::SumVolumeUp  () {gain = Decibels::decibelsToGain(+2);}
+SumVolumeUp::SumVolumeUp  () {gain = 2;}
 SumVolumeUp::~SumVolumeUp () {}
 
 void SumVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -113,7 +113,7 @@ void SumVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SumVolumeDown::SumVolumeDown  () {gain = Decibels::decibelsToGain(-2);}
+SumVolumeDown::SumVolumeDown  () {gain = 0.5;}
 SumVolumeDown::~SumVolumeDown () {}
 
 void SumVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -130,94 +130,94 @@ void SumVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-MidVolumeUp::MidVolumeUp  () {gain = Decibels::decibelsToGain(+2);}
+MidVolumeUp::MidVolumeUp  () {gain = 2;}
 MidVolumeUp::~MidVolumeUp () {}
 
 void MidVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 {
-    const float reduction       = Decibels::decibelsToGain(-2);
+    const float sqrt2           = 1.4142135623730950488;
     
     float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
     {
-        float midChannel        = leftChannel[sample] + rightChannel[sample];
-        float sideChannel       = leftChannel[sample] - rightChannel[sample];
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
         
         midChannel              = midChannel * gain;
         
-        leftChannel[sample]     = (midChannel + sideChannel) * reduction;
-        rightChannel[sample]    = (midChannel - sideChannel) * reduction;
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
     }
 }
 
 //==============================================================================
-MidVolumeDown::MidVolumeDown  () {gain = Decibels::decibelsToGain(-2);}
+MidVolumeDown::MidVolumeDown  () {gain = 0.5;}
 MidVolumeDown::~MidVolumeDown () {}
 
 void MidVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 {
-    const float reduction       = Decibels::decibelsToGain(-2);
+    const float sqrt2           = 1.4142135623730950488;
     
     float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
     {
-        float midChannel        = leftChannel[sample] + rightChannel[sample];
-        float sideChannel       = leftChannel[sample] - rightChannel[sample];
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
         
         midChannel              = midChannel * gain;
         
-        leftChannel[sample]     = (midChannel + sideChannel) * reduction;
-        rightChannel[sample]    = (midChannel - sideChannel) * reduction;
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
     }
 }
 
 //==============================================================================
-SideVolumeUp::SideVolumeUp  () {gain = Decibels::decibelsToGain(+2);}
+SideVolumeUp::SideVolumeUp  () {gain = 2;}
 SideVolumeUp::~SideVolumeUp () {}
 
 void SideVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 {
-    const float reduction       = Decibels::decibelsToGain(-2);
+    const float sqrt2           = 1.4142135623730950488;
     
     float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
     {
-        float midChannel        = leftChannel[sample] + rightChannel[sample];
-        float sideChannel       = leftChannel[sample] - rightChannel[sample];
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
         
-        sideChannel              = midChannel * gain;
+        sideChannel              = sideChannel * gain;
         
-        leftChannel[sample]     = (midChannel + sideChannel) * reduction;
-        rightChannel[sample]    = (midChannel - sideChannel) * reduction;
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
     }
 }
 
 //==============================================================================
-SideVolumeDown::SideVolumeDown  () {gain = Decibels::decibelsToGain(-2);}
+SideVolumeDown::SideVolumeDown  () {gain = 0.5;}
 SideVolumeDown::~SideVolumeDown () {}
 
 void SideVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 {
-    const float reduction       = Decibels::decibelsToGain(-2);
+    const float sqrt2           = 1.4142135623730950488;
     
     float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
     {
-        float midChannel        = leftChannel[sample] + rightChannel[sample];
-        float sideChannel       = leftChannel[sample] - rightChannel[sample];
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
         
-        sideChannel              = midChannel * gain;
+        sideChannel              = sideChannel * gain;
         
-        leftChannel[sample]     = (midChannel + sideChannel) * reduction;
-        rightChannel[sample]    = (midChannel - sideChannel) * reduction;
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
     }
 }
 

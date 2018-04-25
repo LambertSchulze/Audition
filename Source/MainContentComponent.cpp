@@ -21,6 +21,7 @@ MainContentComponent::MainContentComponent()
     
     settingsFile = appDataDir.getChildFile ("Save");
     
+    
     setAudioChannels (2, 2);
     
     formatManager.registerBasicFormats();
@@ -59,12 +60,10 @@ MainContentComponent::MainContentComponent()
 MainContentComponent::~MainContentComponent()
 {
     shutdownAudio();
-    saveData();
+    saveData(settingsFile);
     mainVT.removeListener(this);
     transportSource.removeChangeListener(this);
 
-    DBG ("This is the saved ValueTree:");
-    DBG (mainVT.toXmlString());
     DBG ("End of Destructor");
 }
 
@@ -124,7 +123,11 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& treeWhosePropert
     if (property == IDs::TransportState)
     {
         var tS = treeWhosePropertyHasChanged.getProperty(property);
-        if (tS == "Stopped")    {transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));}
+        if (tS == "Stopped")
+        {
+            
+            //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::Start));
+        }
         if (tS == "Starting")   {transportSource.start();
                                 treeWhosePropertyHasChanged.setProperty(IDs::TransportState, "Playing", nullptr);}
         if (tS == "Playing")    {}
@@ -149,15 +152,15 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& treeWhosePropert
         shouldProcessEffect = treeWhosePropertyHasChanged.getProperty(property);
     }
     
-    if (property == IDs::Selected)
-    {
-        if ((bool) treeWhosePropertyHasChanged.getProperty(property)) setReaderSource(treeWhosePropertyHasChanged.getProperty(IDs::FilePath));
-    }
+//    if (property == IDs::Selected)
+//    {
+//        if ((bool) treeWhosePropertyHasChanged.getProperty(property)) setReaderSource(treeWhosePropertyHasChanged.getProperty(IDs::FilePath));
+//    }
     
-    if (property == IDs::Start)
-    {
-        transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));
-    }
+//    if (property == IDs::FileStart)
+//    {
+//        transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));
+//    }
 }
 
 void MainContentComponent::valueTreeChildAdded (ValueTree &parentTree, ValueTree &childWhichHasBeenAdded) {}
@@ -177,35 +180,49 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 //==============================================================================
 void MainContentComponent::setupProperties()
 {
-    loadData();
+    loadData(settingsFile);
     
+    // if VT is not valid, create a new one.
     if (!mainVT.isValid())
     {
-        mainVT = ValueTree(IDs::Main);
         //DBG ("No valid ValueTree..");
+        mainVT = ValueTree(IDs::Main);
     }
+    
+    
+    // checking for MAIN properties.
     if (!mainVT.hasProperty(IDs::WindowHeight)) mainVT.setProperty(IDs::WindowHeight, 600, nullptr);
     if (!mainVT.hasProperty(IDs::WindowWidth))  mainVT.setProperty(IDs::WindowWidth, 800, nullptr);
     
+    
+    // checking for TRANSPORT
     if (!mainVT.getChildWithName(IDs::Transport).isValid())
     {
+        // setting up a fresh TRANSPORT child.
         ValueTree transport (IDs::Transport);
-        transport.setProperty(IDs::TransportState, "Stopped", nullptr);
-        transport.setProperty(IDs::IsProcessing, false, nullptr);
         transport.setProperty(IDs::LimitPlayback, false, nullptr);
         mainVT.addChild(transport, -1, nullptr);
     }
-    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopped", nullptr);
+    // nulling TRANSPORT
+    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState,    "Stopped",  nullptr);
+    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing,      false,      nullptr);
+    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::EffectToPlay,      -1,         nullptr);
     
+    
+    // checking for FILELIST
     if (!mainVT.getChildWithName(IDs::FileList).isValid())
     {
+        // setting up a fresh FILELIST child
         ValueTree fileList (IDs::FileList);
-        fileList.setProperty(IDs::LastSelected, 0, nullptr);
+        fileList.setProperty(IDs::SelectedFile, 0, nullptr);
         mainVT.addChild(fileList, -1, nullptr);
     }
     
+    // checking for EFFECTLIST
     if (!mainVT.getChildWithName(IDs::EffectList).isValid())
     {
+        // setting up a new FILELIST with Level 0 Effects
+        
         ValueTree effectList    (IDs::EffectList);
         
         ValueTree noEffect      (IDs::Effect);
@@ -277,31 +294,22 @@ void MainContentComponent::setupProperties()
         effectList.addChild(sideVolDown,    -1, nullptr);
         mainVT.addChild(effectList, -1, nullptr);
     }
-    if (mainVT.getChildWithName(IDs::EffectList).getChildWithProperty(IDs::forPlayback, true).isValid()) mainVT.getChildWithName(IDs::EffectList).getChildWithProperty(IDs::forPlayback, true).setProperty(IDs::forPlayback, false, nullptr);
     
-    if (!mainVT.getChildWithName(IDs::Quiz).isValid())
-    {
-        ValueTree quizTree (IDs::Quiz);
-        quizTree.setProperty(IDs::QuizState, 3, nullptr);
-        
-        for (int i=0; i<3; ++i)
-        {
-            ValueTree choiceTree (IDs::Choice);
-            choiceTree.setProperty(IDs::Name, "", nullptr);
-            choiceTree.setProperty(IDs::isRight, "", nullptr);
-            quizTree.addChild(choiceTree, -1, nullptr);
-        }
-        mainVT.addChild(quizTree, -1, nullptr);
-    }
-    if (mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).isValid()) mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
-    
-    if (!mainVT.getChildWithName(IDs::Statistics).isValid())
-    {
-        ValueTree statsTree (IDs::Statistics);
-        statsTree.setProperty(IDs::TotalPlayed, 0, nullptr);
-        statsTree.setProperty(IDs::TotalWon, 0, nullptr);
-        statsTree.setProperty(IDs::TotalLost, 0, nullptr);
-    }
+//    if (!mainVT.getChildWithName(IDs::Quiz).isValid())
+//    {
+//        ValueTree quizTree (IDs::Quiz);
+//        quizTree.setProperty(IDs::QuizState, 3, nullptr);
+//        
+//        for (int i=0; i<3; ++i)
+//        {
+//            ValueTree choiceTree (IDs::Choice);
+//            choiceTree.setProperty(IDs::Name, "", nullptr);
+//            choiceTree.setProperty(IDs::isRight, "", nullptr);
+//            quizTree.addChild(choiceTree, -1, nullptr);
+//        }
+//        mainVT.addChild(quizTree, -1, nullptr);
+//    }
+//    if (mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).isValid()) mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
     
     //DBG ("Property Setup done! Here's the ValueTree:");
     //DBG ("mainVT.toXmlString()");
@@ -315,62 +323,50 @@ void MainContentComponent::setReaderSource (String filePathToSet)
     {
         ScopedPointer<AudioFormatReaderSource> newSource = new AudioFormatReaderSource(reader, true);
         transportSource.setSource(newSource, 0, nullptr, reader->sampleRate);
-        transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));
+        //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));
         readerSource = newSource.release();
     }
     DBG ("Set ReaderSource to "<< filePathToSet);
 }
 
-void MainContentComponent::loadData()
+void MainContentComponent::loadData(File file)
 {
-    File DataFile ("../../../../Recources/AudioFilesData.xml");
-    
-    std::cout << "Loading Data...\n";
-    if (DataFile.exists())
+    DBG("Loading Data...");
+    if (file.exists())
     {
-        ScopedPointer<XmlElement> e (XmlDocument::parse (settingsFile));
+        ScopedPointer<XmlElement> e (XmlDocument::parse (file));
         
         if (e == NULL)
         {
             mainVT = ValueTree();
-            std::cout << "...Loading failed...\n";
+            DBG("Loading failed..");
         }
         else
         {
             mainVT = ValueTree::fromXml(*e);
-            std::cout << "...Loading done!\n";
+            DBG("...Loading done!");
         }
     }
+    else
+    {
+        DBG("File doesn't exist.");
+        Result creation (file.create());
+        
+        if (creation.wasOk())       DBG("created a new file! Hurray!");
+        else                        {DBG("could not create a new file :-(");
+                                    DBG(creation.getErrorMessage());}
+    }
 }
 
-void MainContentComponent::saveData()
+void MainContentComponent::saveData(File file)
 {
-    File DataFile ("../../../../Recources/AudioFilesData.xml");
-    
-    if (DataFile.exists())
+    if (file.exists())
     {
         ScopedPointer<XmlElement> e (mainVT.createXml());
-        e->writeToFile(settingsFile, "");
+        e->writeToFile(file, "");
+        DBG("Data saved.");
+        DBG("This is the saved ValueTree:");
+        DBG(mainVT.toXmlString());
     }
-    std::cout << "Data saved.";
+    if (!file.exists()) DBG("Save file doesn't exist. Could't save..");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

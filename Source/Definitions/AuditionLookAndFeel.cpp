@@ -21,12 +21,12 @@ public:
         setColourScheme({   Colours::transparentWhite,  // windowBackground
                             Colours::transparentWhite,  // widgetBackground
                             Colours::transparentWhite,  // menuBackground
-                            Colours::blue,              // outline
-                            Colours::pink,              // defaultText
-                            Colours::yellow,            // defaultFill (scrollbars)
-                            Colours::cornsilk,
-                            Colours::coral,
-                            Colours::rosybrown
+                            black,                      // outline
+                            black,                      // defaultText
+                            yellow,                     // defaultFill (scrollbars)
+                            white,                      // selected Button text
+                            blue,                       // selected Button background
+                            red
                         });
         /*
          windowBackground       0xffefefef
@@ -43,7 +43,18 @@ public:
         
         
     };
-
+    
+    Colour  blue    {27, 173, 248},
+            brown   {162, 132, 94},
+            gray    {142, 142, 145},
+            black   {0, 0, 0},
+            white   {255, 255, 255},
+            green   {99, 218, 56},
+            orange  {255, 149, 0},
+            pink    {255, 41, 104},
+            purple  {204, 115, 225},
+            red     {255, 59, 48},
+            yellow  {255, 204, 0};
 };
 
 #endif

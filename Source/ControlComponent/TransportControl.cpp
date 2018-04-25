@@ -21,13 +21,19 @@ TransportControl::TransportControl (ValueTree& vt)
     addAndMakeVisible(&effectButton);
     originalButton  .setClickingTogglesState(true);
     effectButton    .setClickingTogglesState(true);
-    effectButton    .setEnabled(false);
+    
+    // originalButton should only be enabled if Filelist is not empty and a file is selected.
+    // effectButton should only be enabled if a file is loaded and a effect for playback is set.
+    // this has to be checked in the beginning and after every change of the properties.
+    
+    if (mainVT.getChildWithName(IDs::FileList).getNumChildren() == 0) originalButton.setEnabled(false);
+    
+    // the effect button is always disabled in the beginning.
+    effectButton.setEnabled(false);
     
     originalButton  .addListener(this);
     effectButton    .addListener(this);
-    
-    
-    mainVT.addListener(this);
+    mainVT          .addListener(this);
 }
 
 TransportControl::~TransportControl()
@@ -52,6 +58,8 @@ void TransportControl::resized()
 //==============================================================================
 void TransportControl::valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property)
 {
+    // disabling buttons in different QuizStates
+    
     if (property == IDs::QuizState)
     {
         if ((int) treeWhosePropertyHasChanged.getProperty(property) == 3)
@@ -66,20 +74,26 @@ void TransportControl::valueTreePropertyChanged (ValueTree& treeWhosePropertyHas
         }
     }
     
-    if (property == IDs::forPlayback && (bool) treeWhosePropertyHasChanged.getProperty(property) == true) effectButton.setEnabled(true);
+    // if no effect is set for playback, that means, Effect_To_Play has the value -1 (like at startup),
+    // the effect button is dissabled. Otherwise its being enabled.
+    
+    if (property == IDs::EffectToPlay) {((int) treeWhosePropertyHasChanged.getProperty(property) == -1) ? effectButton.setEnabled(false) : effectButton.setEnabled(true);}
 }
 
 void TransportControl::valueTreeChildAdded (ValueTree &parentTree, ValueTree &childWhichHasBeenAdded)
 {
+    // makes shure that buttons get enabled if files are in the filelist.
+    
     if (parentTree.hasType(IDs::FileList))
     {
         originalButton  .setEnabled(true);
-        effectButton    .setEnabled(true);
     }
 }
 
 void TransportControl::valueTreeChildRemoved (ValueTree &parentTree, ValueTree &childWhichHasBeenRemoved, int /*index*/)
 {
+    // if all files of the filelist are removed, disables buttons
+    
     if (parentTree.hasType(IDs::FileList))
     {
         if (parentTree.getNumChildren() == 0)

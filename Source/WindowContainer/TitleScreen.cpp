@@ -24,11 +24,11 @@ TitleScreen::TitleScreen()
     changelogText << "AUDITION - Technical Hearing\n";
     changelogText << "********* Alpha1.0 *********\n\n";
     changelogText << "\nChangelog:\n\n";
+    changelogText << "- Overview Page for live listening to the effects\n";
     changelogText << "- removed some bugs and added things\n";
     changelogText << "(still work in proggress)\n";
     
     changelogText << "\nUpcoming Features:\n\n";
-    changelogText << "- Overview Page for live listening to the effects\n";
     changelogText << "- Better looking GUI, Icons, Animations and Transitions\n";
     changelogText << "- Record Clips from an audio input (hardware players or software via rewire)\n";
     changelogText << "- Adding effects: Reverb, Compression, different Filterdesigns\n";

@@ -34,7 +34,7 @@ public:
     void paintCell (Graphics&, int, int, int, int, bool) override;
     Component* refreshComponentForCell (int, int, bool, Component*) override;
     
-    void selectedRowsChanged ( int ) override;
+    void selectedRowsChanged (int) override;
 
     //==============================================================================
     

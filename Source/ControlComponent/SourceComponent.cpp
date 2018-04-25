@@ -109,8 +109,10 @@ void SourceComponent::selectedRowsChanged (int lastRowSelected)
 {
     if (fileListNode.getNumChildren())
     {
-        fileListNode.getChildWithProperty(IDs::Selected, true).removeProperty(IDs::Selected, nullptr);
-        fileListNode.getChild(fileListBox.getSelectedRow()).setProperty(IDs::Selected, true, nullptr);
+//        fileListNode.getChildWithProperty(IDs::Selected, true).removeProperty(IDs::Selected, nullptr);
+//        fileListNode.getChild(fileListBox.getSelectedRow()).setProperty(IDs::Selected, true, nullptr);
+        
+        fileListNode.setProperty(IDs::SelectedFile, lastRowSelected, nullptr);
     }
 }
 
@@ -138,7 +140,7 @@ void SourceComponent::addFile()
                 ValueTree newFile (IDs::File);
                 newFile.setProperty(IDs::FilePath, newFiles[i].getFullPathName(), nullptr);
                 newFile.setProperty(IDs::FileName, newFiles[i].getFileNameWithoutExtension(), nullptr);
-                newFile.setProperty(IDs::Start, "0.00", nullptr);
+                newFile.setProperty(IDs::FileStart, "0.00", nullptr);
                 bool isLossless (newFiles[i].getFileExtension() == ".wav");
                 newFile.setProperty(IDs::IsLossless, isLossless, nullptr);
                 
@@ -168,12 +170,12 @@ void SourceComponent::clearFileList()
 
 void SourceComponent::setStartTime (int row, String startTime)
 {
-    fileListNode.getChild(row).setProperty(IDs::Start, startTime, nullptr);
+    fileListNode.getChild(row).setProperty(IDs::FileStart, startTime, nullptr);
 }
 
 String SourceComponent::getStartTime (int row) const
 {
-    return fileListNode.getChild(row).getProperty(IDs::Start);
+    return fileListNode.getChild(row).getProperty(IDs::FileStart);
 }
 
 void SourceComponent::updateButtons()

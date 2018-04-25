@@ -54,8 +54,8 @@ public:
     void setupProperties();
     void setReaderSource(String);
     
-    void loadData();
-    void saveData();
+    void loadData(File);
+    void saveData(File);
     
 private:
     //==============================================================================
