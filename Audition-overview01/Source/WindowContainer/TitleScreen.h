@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    OverviewScreen.h
-    Created: 18 Mar 2018 9:32:33pm
+    TitleScreen.h
+    Created: 18 Mar 2018 9:32:08pm
     Author:  Lambert Schulze
 
   ==============================================================================
@@ -15,22 +15,19 @@
 //==============================================================================
 /*
 */
-class OverviewScreen :  public Component,
-                        public Button::Listener
+class TitleScreen    : public Component
 {
 public:
-    OverviewScreen(ValueTree&);
-    ~OverviewScreen();
+    TitleScreen();
+    ~TitleScreen();
 
     void paint (Graphics&) override;
     void resized() override;
     
-    void buttonClicked(Button*) override;
-
-private:
-    ValueTree mainVT, effectVT;
+    void readFile (const File&);
     
-    OwnedArray<TextButton> buttonList;
+private:  
+    TextEditor textEditor;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OverviewScreen)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TitleScreen)
 };

@@ -14,7 +14,7 @@
 MainContentComponent::MainContentComponent()
 :   mainVT(IDs::Main)
 {
-    auto appDataDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile(JUCEApplication::getInstance()->getApplicationName());
+    auto appDataDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Application Support").getChildFile(JUCEApplication::getInstance()->getApplicationName());
     
     if (!appDataDir.exists())
         appDataDir.createDirectory();
@@ -23,6 +23,7 @@ MainContentComponent::MainContentComponent()
     
     
     setAudioChannels (2, 2);
+    setLookAndFeel(&lookAndFeel);
     
     formatManager.registerBasicFormats();
     transportSource.addChangeListener(this);
@@ -63,6 +64,7 @@ MainContentComponent::~MainContentComponent()
     saveData(settingsFile);
     mainVT.removeListener(this);
     transportSource.removeChangeListener(this);
+    setLookAndFeel (nullptr);
 
     DBG ("End of Destructor");
 }
