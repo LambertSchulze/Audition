@@ -71,22 +71,25 @@ void QuizScreen::paint (Graphics& g) {}
 void QuizScreen::resized()
 {
     auto r (getLocalBounds());
-    auto rBR (r.getBottomRight());
-    choice1Button.setBounds(0, 0, 100, 100);
-    choice2Button.setBounds(0, 0, 100, 100);
-    choice3Button.setBounds(0, 0, 100, 100);
-    choice1Button.setCentreRelative(0.3, 0.5);
-    choice2Button.setCentreRelative(0.5, 0.5);
-    choice3Button.setCentreRelative(0.7, 0.5);
+
+    roundCounter.setBounds(r.removeFromTop(r.getHeight() / 3));
+
+    Grid grid;
+    grid.templateRows       = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
+    grid.templateColumns    = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
+    //grid.setGap(Grid::Px (10));
+    grid.items =
+    {
+        GridItem(choice1Button).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
+        GridItem(choice2Button).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
+        GridItem(choice3Button).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
+        GridItem(play1Button).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
+        GridItem(play2Button).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
+        GridItem(play3Button).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center)
+    };
+    grid.performLayout(r.removeFromTop(r.getHeight() / 2));
     
-    play1Button.setBounds(0, 0, 100, 100);
-    play2Button.setBounds(0, 0, 100, 100);
-    play3Button.setBounds(0, 0, 100, 100);
-    play1Button.setCentreRelative(0.3, 0.7);
-    play2Button.setCentreRelative(0.5, 0.7);
-    play3Button.setCentreRelative(0.7, 0.7);
-    roundCounter.setBounds(0, 0, r.getWidth(), 100);
-    nextButton.setBounds(rBR.x - 100, rBR.y -100, 100, 100);
+    nextButton.setBounds(r.removeFromRight(120).removeFromBottom(120));
 }
 
 void QuizScreen::buttonClicked(Button* b)

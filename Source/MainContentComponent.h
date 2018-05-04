@@ -15,6 +15,7 @@
 #include "Definitions/Definitions.h"
 #include "Definitions/AuditionLookAndFeel.cpp"
 #include "Definitions/Effects.h"
+#include "Definitions/AuditionLookAndFeel.cpp"
 #include "ControlComponent/ControlComponent.h"
 #include "WindowContainer/WindowContainer.h"
 
@@ -70,6 +71,8 @@ private:
     OwnedArray<Effect>  effectList;
     Effect*             currentEffect;
     bool                shouldProcessEffect;
+    
+    AuditionLookAndFeel lookAndFeel;
     
     //==============================================================================
     ScopedPointer<ControlComponent> controlComponent;
