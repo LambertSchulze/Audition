@@ -25,16 +25,16 @@ public:
     DataHandler();
     ~DataHandler();
 
-    const ValueTree& getValueTree();
+    ValueTree& getValueTree();
 
 private:
-    void loadData();
-    void saveData();
+    void loadData(File);
+    void saveData(File);
 
-    void setupValueTree();
+    void setupProperties();
 
-    const File saveFile;
-    ValueTree vt;
+    File saveFile;
+    ValueTree mainVT;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DataHandler)
 };

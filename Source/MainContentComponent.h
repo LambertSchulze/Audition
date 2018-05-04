@@ -16,6 +16,7 @@
 #include "Definitions/AuditionLookAndFeel.cpp"
 #include "Definitions/Effects.h"
 #include "Definitions/AuditionLookAndFeel.cpp"
+#include "Core/DataHandler.h"
 #include "ControlComponent/ControlComponent.h"
 #include "WindowContainer/WindowContainer.h"
 
@@ -55,14 +56,10 @@ public:
     void setupProperties();
     void setReaderSource(String);
     
-    void loadData(File);
-    void saveData(File);
-    
 private:
     //==============================================================================
     ValueTree           mainVT;
-    File                settingsFile;
-    XmlElement*         fileDataXml;
+    //XmlElement*         fileDataXml;
     
     AudioFormatManager                      formatManager;
     ScopedPointer<AudioFormatReaderSource>  readerSource;
@@ -73,6 +70,7 @@ private:
     bool                shouldProcessEffect;
     
     AuditionLookAndFeel lookAndFeel;
+    DataHandler dataHandler;
     
     //==============================================================================
     ScopedPointer<ControlComponent> controlComponent;
