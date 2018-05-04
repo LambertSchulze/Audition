@@ -15,7 +15,8 @@
 //==============================================================================
 TransportControl::TransportControl (ValueTree& vt)
 :   mainVT(vt),
-    originalButton("Original"), effectButton("Effect")
+    originalButton("Original"),
+    effectButton("Effect")
 {    
     addAndMakeVisible(&originalButton);
     addAndMakeVisible(&effectButton);

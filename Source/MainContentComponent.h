@@ -53,13 +53,11 @@ public:
     void changeListenerCallback (ChangeBroadcaster* source) override;
     
     //==============================================================================
-    void setupProperties();
     void setReaderSource(String);
     
 private:
     //==============================================================================
     ValueTree           mainVT;
-    //XmlElement*         fileDataXml;
     
     AudioFormatManager                      formatManager;
     ScopedPointer<AudioFormatReaderSource>  readerSource;

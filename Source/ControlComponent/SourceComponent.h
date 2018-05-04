@@ -16,8 +16,7 @@
 /*
 */
 class SourceComponent :     public Component,
-                            public TableListBoxModel,
-                            public Button::Listener
+                            public TableListBoxModel
 {
 //==============================================================================
 public:
@@ -37,10 +36,6 @@ public:
     void selectedRowsChanged (int) override;
 
     //==============================================================================
-    
-    void buttonClicked(Button*) override;
-    //==============================================================================
-    
     void addFile();
     void removeFile(int);
     void clearFileList();

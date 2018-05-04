@@ -8,6 +8,7 @@
  ==============================================================================
  */
 
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "DataHandler.h"
 #include "../Definitions/Definitions.h"
 
@@ -22,7 +23,7 @@ DataHandler::DataHandler()
     saveFile = appDataDir.getChildFile ("Save");
     
     setupProperties();
-    DBG("setting up the properties.");
+//    DBG("setting up the properties.");
 }
 
 DataHandler::~DataHandler()
@@ -32,7 +33,7 @@ DataHandler::~DataHandler()
 
 ValueTree& DataHandler::getValueTree()
 {
-    DBG("DataHandler: returning the ValueTree.");
+//    DBG("DataHandler: returning the ValueTree.");
     return mainVT;
 }
 

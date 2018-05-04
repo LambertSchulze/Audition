@@ -57,14 +57,14 @@ MainContentComponent::~MainContentComponent()
     transportSource.removeChangeListener(this);
     setLookAndFeel (nullptr);
 
-    DBG ("End of Destructor");
+//    DBG ("End of Destructor");
 }
 
 void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay (samplesPerBlockExpected, sampleRate);
     
-    DBG ("inside prepareToPlay()");
+//    DBG ("inside prepareToPlay()");
 }
 
 void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -111,21 +111,21 @@ void MainContentComponent::resized()
 }
 
 //==============================================================================
-void MainContentComponent::valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property)
+void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
 {
     if (property == IDs::TransportState)
     {
-        var tS = treeWhosePropertyHasChanged.getProperty(property);
+        var tS = changedTree.getProperty(property);
         if (tS == "Stopped")
         {
             
             //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::Start));
         }
         if (tS == "Starting")   {transportSource.start();
-                                treeWhosePropertyHasChanged.setProperty(IDs::TransportState, "Playing", nullptr);}
+                                changedTree.setProperty(IDs::TransportState, "Playing", nullptr);}
         if (tS == "Playing")    {}
         if (tS == "Stopping")   {transportSource.stop();
-                                treeWhosePropertyHasChanged.setProperty(IDs::TransportState, "Stopped", nullptr);}
+                                changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);}
     }
     
 //    if (property == IDs::forPlayback)
@@ -136,13 +136,13 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& treeWhosePropert
     
     if (property == IDs::EffectToPlay)
     {
-        currentEffect = effectList[(int) treeWhosePropertyHasChanged.getProperty(property)];
-        DBG (treeWhosePropertyHasChanged.getProperty(property).toString());
+        currentEffect = effectList[(int) changedTree.getProperty(property)];
+        DBG ("Effect to play: " + changedTree.getProperty(property).toString());
     }
     
     if (property == IDs::IsProcessing)
     {
-        shouldProcessEffect = treeWhosePropertyHasChanged.getProperty(property);
+        shouldProcessEffect = changedTree.getProperty(property);
     }
     
 //    if (property == IDs::Selected)

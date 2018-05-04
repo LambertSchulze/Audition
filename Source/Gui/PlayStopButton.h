@@ -11,11 +11,12 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Definitions/Shapes.h"
 
 //==============================================================================
 /*
  */
-class PlayStopButton :  public TextButton
+class PlayStopButton :  public ShapeButton
 {
 public:
     PlayStopButton(String);
@@ -26,5 +27,7 @@ public:
     void setStateToOff();
     
 private:
+    Shapes shape;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayStopButton)
 };

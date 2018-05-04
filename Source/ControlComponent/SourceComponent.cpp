@@ -36,21 +36,14 @@ SourceComponent::SourceComponent(ValueTree& vt)
     recordButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
     clearButton .setConnectedEdges(Button::ConnectedOnLeft);
     
-    addButton   .addListener(this);
-    removeButton.addListener(this);
-    clearButton .addListener(this);
-    recordButton.addListener(this);
+    addButton   .onClick = [this] { addFile(); };
+    removeButton.onClick = [this] { removeFile(fileListBox.getSelectedRow()); };
+    clearButton .onClick = [this] { clearFileList(); };
     
     updateButtons();
 }
 
-SourceComponent::~SourceComponent()
-{
-    addButton   .removeListener(this);
-    removeButton.removeListener(this);
-    clearButton .removeListener(this);
-    recordButton.removeListener(this);
-}
+SourceComponent::~SourceComponent()         {}
 //==============================================================================
 
 void SourceComponent::paint (Graphics& g)   {}
@@ -114,15 +107,6 @@ void SourceComponent::selectedRowsChanged (int lastRowSelected)
         
         fileListNode.setProperty(IDs::SelectedFile, lastRowSelected, nullptr);
     }
-}
-
-
-//==============================================================================
-void SourceComponent::buttonClicked(Button* b)
-{
-    if (b == &addButton)    addFile();
-    if (b == &removeButton) removeFile(fileListBox.getSelectedRow());
-    if (b == &clearButton)  clearFileList();
 }
 
 //==============================================================================
