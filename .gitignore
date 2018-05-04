@@ -31,6 +31,6 @@
 *.out
 *.app
 
-# my ignores
+# My Ignores
 JuceLibraryCode/**
 Builds/**
