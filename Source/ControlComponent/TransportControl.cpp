@@ -32,6 +32,19 @@ TransportControl::TransportControl (ValueTree& vt)
     // the effect button is always disabled in the beginning.
     effectButton.setEnabled(false);
     
+    
+    Image playImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_play_circle_outline_black_48px.svg"));
+    Image stopImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_stop_circle_outline_black_48px.svg"));
+    
+    originalButton.setImages(true, true, true,
+                             playImage, 0.7f, Colours::red,
+                             playImage, 1.0f, Colours::transparentBlack,
+                             playImage, 1.0f, Colours::blue, 0.5f);
+    effectButton.setImages(true, true, true,
+                            playImage, 0.7f, Colours::transparentBlack,
+                            playImage, 1.0f, Colours::transparentBlack,
+                            playImage, 1.0f, Colours::blue, 0.5f);
+
     originalButton  .addListener(this);
     effectButton    .addListener(this);
     mainVT          .addListener(this);
@@ -118,7 +131,7 @@ void TransportControl::buttonClicked(Button* b)
         {
             mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, false, nullptr);
             mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
-            effectButton.setStateToOff();
+            //effectButton.setStateToOff();
             //std::cout << "OB: getToggleState() true\n";
         }
         else
@@ -133,7 +146,7 @@ void TransportControl::buttonClicked(Button* b)
         {
             mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, true, nullptr);
             mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
-            originalButton.setStateToOff();
+            //originalButton.setStateToOff();
             //std::cout << "EB: getToggleState() true\n";
         }
         else

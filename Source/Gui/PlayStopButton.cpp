@@ -13,13 +13,18 @@
 
 //==============================================================================
 PlayStopButton::PlayStopButton(String s)
-:   ShapeButton(s, Colours::grey, Colours::dimgrey, Colours::lightgrey)
+:   ImageButton(s)
 {
-    
     this->setClickingTogglesState(true);
     this->setToggleState(false, dontSendNotification);
-    //this->setButtonText("Play");
-    this->setShape(shape.addPath(), true, true, false);
+    
+    playImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Builds/MacOSX/svg/ic_add_black_48px.svg"));
+    stopImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Builds/MacOSX/svg/ic_stop_circle_outline_black_48px.svg"));
+    
+    this->setImages(true, true, true,
+                    playImage, 0.7f, Colours::transparentBlack,
+                    playImage, 1.0f, Colours::transparentBlack,
+                    playImage, 1.0f, Colours::blue, 0.5f);
 }
 
 PlayStopButton::~PlayStopButton() {}
@@ -27,7 +32,7 @@ PlayStopButton::~PlayStopButton() {}
 void PlayStopButton::clicked()
 {
     (this->getToggleState()) ? this->setButtonText("Stop") : this->setButtonText("Play");
-    //std::cout << "Button: clicked()\n";
+    //DBG("PlayStopButton: clicked()");
 }
 
 void PlayStopButton::setStateToOff()

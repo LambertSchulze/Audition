@@ -26,6 +26,9 @@ WindowContainer::WindowContainer(ValueTree& vt)
     overviewScreen  .setVisible(false);
     quizScreen      .setVisible(false);
     
+    overviewButton  .setButtonText("Main");
+    quizButton      .setButtonText("Quiz");
+    
     overviewButton  .addListener(this);
     quizButton      .addListener(this);
 }
@@ -47,8 +50,8 @@ void WindowContainer::resized()
     auto            header  (r.removeFromTop(UI::headerHeight));
     Rectangle<int>  page    (UI::sidebarWidth, UI::headerHeight, rWidth-UI::sidebarWidth, rHeight-UI::headerHeight-UI::footerHeight);
 
-    overviewButton  .setBounds(header.removeFromLeft(UI::headerHeight).reduced(10));
-    quizButton      .setBounds(header.removeFromLeft(UI::headerHeight).reduced(10));
+    overviewButton  .setBounds(header.removeFromLeft(rWidth / 7).reduced(10));
+    quizButton      .setBounds(header.removeFromLeft(rWidth / 7).reduced(10));
     titleScreen     .setBounds(page);
     overviewScreen  .setBounds(page);
     quizScreen      .setBounds(page);
