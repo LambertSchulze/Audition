@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Gui/Shapes.h"
 
 //==============================================================================
 /*
@@ -50,7 +51,8 @@ private:
     ValueTree fileListNode;
     
     TableListBox fileListBox {{}, this};
-    TextButton addButton, removeButton, clearButton, recordButton;
+    DrawableButton addButton, removeButton, clearButton;
+    Shapes shape;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SourceComponent)
 };

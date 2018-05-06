@@ -15,10 +15,11 @@
 PlayStopButton::PlayStopButton(String s)
 :   ShapeButton(s, Colours::grey, Colours::dimgrey, Colours::lightgrey)
 {
+    
     this->setClickingTogglesState(true);
     this->setToggleState(false, dontSendNotification);
     //this->setButtonText("Play");
-    this->setShape(shape.playShape(), true, true, true);
+    this->setShape(shape.addPath(), true, true, false);
 }
 
 PlayStopButton::~PlayStopButton() {}

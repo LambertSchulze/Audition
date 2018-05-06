@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
-#include "../Definitions/Shapes.h"
+#include "Shapes.h"
 
 //==============================================================================
 /*
@@ -28,6 +28,7 @@ public:
     
 private:
     Shapes shape;
+    Path path;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayStopButton)
 };

@@ -16,14 +16,15 @@
 //==============================================================================
 SourceComponent::SourceComponent(ValueTree& vt)
 :   fileListNode(vt),
-    addButton("Add"), removeButton("Del"), clearButton("Clear"), recordButton("Rec")
+    addButton("Add", DrawableButton::ButtonStyle::ImageAboveTextLabel),
+    removeButton("Del", DrawableButton::ButtonStyle::ImageAboveTextLabel),
+    clearButton("Clear", DrawableButton::ButtonStyle::ImageAboveTextLabel)
 {
     fileListNode = fileListNode.getChildWithName(IDs::FileList);
     
     addAndMakeVisible (&fileListBox);
     addAndMakeVisible (&addButton);
     addAndMakeVisible (&removeButton);
-    addAndMakeVisible (&recordButton);
     addAndMakeVisible (&clearButton);
     
     fileListBox.getHeader().addColumn("Filename", 1, 150, 100, -1, (TableHeaderComponent::visible | TableHeaderComponent::resizable));
@@ -33,12 +34,18 @@ SourceComponent::SourceComponent(ValueTree& vt)
     
     addButton   .setConnectedEdges(Button::ConnectedOnRight);
     removeButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
-    recordButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
     clearButton .setConnectedEdges(Button::ConnectedOnLeft);
     
     addButton   .onClick = [this] { addFile(); };
     removeButton.onClick = [this] { removeFile(fileListBox.getSelectedRow()); };
     clearButton .onClick = [this] { clearFileList(); };
+    
+    addButton.setImages(Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Recources/svg/ic_add_black_48px.svg")));
+    addButton.setButtonText("Add");
+    removeButton.setImages(Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Recources/svg/ic_remove_black_48px.svg")));
+    removeButton.setButtonText("Remove");
+    clearButton.setImages(Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Recources/svg/ic_clear_black_48px.svg")));
+    clearButton.setButtonText("Clear");
     
     updateButtons();
 }
@@ -52,9 +59,8 @@ void SourceComponent::resized()
 {
     auto r (getLocalBounds());
     auto buttonRow (r.removeFromBottom(50).reduced(5));
-    addButton   .setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 4));
-    removeButton.setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 3));
-    recordButton.setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 2));
+    addButton   .setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 3));
+    removeButton.setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 2));
     clearButton .setBounds(buttonRow);
     fileListBox .setBounds(r);
 }
