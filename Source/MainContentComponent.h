@@ -13,8 +13,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "Definitions/Definitions.h"
-#include "Gui/AuditionLookAndFeel.cpp"
 #include "Definitions/Effects.h"
+#include "Gui/AuditionLookAndFeel.cpp"
 #include "Core/DataHandler.h"
 #include "ControlComponent/ControlComponent.h"
 #include "WindowContainer/WindowContainer.h"

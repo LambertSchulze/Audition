@@ -107,13 +107,7 @@ Component* SourceComponent::refreshComponentForCell (int rowNumber, int columnId
 
 void SourceComponent::selectedRowsChanged (int lastRowSelected)
 {
-    if (fileListNode.getNumChildren())
-    {
-//        fileListNode.getChildWithProperty(IDs::Selected, true).removeProperty(IDs::Selected, nullptr);
-//        fileListNode.getChild(fileListBox.getSelectedRow()).setProperty(IDs::Selected, true, nullptr);
-        
-        fileListNode.setProperty(IDs::SelectedFile, lastRowSelected, nullptr);
-    }
+    if (fileListNode.getNumChildren())  { fileListNode.setProperty(IDs::SelectedFile, lastRowSelected, nullptr); }
 }
 
 //==============================================================================
@@ -146,6 +140,13 @@ void SourceComponent::addFile()
 
 void SourceComponent::removeFile(int fileIndex)
 {
+    // check if removed file is playing
+    if (fileIndex == (int) fileListNode.getProperty(IDs::SelectedFile))
+    {
+        // stopping playback
+        fileListNode.getParent().getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+    }
+    
     fileListNode.removeChild(fileIndex, nullptr);
     fileListBox.selectRow(jmax(fileIndex - 1, 0));
     fileListBox.updateContent();

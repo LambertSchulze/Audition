@@ -44,7 +44,7 @@ namespace IDs
     
     const Identifier FileList       = "FILELIST";
     // stores the last selected file, so that at startup it can be selected again.
-    const Identifier SelectedFile   = "Last_File_Selected";
+    const Identifier SelectedFile   = "Selected_File";
     
     
     const Identifier File           = "FILE";

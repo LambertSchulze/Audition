@@ -26,8 +26,8 @@ WindowContainer::WindowContainer(ValueTree& vt)
     overviewScreen  .setVisible(false);
     quizScreen      .setVisible(false);
     
-    overviewButton  .setButtonText("Main");
-    quizButton      .setButtonText("Quiz");
+    overviewButton  .setButtonText("Effect Collection");
+    quizButton      .setButtonText("1, 2, 3 Quiz");
     
     overviewButton  .addListener(this);
     quizButton      .addListener(this);

@@ -41,8 +41,8 @@ void PlayStopButton::drawStopImageOnButton()
     Graphics s(image);
     s.setColour(Colours::black);
     s.fillEllipse(0, 0, 100, 100);
-    s.setColour(red);
-    s.fillRect(25, 25, 50, 50);
+    s.setColour(Colours::lightgrey);
+    s.fillRect(30, 30, 40, 40);
     
     this->setImages(false, true, true,
                     image, 0.7f, Colours::transparentBlack,
@@ -58,7 +58,7 @@ void PlayStopButton::drawPlayImageOnButton()
     Graphics p(image);
     p.setColour(Colours::black);
     p.fillEllipse(0, 0, 100, 100);
-    p.setColour(green);
+    p.setColour(Colours::lightgrey);
     p.drawArrow(Line<float>(25, 50, 75, 50), 0, 50, 100);
     
     this->setImages(false, true, true,

@@ -57,14 +57,13 @@ MainContentComponent::~MainContentComponent()
     transportSource.removeChangeListener(this);
     setLookAndFeel (nullptr);
 
-//    DBG ("End of Destructor");
+    DBG ("End of Destructor");
 }
 
 void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay (samplesPerBlockExpected, sampleRate);
-    
-//    DBG ("inside prepareToPlay()");
+    DBG ("inside prepareToPlay()");
 }
 
 void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -113,42 +112,37 @@ void MainContentComponent::resized()
 //==============================================================================
 void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
 {
+    // setting the AudioTransportSource after the ID TransportState
     if (property == IDs::TransportState)
     {
         var tS = changedTree.getProperty(property);
-        if (tS == "Stopped")
-        {
-            
-            //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::Start));
-        }
-        if (tS == "Starting")   {transportSource.start();
-                                changedTree.setProperty(IDs::TransportState, "Playing", nullptr);}
+        if (tS == "Stopped")    {//transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::Start));
+                                }
+        if (tS == "Starting")   {changedTree.setProperty(IDs::TransportState, "Playing", nullptr);
+                                 transportSource.start();
+                                 DBG("starting transportSource");}
         if (tS == "Playing")    {}
-        if (tS == "Stopping")   {transportSource.stop();
-                                changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);}
+        if (tS == "Stopping")   {changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);
+                                 transportSource.stop();
+                                 DBG("Stopping transportSource");}
     }
     
-//    if (property == IDs::forPlayback)
-//    {
-//        if (treeWhosePropertyHasChanged.getProperty(property)) currentEffect = effectList[(int) treeWhosePropertyHasChanged.getProperty(IDs::Number)];
-//        //DBG ("setting an effect for playback.");
-//    }
+    // sets the shouldProcessEffect flag
+    if (property == IDs::IsProcessing)  { shouldProcessEffect = changedTree.getProperty(property); }
     
+    // sets the audible Effect
     if (property == IDs::EffectToPlay)
     {
         currentEffect = effectList[(int) changedTree.getProperty(property)];
         DBG ("Effect to play: " + changedTree.getProperty(property).toString());
     }
-    
-    if (property == IDs::IsProcessing)
+    // if a file gets selected, the readerSource is set for the file
+    if (property == IDs::SelectedFile)
     {
-        shouldProcessEffect = changedTree.getProperty(property);
+        int numOfSelectedFile = changedTree.getProperty(property);
+        String pathOfSelectedFile = changedTree.getChild(numOfSelectedFile).getProperty(IDs::FilePath);
+        setReaderSource(pathOfSelectedFile);
     }
-    
-//    if (property == IDs::Selected)
-//    {
-//        if ((bool) treeWhosePropertyHasChanged.getProperty(property)) setReaderSource(treeWhosePropertyHasChanged.getProperty(IDs::FilePath));
-//    }
     
 //    if (property == IDs::FileStart)
 //    {

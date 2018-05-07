@@ -40,7 +40,7 @@ private:
     ValueTree mainVT;
     
     PlayStopButton originalButton, effectButton;
-
+    Label originalLabel, effectLabel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportControl)
 };
