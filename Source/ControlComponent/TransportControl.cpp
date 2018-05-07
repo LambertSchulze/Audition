@@ -31,19 +31,6 @@ TransportControl::TransportControl (ValueTree& vt)
     
     // the effect button is always disabled in the beginning.
     effectButton.setEnabled(false);
-    
-    
-    Image playImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_play_circle_outline_black_48px.svg"));
-    Image stopImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_stop_circle_outline_black_48px.svg"));
-    
-    originalButton.setImages(true, true, true,
-                             playImage, 0.7f, Colours::red,
-                             playImage, 1.0f, Colours::transparentBlack,
-                             playImage, 1.0f, Colours::blue, 0.5f);
-    effectButton.setImages(true, true, true,
-                            playImage, 0.7f, Colours::transparentBlack,
-                            playImage, 1.0f, Colours::transparentBlack,
-                            playImage, 1.0f, Colours::blue, 0.5f);
 
     originalButton  .addListener(this);
     effectButton    .addListener(this);
