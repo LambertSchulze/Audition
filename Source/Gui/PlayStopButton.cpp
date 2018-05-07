@@ -16,42 +16,58 @@ PlayStopButton::PlayStopButton(String name)
 :   ImageButton(name)
 {
     this->setClickingTogglesState(true);
-    this->setToggleState(false, dontSendNotification);
     
-    //playImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Builds/MacOSX/svg/ic_add_black_48px.svg"));
-    //stopImage = ImageFileFormat::loadFrom(File("/Users/lambertschulze/Documents/Develop/Audition/Builds/MacOSX/svg/ic_stop_circle_outline_black_48px.svg"));
-    
-    Image playImage (Image::RGB, 100, 100, true);
-    Image stopImage (Image::RGB, 100, 100, true);
-    
-    Graphics p(playImage);
-    p.setColour(Colours::black);
-    p.fillEllipse(0, 0, 100, 100);
-    p.setColour(Colours::green);
-    p.drawArrow(Line<float>(25, 50, 75, 50), 0, 50, 100);
-    
-    Graphics s(stopImage);
-    s.setColour(Colours::black);
-    s.fillEllipse(0, 0, 100, 100);
-    s.setColour(Colours::red);
-    s.fillRect(25, 25, 50, 50);
-    
-    this->setImages(true, true, true,
-                    playImage, 0.7f, Colours::transparentBlack,
-                    playImage, 1.0f, Colours::transparentBlack,
-                    stopImage, 1.0f, Colours::transparentBlack, 0.5);
+    drawPlayImageOnButton();
 }
 
-PlayStopButton::~PlayStopButton() {}
+PlayStopButton::~PlayStopButton()
+{}
 
 void PlayStopButton::clicked()
 {
-    (this->getToggleState()) ? this->setButtonText("Stop") : this->setButtonText("Play");
-    //DBG("PlayStopButton: clicked()");
+    auto b = this->getToggleState();
+    
+    if (b == true)  drawStopImageOnButton();
+    else            drawPlayImageOnButton();
+    
+    repaint();
+}
+
+void PlayStopButton::drawStopImageOnButton()
+{
+    Image image (Image::RGB, 100, 100, true);
+    Colour red {255, 59, 48};
+    
+    Graphics s(image);
+    s.setColour(Colours::black);
+    s.fillEllipse(0, 0, 100, 100);
+    s.setColour(red);
+    s.fillRect(25, 25, 50, 50);
+    
+    this->setImages(false, true, true,
+                    image, 0.7f, Colours::transparentBlack,
+                    image, 1.0f, Colours::transparentBlack,
+                    image, 1.0f, Colours::transparentBlack, 0.5);
+}
+
+void PlayStopButton::drawPlayImageOnButton()
+{
+    Image image (Image::RGB, 100, 100, true);
+    Colour green {99, 218, 56};
+    
+    Graphics p(image);
+    p.setColour(Colours::black);
+    p.fillEllipse(0, 0, 100, 100);
+    p.setColour(green);
+    p.drawArrow(Line<float>(25, 50, 75, 50), 0, 50, 100);
+    
+    this->setImages(false, true, true,
+                    image, 0.7f, Colours::transparentBlack,
+                    image, 1.0f, Colours::transparentBlack,
+                    image, 1.0f, Colours::transparentBlack, 0.5);
 }
 
 void PlayStopButton::setStateToOff()
 {
     this->setToggleState(false, dontSendNotification);
-    this->setButtonText("Play");
 }

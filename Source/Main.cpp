@@ -9,7 +9,7 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Definitions/AuditionLookAndFeel.cpp"
+#include "Gui/AuditionLookAndFeel.cpp"
 
 Component* createMainContentComponent();
 

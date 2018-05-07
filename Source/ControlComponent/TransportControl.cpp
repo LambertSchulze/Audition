@@ -32,15 +32,13 @@ TransportControl::TransportControl (ValueTree& vt)
     // the effect button is always disabled in the beginning.
     effectButton.setEnabled(false);
 
-    originalButton  .addListener(this);
-    effectButton    .addListener(this);
+    originalButton.onClick = [this] { originalButtonclicked(); };
+    effectButton.onClick   = [this] { effectButtonclicked(); };
     mainVT          .addListener(this);
 }
 
 TransportControl::~TransportControl()
 {
-    originalButton  .removeListener(this);
-    effectButton    .removeListener(this);
     mainVT          .removeListener(this);
 }
 
@@ -110,36 +108,34 @@ void TransportControl::valueTreeParentChanged (ValueTree&) {}
 void TransportControl::valueTreeRedirected (ValueTree&) {}
 
 //==============================================================================
-void TransportControl::buttonClicked(Button* b)
+void TransportControl::originalButtonclicked()
 {
-    if (b == &originalButton)
+    if (originalButton.getToggleState())
     {
-        if (originalButton.getToggleState())
-        {
-            mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, false, nullptr);
-            mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
-            //effectButton.setStateToOff();
-            //std::cout << "OB: getToggleState() true\n";
-        }
-        else
-        {
-            mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
-            //std::cout << "OB: getToggleState() else\n";
-        }
+        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, false, nullptr);
+        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
+        //effectButton.setStateToOff();
+        //std::cout << "OB: getToggleState() true\n";
     }
-    if (b == &effectButton)
+    else
     {
-        if (effectButton.getToggleState())
-        {
-            mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, true, nullptr);
-            mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
-            //originalButton.setStateToOff();
-            //std::cout << "EB: getToggleState() true\n";
-        }
-        else
-        {
-            mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
-            //std::cout << "EB: getToggleState() else\n";
-        }
+        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+        //std::cout << "OB: getToggleState() else\n";
+    }
+}
+
+void TransportControl::effectButtonclicked()
+{
+    if (effectButton.getToggleState())
+    {
+        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, true, nullptr);
+        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
+        //originalButton.setStateToOff();
+        //std::cout << "EB: getToggleState() true\n";
+    }
+    else
+    {
+        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+        //std::cout << "EB: getToggleState() else\n";
     }
 }

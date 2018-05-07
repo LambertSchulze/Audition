@@ -17,8 +17,7 @@
 /*
 */
 class TransportControl :    public Component,
-                            public ValueTree::Listener,
-                            public Button::Listener
+                            public ValueTree::Listener
 {
 public:
     TransportControl(ValueTree&);
@@ -34,7 +33,8 @@ public:
     void valueTreeParentChanged (ValueTree&) override;
     void valueTreeRedirected (ValueTree&) override;
     
-    void buttonClicked (Button*) override;
+    void originalButtonclicked();
+    void effectButtonclicked();
     
 private:
     ValueTree mainVT;

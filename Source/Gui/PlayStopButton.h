@@ -22,11 +22,12 @@ public:
     ~PlayStopButton();
     
     void clicked() override;
+    void drawPlayImageOnButton();
+    void drawStopImageOnButton();
     
     void setStateToOff();
     
 private:
-    Image playImage, stopImage;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayStopButton)
 };
