@@ -13,8 +13,8 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-TransportControl::TransportControl (ValueTree& vt)
-:   mainVT(vt),
+TransportControl::TransportControl (ValueTree& tree)
+:   vt(tree),
     originalButton("Original"), effectButton("Effect"),
     originalLabel("Original"), effectLabel("Effect")
 {    
@@ -35,19 +35,19 @@ TransportControl::TransportControl (ValueTree& vt)
     // effectButton should only be enabled if a file is loaded and a effect for playback is set.
     // this has to be checked in the beginning and after every change of the properties.
     
-    if (mainVT.getChildWithName(IDs::FileList).getNumChildren() == 0) originalButton.setEnabled(false);
+    if (FILELIST.getNumChildren() == 0) originalButton.setEnabled(false);
     
     // the effect button is always disabled in the beginning.
     effectButton.setEnabled(false);
 
     originalButton.onClick = [this] { originalButtonclicked(); };
     effectButton.onClick   = [this] { effectButtonclicked(); };
-    mainVT          .addListener(this);
+    vt.addListener(this);
 }
 
 TransportControl::~TransportControl()
 {
-    mainVT          .removeListener(this);
+    vt.removeListener(this);
 }
 
 void TransportControl::paint (Graphics& g)      {}
@@ -87,35 +87,31 @@ void TransportControl::valueTreePropertyChanged (ValueTree& changedTree, const I
     // the effect button is dissabled. Otherwise its being enabled.
     if (property == IDs::EffectToPlay) {((int) changedTree.getProperty(property) == -1) ? effectButton.setEnabled(false) : effectButton.setEnabled(true);}
     
-    // if playback stopps by removing the file from the list, the buttons must get untoggled
+    // if playback stopps by removing the file from the list, the buttons must get untoggled manualy
     if (property == IDs::TransportState)
     {
-        // if transportState is Stopping or Stopped, untoggle Buttons
-        if ((String) changedTree.getProperty(property) == "Stopping")
+        String s  = changedTree.getProperty(property);
+        if (s == "Stopped") {
+            originalButton.setStateToOff();
+            effectButton  .setStateToOff();
+            DBG("set the state of the playbuttons to false.");
+        }
     }
 }
 
 void TransportControl::valueTreeChildAdded (ValueTree &parentTree, ValueTree &childWhichHasBeenAdded)
 {
     // makes shure that buttons get enabled if files are in the filelist.
-    
-    if (parentTree.hasType(IDs::FileList))
-    {
-        originalButton  .setEnabled(true);
-    }
+    if (parentTree.hasType(IDs::FileList))  { originalButton.setEnabled(true); }
 }
 
 void TransportControl::valueTreeChildRemoved (ValueTree &parentTree, ValueTree &childWhichHasBeenRemoved, int /*index*/)
 {
     // if all files of the filelist are removed, disables buttons
-    
-    if (parentTree.hasType(IDs::FileList))
-    {
-        if (parentTree.getNumChildren() == 0)
-        {
+    if (parentTree.hasType(IDs::FileList)) {
+        if (parentTree.getNumChildren() == 0) {
             originalButton  .setEnabled(false);
-            effectButton    .setEnabled(false);
-        }
+            effectButton    .setEnabled(false);}
     }
 }
 
@@ -129,13 +125,13 @@ void TransportControl::originalButtonclicked()
     DBG("originalButton: clicked");
     if (originalButton.getToggleState())
     {
-        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, false, nullptr);
-        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
+        TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
+        TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
         effectButton.setToggleState(false, dontSendNotification);
     }
     else
     {
-        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
     }
 }
 
@@ -144,12 +140,12 @@ void TransportControl::effectButtonclicked()
     DBG("effectButton: clicked");
     if (effectButton.getToggleState())
     {
-        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing, true, nullptr);
-        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Starting", nullptr);
+        TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
+        TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
         originalButton.setToggleState(false, dontSendNotification);
     }
     else
     {
-        mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
     }
 }

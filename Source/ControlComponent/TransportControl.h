@@ -37,7 +37,7 @@ public:
     void effectButtonclicked();
     
 private:
-    ValueTree mainVT;
+    ValueTree vt;
     
     PlayStopButton originalButton, effectButton;
     Label originalLabel, effectLabel;

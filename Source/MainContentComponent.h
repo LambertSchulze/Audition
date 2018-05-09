@@ -56,7 +56,7 @@ public:
     
 private:
     //==============================================================================
-    ValueTree           mainVT;
+    ValueTree           vt;
     
     AudioFormatManager                      formatManager;
     ScopedPointer<AudioFormatReaderSource>  readerSource;

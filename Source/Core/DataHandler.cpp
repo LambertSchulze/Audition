@@ -76,6 +76,7 @@ void DataHandler::setupProperties()
         fileList.setProperty(IDs::SelectedFile, 0, nullptr);
         mainVT.addChild(fileList, -1, nullptr);
     }
+    mainVT.getChildWithName(IDs::FileList).setProperty(IDs::SelectedFile, 0, nullptr);
     
     // checking for EFFECTLIST
     if (!mainVT.getChildWithName(IDs::EffectList).isValid())

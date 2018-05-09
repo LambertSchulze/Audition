@@ -70,4 +70,5 @@ void PlayStopButton::drawPlayImageOnButton()
 void PlayStopButton::setStateToOff()
 {
     this->setToggleState(false, dontSendNotification);
+    this->clicked();
 }

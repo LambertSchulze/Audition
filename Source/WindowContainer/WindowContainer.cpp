@@ -13,8 +13,8 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-WindowContainer::WindowContainer(ValueTree& vt)
-:   mainVT(vt),
+WindowContainer::WindowContainer(ValueTree& tree)
+:   vt(tree),
     overviewScreen(vt), quizScreen(vt),
     overviewButton ("Overview Screen Button"), quizButton ("Quiz Screen Button")
 {

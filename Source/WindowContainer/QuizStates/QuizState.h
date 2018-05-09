@@ -28,7 +28,7 @@ public:
     void newQuiz            ();
     void deletePlayerChoice ();
     
-    ValueTree quizNode;
+    ValueTree vt;
     
 private:
     Random random;

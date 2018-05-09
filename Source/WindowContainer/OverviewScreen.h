@@ -28,7 +28,7 @@ public:
     void buttonClicked(Button*) override;
 
 private:
-    ValueTree mainVT, effectVT;
+    ValueTree vt;
     
     OwnedArray<TextButton> buttonList;
     

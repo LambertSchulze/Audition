@@ -26,19 +26,19 @@ String ChooseState::updateCounter()
 
 void ChooseState::setChoice(String choice)
 {
-    quizNode.setProperty(IDs::PlayerChoice, choice, nullptr);
+    QUIZ.setProperty(IDs::PlayerChoice, choice, nullptr);
 }
 
 void ChooseState::next()
 {
-    if (quizNode.getProperty(IDs::PlayerChoice) == quizNode.getChildWithProperty(IDs::isRight, true).getProperty(IDs::Name))
+    if (QUIZ.getProperty(IDs::PlayerChoice) == QUIZ.getChildWithProperty(IDs::isRight, true).getProperty(IDs::Name))
      {
-         quizNode.setProperty(IDs::QuizState, 1, nullptr);
-         quizNode.setProperty(IDs::WonRounds, (int) quizNode.getProperty(IDs::WonRounds) + 1, nullptr);
+         QUIZ.setProperty(IDs::QuizState, 1, nullptr);
+         QUIZ.setProperty(IDs::WonRounds, (int) QUIZ.getProperty(IDs::WonRounds) + 1, nullptr);
      }
      else
      {
-         quizNode.setProperty(IDs::QuizState, 2, nullptr);
-         quizNode.setProperty(IDs::LostRounds, (int) quizNode.getProperty(IDs::LostRounds) + 1, nullptr);
+         QUIZ.setProperty(IDs::QuizState, 2, nullptr);
+         QUIZ.setProperty(IDs::LostRounds, (int) QUIZ.getProperty(IDs::LostRounds) + 1, nullptr);
      }
 }

@@ -14,22 +14,21 @@
 #include "../Gui/AudioFileListLabelComponent.h"
 
 //==============================================================================
-SourceComponent::SourceComponent(ValueTree& vt)
-:   fileListNode(vt),
+SourceComponent::SourceComponent(ValueTree& tree)
+:   vt(tree),
+    fileListBox {{}, this},
     addButton("Add", DrawableButton::ButtonStyle::ImageOnButtonBackground),
     removeButton("Remove", DrawableButton::ButtonStyle::ImageOnButtonBackground),
     clearButton("Clear", DrawableButton::ButtonStyle::ImageOnButtonBackground)
 {
-    fileListNode = fileListNode.getChildWithName(IDs::FileList);
-    
-    ScopedPointer<Drawable> addImage    = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_add_black_48px.svg"));
-    ScopedPointer<Drawable> removeImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_remove_black_48px.svg"));
-    ScopedPointer<Drawable> clearImage  = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/ic_clear_black_48px.svg"));
+    ScopedPointer<Drawable> addImage    = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_add_black_48px.svg"));
+    ScopedPointer<Drawable> removeImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_remove_black_48px.svg"));
+    ScopedPointer<Drawable> clearImage  = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_clear_black_48px.svg"));
     
     addAndMakeVisible (&fileListBox);
-    addAndMakeVisible (addButton);
-    addAndMakeVisible (removeButton);
-    addAndMakeVisible (clearButton);
+    addAndMakeVisible (&addButton);
+    addAndMakeVisible (&removeButton);
+    addAndMakeVisible (&clearButton);
     
     fileListBox.getHeader().addColumn("Filename", 1, 150, 100, -1, (TableHeaderComponent::visible | TableHeaderComponent::resizable));
     fileListBox.getHeader().addColumn("Start", 2, 40, 40, 40, TableHeaderComponent::visible);
@@ -67,7 +66,7 @@ void SourceComponent::resized()
 }
 
 //==============================================================================
-int SourceComponent::getNumRows()           {return fileListNode.getNumChildren();}
+int SourceComponent::getNumRows()           {return FILELIST.getNumChildren();}
 
 void SourceComponent::paintRowBackground (Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected)
 {
@@ -79,11 +78,11 @@ void SourceComponent::paintRowBackground (Graphics& g, int rowNumber, int /*widt
 void SourceComponent::paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
     g.setColour ((rowIsSelected) ? Colours::black : getLookAndFeel().findColour (ListBox::textColourId));
-    if (fileListNode.getChild(rowNumber).isValid())
+    if (FILELIST.getChild(rowNumber).isValid())
     {        
         if (columnId == 1)
         {
-            auto text = fileListNode.getChild(rowNumber).getProperty(IDs::FileName);
+            auto text = FILELIST.getChild(rowNumber).getProperty(IDs::FileName);
             g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
         }
     }
@@ -107,7 +106,7 @@ Component* SourceComponent::refreshComponentForCell (int rowNumber, int columnId
 
 void SourceComponent::selectedRowsChanged (int lastRowSelected)
 {
-    if (fileListNode.getNumChildren())  { fileListNode.setProperty(IDs::SelectedFile, lastRowSelected, nullptr); }
+    if (FILELIST.getNumChildren())  { FILELIST.setProperty(IDs::SelectedFile, lastRowSelected, nullptr); }
 }
 
 //==============================================================================
@@ -120,7 +119,7 @@ void SourceComponent::addFile()
         Array<File> newFiles (chooser.getResults());
         for (int i = 0; i < newFiles.size(); i++)
         {
-            if (!fileListNode.getChildWithProperty(IDs::FilePath, newFiles[i].getFullPathName()).isValid())
+            if (!FILELIST.getChildWithProperty(IDs::FilePath, newFiles[i].getFullPathName()).isValid())
             {
                 ValueTree newFile (IDs::File);
                 newFile.setProperty(IDs::FilePath, newFiles[i].getFullPathName(), nullptr);
@@ -129,7 +128,7 @@ void SourceComponent::addFile()
                 bool isLossless (newFiles[i].getFileExtension() == ".wav");
                 newFile.setProperty(IDs::IsLossless, isLossless, nullptr);
                 
-                fileListNode.addChild(newFile, -1, nullptr);
+                FILELIST.addChild(newFile, -1, nullptr);
             }
         }
     }
@@ -141,13 +140,11 @@ void SourceComponent::addFile()
 void SourceComponent::removeFile(int fileIndex)
 {
     // check if removed file is playing
-    if (fileIndex == (int) fileListNode.getProperty(IDs::SelectedFile))
-    {
+    if (fileIndex == (int) FILELIST.getProperty(IDs::SelectedFile)) {
         // stopping playback
-        fileListNode.getParent().getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
-    }
+        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);}
     
-    fileListNode.removeChild(fileIndex, nullptr);
+    FILELIST.removeChild(fileIndex, nullptr);
     fileListBox.selectRow(jmax(fileIndex - 1, 0));
     fileListBox.updateContent();
     updateButtons();
@@ -155,19 +152,23 @@ void SourceComponent::removeFile(int fileIndex)
 
 void SourceComponent::clearFileList()
 {
-    fileListNode.removeAllChildren(nullptr);
+    // check if playback is running
+    String s = TRANSPORT.getProperty(IDs::TransportState);
+    if (s == "Playing") TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+    
+    FILELIST.removeAllChildren(nullptr);
     fileListBox.updateContent();
     updateButtons();
 }
 
 void SourceComponent::setStartTime (int row, String startTime)
 {
-    fileListNode.getChild(row).setProperty(IDs::FileStart, startTime, nullptr);
+    FILELIST.getChild(row).setProperty(IDs::FileStart, startTime, nullptr);
 }
 
 String SourceComponent::getStartTime (int row) const
 {
-    return fileListNode.getChild(row).getProperty(IDs::FileStart);
+    return FILELIST.getChild(row).getProperty(IDs::FileStart);
 }
 
 void SourceComponent::updateButtons()
@@ -179,6 +180,4 @@ void SourceComponent::updateButtons()
     else if (getNumRows() > 0) {
         removeButton   .setEnabled(true);
         clearButton    .setEnabled(true);}
-    
-    if ((fileListBox.getNumSelectedRows() == 0) & (getNumRows() > 0)) fileListBox.selectRow(0, false, false);
 }

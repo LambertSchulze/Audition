@@ -13,11 +13,18 @@
 
 #pragma once
 
+
 namespace UI {
     const int headerHeight          = 80;
     const int sidebarWidth          = 200;
     const int footerHeight          = 100;
 }
+
+#define TRANSPORT   vt.getChildWithName(IDs::Transport)
+#define FILELIST    vt.getChildWithName(IDs::FileList)
+#define EFFECTLIST  vt.getChildWithName(IDs::EffectList)
+#define QUIZ        vt.getChildWithName(IDs::Quiz)
+#define STATISTICS  vt.getChildWithName(IDs::Statistics)
 
 namespace IDs
 {    
@@ -78,5 +85,7 @@ namespace IDs
     const Identifier TotalWon       = "Total_Games_Won";
     const Identifier TotalLost      = "Total_Games_Lost";
 };
+
+
 
 #endif

@@ -29,11 +29,11 @@ void BeginState::next()
     deletePlayerChoice();
     
     // null other Parameters
-    quizNode.setProperty(IDs::RoundCounter, 1, nullptr);
-    quizNode.setProperty(IDs::WonRounds, 0, nullptr);
-    quizNode.setProperty(IDs::LostRounds, 0, nullptr);
+    QUIZ.setProperty(IDs::RoundCounter, 1, nullptr);
+    QUIZ.setProperty(IDs::WonRounds, 0, nullptr);
+    QUIZ.setProperty(IDs::LostRounds, 0, nullptr);
     
-    quizNode.getParent().getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+    TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
     
-    quizNode.setProperty(IDs::QuizState, 0, nullptr);
+    QUIZ.setProperty(IDs::QuizState, 0, nullptr);
 }

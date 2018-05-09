@@ -13,8 +13,8 @@
 #include "../../Definitions/Definitions.h"
 
 //==============================================================================
-QuizState::QuizState (ValueTree& vt)
-:   quizNode(vt)
+QuizState::QuizState (ValueTree& tree)
+:   vt(tree)
 {}
 
 QuizState::~QuizState()
@@ -28,8 +28,7 @@ void QuizState::newQuiz             ()
 {
     // get 3 random Effects of the List of all Effects
     
-    ValueTree effectListNode    = quizNode.getParent().getChildWithName(IDs::EffectList);
-    int numOfAllEffects     = effectListNode.getNumChildren();
+    int numOfAllEffects     = EFFECTLIST.getNumChildren();
     
     int randEffect1         = random.nextInt(numOfAllEffects);
     
@@ -37,23 +36,22 @@ void QuizState::newQuiz             ()
     
     int randEffect3         = random.nextInt(numOfAllEffects);
  
-    quizNode.getChild(0).setProperty(IDs::Name, effectListNode.getChild(randEffect1).getProperty(IDs::EffectName), nullptr);
-    quizNode.getChild(1).setProperty(IDs::Name, effectListNode.getChild(randEffect2).getProperty(IDs::EffectName), nullptr);
-    quizNode.getChild(2).setProperty(IDs::Name, effectListNode.getChild(randEffect3).getProperty(IDs::EffectName), nullptr);
+    QUIZ.getChild(0).setProperty(IDs::Name, EFFECTLIST.getChild(randEffect1).getProperty(IDs::EffectName), nullptr);
+    QUIZ.getChild(1).setProperty(IDs::Name, EFFECTLIST.getChild(randEffect2).getProperty(IDs::EffectName), nullptr);
+    QUIZ.getChild(2).setProperty(IDs::Name, EFFECTLIST.getChild(randEffect3).getProperty(IDs::EffectName), nullptr);
     
     // set one of them as the right one
     
-    if (quizNode.getChildWithProperty(IDs::isRight, true).isValid()) quizNode.getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
-    if (effectListNode.getChildWithProperty(IDs::forPlayback, true).isValid()) effectListNode.getChildWithProperty(IDs::forPlayback, true).setProperty(IDs::forPlayback, false, nullptr);
+    if (QUIZ.getChildWithProperty(IDs::isRight, true).isValid()) QUIZ.getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
+    if (EFFECTLIST.getChildWithProperty(IDs::forPlayback, true).isValid()) EFFECTLIST.getChildWithProperty(IDs::forPlayback, true).setProperty(IDs::forPlayback, false, nullptr);
     
     int rightAnswer = random.nextInt(3);
     
-    quizNode.getChild(rightAnswer).setProperty(IDs::isRight, true, nullptr);
+    QUIZ.getChild(rightAnswer).setProperty(IDs::isRight, true, nullptr);
     
-    effectListNode.getChildWithProperty(IDs::EffectName, quizNode.getChildWithProperty(IDs::isRight, true).getProperty(IDs::Name)).setProperty(IDs::forPlayback, true, nullptr);
-
+    EFFECTLIST.getChildWithProperty(IDs::EffectName, QUIZ.getChildWithProperty(IDs::isRight, true).getProperty(IDs::Name)).setProperty(IDs::forPlayback, true, nullptr);
 
 //    std::cout << "right Answer: " << quizNode.getChild(rightAnswer).getProperty(IDs::Name).toString() << "\n";
 }
 
-void QuizState::deletePlayerChoice()            {quizNode.setProperty(IDs::PlayerChoice, "", nullptr);}
+void QuizState::deletePlayerChoice()            {QUIZ.setProperty(IDs::PlayerChoice, "", nullptr);}

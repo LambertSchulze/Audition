@@ -28,5 +28,5 @@ void LooseState::next()
     newQuiz();
     deletePlayerChoice();
     
-    quizNode.setProperty(IDs::QuizState, 0, nullptr);
+    QUIZ.setProperty(IDs::QuizState, 0, nullptr);
 }

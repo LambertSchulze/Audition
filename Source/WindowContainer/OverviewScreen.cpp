@@ -13,14 +13,12 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-OverviewScreen::OverviewScreen(ValueTree& vt)
-:   mainVT(vt)
+OverviewScreen::OverviewScreen(ValueTree& tree)
+:   vt(tree)
 {
-    effectVT = mainVT.getChildWithName(IDs::EffectList);
-    
-    for (int child = 0; child < effectVT.getNumChildren(); child++)
+    for (int child = 0; child < EFFECTLIST.getNumChildren(); child++)
     {
-        buttonList.add(new TextButton(effectVT.getChild(child).getProperty(IDs::EffectName)));
+        buttonList.add(new TextButton(EFFECTLIST.getChild(child).getProperty(IDs::EffectName)));
         addAndMakeVisible(buttonList[child]);
         buttonList[child]->setClickingTogglesState(true);
         buttonList[child]->setRadioGroupId(555);
@@ -45,8 +43,8 @@ void OverviewScreen::resized()
 void OverviewScreen::buttonClicked (Button* button)
 {
     // get the Number of the child with the same EffectName as the button
-    int selectedEffectNumber = effectVT.getChildWithProperty(IDs::EffectName, button->getName()).getProperty(IDs::Number);
+    int selectedEffectNumber = EFFECTLIST.getChildWithProperty(IDs::EffectName, button->getName()).getProperty(IDs::Number);
     
     //set Transports Effect_To_Play to that number
-    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::EffectToPlay, selectedEffectNumber, nullptr);
+    TRANSPORT.setProperty(IDs::EffectToPlay, selectedEffectNumber, nullptr);
 }

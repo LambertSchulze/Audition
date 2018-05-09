@@ -13,8 +13,8 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-QuizScreen::QuizScreen(ValueTree& vt)
-:   quizNode(vt),
+QuizScreen::QuizScreen(ValueTree& tree)
+:   vt(tree),
     choice1Button("Choice 1 Button"),
     choice2Button("Choice 2 Button"),
     choice3Button("Choice 3 Button"),
@@ -23,8 +23,6 @@ QuizScreen::QuizScreen(ValueTree& vt)
     play2Button("Play Choice 2 Button"),
     play3Button("Play Choice 3 Button")
 {
-    quizNode = quizNode.getChildWithName(IDs::Quiz);
-    
     addAndMakeVisible(&choice1Button);
     addAndMakeVisible(&choice2Button);
     addAndMakeVisible(&choice3Button);
@@ -40,14 +38,14 @@ QuizScreen::QuizScreen(ValueTree& vt)
     choice3Button   .addListener(this);
     nextButton      .addListener(this);
     
-    quizNode.addListener(this);
+    vt.addListener(this);
     
     if (stateList.isEmpty())
     {
-        stateList.addIfNotAlreadyThere(new ChooseState(quizNode));
-        stateList.addIfNotAlreadyThere(new WinState(quizNode));
-        stateList.addIfNotAlreadyThere(new LooseState(quizNode));
-        stateList.addIfNotAlreadyThere(new BeginState(quizNode));
+        stateList.addIfNotAlreadyThere(new ChooseState(vt));
+        stateList.addIfNotAlreadyThere(new WinState(vt));
+        stateList.addIfNotAlreadyThere(new LooseState(vt));
+        stateList.addIfNotAlreadyThere(new BeginState(vt));
     }
     currentState = stateList[3];
     update(3);
@@ -59,8 +57,9 @@ QuizScreen::~QuizScreen()
     choice2Button   .removeListener(this);
     choice3Button   .removeListener(this);
     nextButton      .removeListener(this);
+    vt              .removeListener(this);
     
-    quizNode.removeAllProperties(nullptr);
+    QUIZ.removeAllProperties(nullptr);
     
     stateList.clear(true);
     currentState = nullptr;
@@ -94,19 +93,19 @@ void QuizScreen::resized()
 
 void QuizScreen::buttonClicked(Button* b)
 {
-    if (b == &choice1Button) currentState->setChoice(quizNode.getChild(0).getProperty(IDs::Name));
-    if (b == &choice2Button) currentState->setChoice(quizNode.getChild(1).getProperty(IDs::Name));
-    if (b == &choice3Button) currentState->setChoice(quizNode.getChild(2).getProperty(IDs::Name));
+    if (b == &choice1Button) currentState->setChoice(QUIZ.getChild(0).getProperty(IDs::Name));
+    if (b == &choice2Button) currentState->setChoice(QUIZ.getChild(1).getProperty(IDs::Name));
+    if (b == &choice3Button) currentState->setChoice(QUIZ.getChild(2).getProperty(IDs::Name));
     if (b == &nextButton)
     {
         currentState->next();
-        update((int) quizNode.getProperty(IDs::QuizState));
+        update((int) QUIZ.getProperty(IDs::QuizState));
     }
 }
 
 void QuizScreen::valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property)
 {    
-    if (property == IDs::QuizState) currentState = stateList[quizNode.getProperty(IDs::QuizState)];
+    if (property == IDs::QuizState) currentState = stateList[QUIZ.getProperty(IDs::QuizState)];
 }
 
 void QuizScreen::valueTreeChildAdded (ValueTree&, ValueTree&) {}
@@ -137,9 +136,9 @@ void QuizScreen::update (int state)
             choice2Button.setEnabled(true);
             choice3Button.setEnabled(true);
             
-            choice1Button.setButtonText(quizNode.getChild(0).getProperty(IDs::Name).toString());
-            choice2Button.setButtonText(quizNode.getChild(1).getProperty(IDs::Name).toString());
-            choice3Button.setButtonText(quizNode.getChild(2).getProperty(IDs::Name).toString());
+            choice1Button.setButtonText(QUIZ.getChild(0).getProperty(IDs::Name).toString());
+            choice2Button.setButtonText(QUIZ.getChild(1).getProperty(IDs::Name).toString());
+            choice3Button.setButtonText(QUIZ.getChild(2).getProperty(IDs::Name).toString());
             
             break;
             
@@ -150,9 +149,9 @@ void QuizScreen::update (int state)
             
             roundCounter.setText(currentState->updateCounter(), dontSendNotification);
             
-            choice1Button.setVisible(quizNode.getChild(0).getProperty(IDs::isRight));
-            choice2Button.setVisible(quizNode.getChild(1).getProperty(IDs::isRight));
-            choice3Button.setVisible(quizNode.getChild(2).getProperty(IDs::isRight));
+            choice1Button.setVisible(QUIZ.getChild(0).getProperty(IDs::isRight));
+            choice2Button.setVisible(QUIZ.getChild(1).getProperty(IDs::isRight));
+            choice3Button.setVisible(QUIZ.getChild(2).getProperty(IDs::isRight));
             choice1Button.setEnabled(false);
             choice2Button.setEnabled(false);
             choice3Button.setEnabled(false);
@@ -168,15 +167,15 @@ void QuizScreen::update (int state)
             
             roundCounter.setText(currentState->updateCounter(), dontSendNotification);
             
-            play1Button.setVisible(quizNode.getChild(0).getProperty(IDs::isRight));
-            play2Button.setVisible(quizNode.getChild(1).getProperty(IDs::isRight));
-            play3Button.setVisible(quizNode.getChild(2).getProperty(IDs::isRight));
-            choice1Button.setVisible(quizNode.getChild(0).getProperty(IDs::isRight));
-            choice2Button.setVisible(quizNode.getChild(1).getProperty(IDs::isRight));
-            choice3Button.setVisible(quizNode.getChild(2).getProperty(IDs::isRight));
-            choice1Button.setEnabled(!(quizNode.getChild(0).getProperty(IDs::isRight)));
-            choice2Button.setEnabled(!(quizNode.getChild(1).getProperty(IDs::isRight)));
-            choice3Button.setEnabled(!(quizNode.getChild(2).getProperty(IDs::isRight)));
+            play1Button.setVisible(QUIZ.getChild(0).getProperty(IDs::isRight));
+            play2Button.setVisible(QUIZ.getChild(1).getProperty(IDs::isRight));
+            play3Button.setVisible(QUIZ.getChild(2).getProperty(IDs::isRight));
+            choice1Button.setVisible(QUIZ.getChild(0).getProperty(IDs::isRight));
+            choice2Button.setVisible(QUIZ.getChild(1).getProperty(IDs::isRight));
+            choice3Button.setVisible(QUIZ.getChild(2).getProperty(IDs::isRight));
+            choice1Button.setEnabled(!(QUIZ.getChild(0).getProperty(IDs::isRight)));
+            choice2Button.setEnabled(!(QUIZ.getChild(1).getProperty(IDs::isRight)));
+            choice3Button.setEnabled(!(QUIZ.getChild(2).getProperty(IDs::isRight)));
                         
             nextButton.setButtonText("Next");
             break;

@@ -12,7 +12,7 @@
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
-:   mainVT()
+:   vt()
 {
     setAudioChannels (2, 2);
     setLookAndFeel(&lookAndFeel);
@@ -37,23 +37,23 @@ MainContentComponent::MainContentComponent()
     currentEffect = effectList[0];
     shouldProcessEffect = false;
     
-    mainVT = dataHandler.getValueTree();
-    mainVT.addListener(this);
+    vt = dataHandler.getValueTree();
+    vt.addListener(this);
     
-    controlComponent    = new ControlComponent(mainVT);
-    windowContainer     = new WindowContainer(mainVT);
+    controlComponent    = new ControlComponent(vt);
+    windowContainer     = new WindowContainer(vt);
     addAndMakeVisible(controlComponent);
     addAndMakeVisible(windowContainer);
     controlComponent->setInterceptsMouseClicks(false, true);
     windowContainer ->setInterceptsMouseClicks(false, true);
     
-    setSize(mainVT.getProperty(IDs::WindowWidth, 800), mainVT.getProperty(IDs::WindowHeight, 600));
+    setSize(vt.getProperty(IDs::WindowWidth, 800), vt.getProperty(IDs::WindowHeight, 600));
 }
 
 MainContentComponent::~MainContentComponent()
 {
     shutdownAudio();
-    mainVT.removeListener(this);
+    vt.removeListener(this);
     transportSource.removeChangeListener(this);
     setLookAndFeel (nullptr);
 
@@ -105,44 +105,44 @@ void MainContentComponent::resized()
     controlComponent->setBounds(r);
     windowContainer ->setBounds(r);
     
-    mainVT.setProperty(IDs::WindowHeight, this->getHeight(), nullptr);
-    mainVT.setProperty(IDs::WindowWidth, this->getWidth(), nullptr);
+    vt.setProperty(IDs::WindowHeight, this->getHeight(), nullptr);
+    vt.setProperty(IDs::WindowWidth, this->getWidth(), nullptr);
 }
 
 //==============================================================================
 void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
 {
     // setting the AudioTransportSource after the ID TransportState
-    if (property == IDs::TransportState)
-    {
+    if (property == IDs::TransportState) {
         var tS = changedTree.getProperty(property);
-        if (tS == "Stopped")    {//transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::Start));
-                                }
-        if (tS == "Starting")   {changedTree.setProperty(IDs::TransportState, "Playing", nullptr);
-                                 transportSource.start();
-                                 DBG("starting transportSource");}
-        if (tS == "Playing")    {}
-        if (tS == "Stopping")   {changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);
-                                 transportSource.stop();
-                                 DBG("Stopping transportSource");}
+        
+        if (tS == "Stopped") {
+            //
+            //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::
+            }
+        if (tS == "Starting") {
+            //setting readerSource to the last selected file
+            int selectedFile = FILELIST.getProperty(IDs::SelectedFile);
+            String filePath = FILELIST.getChild(selectedFile).getProperty(IDs::FilePath);
+            setReaderSource(filePath);
+            
+            transportSource.start();
+            changedTree.setProperty(IDs::TransportState, "Playing", nullptr);
+            DBG("starting transportSource");}
+        if (tS == "Playing") {}
+        if (tS == "Stopping") {
+            changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);
+            transportSource.stop();
+            DBG("stopping transportSource");}
     }
     
     // sets the shouldProcessEffect flag
-    if (property == IDs::IsProcessing)  { shouldProcessEffect = changedTree.getProperty(property); }
+    if (property == IDs::IsProcessing) { shouldProcessEffect = changedTree.getProperty(property); }
     
     // sets the audible Effect
-    if (property == IDs::EffectToPlay)
-    {
+    if (property == IDs::EffectToPlay) {
         currentEffect = effectList[(int) changedTree.getProperty(property)];
-        DBG ("Effect to play: " + changedTree.getProperty(property).toString());
-    }
-    // if a file gets selected, the readerSource is set for the file
-    if (property == IDs::SelectedFile)
-    {
-        int numOfSelectedFile = changedTree.getProperty(property);
-        String pathOfSelectedFile = changedTree.getChild(numOfSelectedFile).getProperty(IDs::FilePath);
-        setReaderSource(pathOfSelectedFile);
-    }
+        DBG ("Effect to play: " + changedTree.getProperty(property).toString());}
     
 //    if (property == IDs::FileStart)
 //    {
@@ -160,7 +160,7 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 {
     if (source == &transportSource)
     {
-        transportSource.isPlaying() ? mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Playing", nullptr) : mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+        transportSource.isPlaying() ? TRANSPORT.setProperty(IDs::TransportState, "Playing", nullptr) : TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
     }
 }
 
@@ -173,7 +173,8 @@ void MainContentComponent::setReaderSource (String filePathToSet)
     {
         ScopedPointer<AudioFormatReaderSource> newSource = new AudioFormatReaderSource(reader, true);
         transportSource.setSource(newSource, 0, nullptr, reader->sampleRate);
-        //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));
+        int startPosition = FILELIST.getChild(FILELIST.getProperty(IDs::SelectedFile)).getProperty(IDs::FileStart);
+        transportSource.setPosition(startPosition);
         readerSource = newSource.release();
     }
     DBG ("Set ReaderSource to "<< filePathToSet);

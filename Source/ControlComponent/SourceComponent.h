@@ -47,9 +47,9 @@ public:
 
 //==============================================================================
 private:
-    ValueTree fileListNode;
+    ValueTree vt;
     
-    TableListBox fileListBox {{}, this};
+    TableListBox fileListBox;
     DrawableButton addButton, removeButton, clearButton;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SourceComponent)

@@ -13,10 +13,10 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-ControlComponent::ControlComponent(ValueTree& vt)
-:   tree(vt),
-    sourceComponent(tree),
-    transportControl(tree)
+ControlComponent::ControlComponent(ValueTree& tree)
+:   vt(tree),
+    sourceComponent(vt),
+    transportControl(vt)
 {
     addAndMakeVisible(&sourceComponent);
     addAndMakeVisible(&transportControl);

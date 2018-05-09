@@ -31,7 +31,7 @@ public:
     void buttonClicked (Button*) override;
 
 private:
-    ValueTree mainVT;
+    ValueTree vt;
     
     TitleScreen titleScreen;
     OverviewScreen overviewScreen;

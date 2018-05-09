@@ -21,7 +21,7 @@ EndState::~EndState() {}
 
 String EndState::updateCounter()
 {
-    return "Final Score:\nWon: " + quizNode.getProperty(IDs::WonRounds).toString() + "\nLost: " + quizNode.getProperty(IDs::LostRounds).toString();
+    return "Final Score:\nWon: " + QUIZ.getProperty(IDs::WonRounds).toString() + "\nLost: " + QUIZ.getProperty(IDs::LostRounds).toString();
 }
 
 void EndState::setChoice(String) {}
@@ -32,11 +32,11 @@ void EndState::next()
     deletePlayerChoice();
     
     // null other Parameters
-    quizNode.setProperty(IDs::RoundCounter, 1, nullptr);
-    quizNode.setProperty(IDs::WonRounds, 0, nullptr);
-    quizNode.setProperty(IDs::LostRounds, 0, nullptr);
+    QUIZ.setProperty(IDs::RoundCounter, 1, nullptr);
+    QUIZ.setProperty(IDs::WonRounds, 0, nullptr);
+    QUIZ.setProperty(IDs::LostRounds, 0, nullptr);
     
-    quizNode.getParent().getChildWithName(IDs::Transport).setProperty(IDs::TransportState, "Stopping", nullptr);
+    TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
     
-    quizNode.getPropertyAsValue(IDs::QuizState, nullptr).setValue(0);
+    QUIZ.getPropertyAsValue(IDs::QuizState, nullptr).setValue(0);
 }

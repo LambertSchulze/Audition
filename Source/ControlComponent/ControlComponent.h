@@ -27,7 +27,7 @@ public:
     void resized() override;
     
 private:
-    ValueTree tree;
+    ValueTree vt;
     
     SourceComponent sourceComponent;
     TransportControl transportControl;

@@ -53,7 +53,7 @@ public:
     void next();
     
 private:
-    ValueTree quizNode;
+    ValueTree vt;
     
     OwnedArray<QuizState>       stateList;
     QuizState*                  currentState;
