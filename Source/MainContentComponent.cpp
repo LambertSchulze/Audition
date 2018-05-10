@@ -43,11 +43,11 @@ MainContentComponent::MainContentComponent()
     controlComponent    = new ControlComponent(vt);
     windowContainer     = new WindowContainer(vt);
     addAndMakeVisible(controlComponent);
-    addAndMakeVisible(windowContainer);
+    //addAndMakeVisible(windowContainer);
     controlComponent->setInterceptsMouseClicks(false, true);
     windowContainer ->setInterceptsMouseClicks(false, true);
     
-    setSize(vt.getProperty(IDs::WindowWidth, 800), vt.getProperty(IDs::WindowHeight, 600));
+    setSize(vt.getProperty(IDs::WindowWidth), vt.getProperty(IDs::WindowHeight));
 }
 
 MainContentComponent::~MainContentComponent()
@@ -92,11 +92,19 @@ void MainContentComponent::releaseResources()
 
 void MainContentComponent::paint (Graphics& g)
 {
-    ColourGradient backgroundGradient = ColourGradient(Colours::whitesmoke, 0, 0, Colours::lightgrey, 0, getLocalBounds().getHeight(), false);
-    g.setGradientFill (backgroundGradient);
-    g.fillAll();
-    g.setColour (Colours::white);
-    g.fillRect(UI::sidebarWidth, UI::headerHeight, getLocalBounds().getWidth()-UI::sidebarWidth, getLocalBounds().getHeight()-UI::headerHeight-UI::footerHeight);
+    int width = getLocalBounds().getWidth();
+    int height = getLocalBounds().getHeight();
+    Colour gray {142, 142, 145};
+    Colour lightgray = gray.brighter(0.9);
+    
+    g.setColour(Colours::lightblue.brighter(0.9));
+    g.fillRect(0, UI::headerHeight, UI::sidebarWidth, height - UI::headerHeight - UI::footerHeight);
+    g.setColour(lightgray);
+    g.fillRect(0, height - UI::footerHeight, width, UI::footerHeight);
+    
+    g.setColour(lightgray);
+    g.drawHorizontalLine(UI::headerHeight, 0, width);
+    
 }
 
 void MainContentComponent::resized()

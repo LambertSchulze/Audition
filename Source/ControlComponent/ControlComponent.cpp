@@ -32,9 +32,10 @@ void ControlComponent::resized()
 {
     auto r          (getLocalBounds());
     auto footer     (r.removeFromBottom(UI::footerHeight));
-    r.removeFromTop (UI::headerHeight);
-    auto sidebar    (r.removeFromLeft(UI::sidebarWidth));
+    auto sidebar    (r.removeFromLeft(UI::sidebarWidth).withTrimmedTop(UI::headerHeight));
+    auto footerLeft (footer.removeFromLeft(UI::sidebarWidth));
+    auto footerRight(footer);
     
-    sourceComponent .setBounds(sidebar);
-    transportControl.setBounds(footer);
+    sourceComponent .setBounds(sidebar.reduced(2));
+    transportControl.setBounds(footerRight);
 }

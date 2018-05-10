@@ -48,7 +48,7 @@ public:
     class MainWindow    : public DocumentWindow
     {
     public:
-        MainWindow (String name)  : DocumentWindow (name, Colours::transparentWhite, DocumentWindow::allButtons)
+        MainWindow (String name)  : DocumentWindow (name, Colours::white, DocumentWindow::allButtons)
         {
             AuditionLookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
             

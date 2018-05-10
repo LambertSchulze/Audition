@@ -51,7 +51,7 @@ void DataHandler::setupProperties()
     
     // checking for MAIN
     if (!mainVT.hasProperty(IDs::WindowHeight)) mainVT.setProperty(IDs::WindowHeight, 600, nullptr);
-    if (!mainVT.hasProperty(IDs::WindowWidth))  mainVT.setProperty(IDs::WindowWidth, 800, nullptr);
+    if (!mainVT.hasProperty(IDs::WindowWidth))  mainVT.setProperty(IDs::WindowWidth, 1000, nullptr);
     
     
     // checking for TRANSPORT

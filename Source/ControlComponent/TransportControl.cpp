@@ -54,15 +54,15 @@ void TransportControl::paint (Graphics& g)      {}
 
 void TransportControl::resized()
 {
-    auto r (getLocalBounds());
+    auto r (getLocalBounds().reduced(8));
     auto l (r.removeFromLeft(r.getWidth() / 2));
-    l = l.removeFromRight(100).reduced(10);
-    r = r.removeFromLeft(100).reduced(10);
+    l = l.removeFromRight(100);
+    r = r.removeFromLeft(100);
     
     originalButton  .setBounds(l.removeFromTop(50));
-    originalLabel   .setBounds(l);
+    originalLabel   .setBounds(l.withTrimmedTop(4));
     effectButton    .setBounds(r.removeFromTop(50));
-    effectLabel     .setBounds(r);
+    effectLabel     .setBounds(r.withTrimmedTop(4));
 }
 
 //==============================================================================

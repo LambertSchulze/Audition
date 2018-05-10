@@ -36,7 +36,6 @@ void PlayStopButton::clicked()
 void PlayStopButton::drawStopImageOnButton()
 {
     Image image (Image::RGB, 100, 100, true);
-    Colour red {255, 59, 48};
     
     Graphics s(image);
     s.setColour(Colours::black);
@@ -53,7 +52,6 @@ void PlayStopButton::drawStopImageOnButton()
 void PlayStopButton::drawPlayImageOnButton()
 {
     Image image (Image::RGB, 100, 100, true);
-    Colour green {99, 218, 56};
     
     Graphics p(image);
     p.setColour(Colours::black);

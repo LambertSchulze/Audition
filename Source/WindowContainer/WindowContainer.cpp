@@ -49,6 +49,7 @@ void WindowContainer::resized()
     auto            rHeight (r.getHeight());
     auto            header  (r.removeFromTop(UI::headerHeight));
     Rectangle<int>  page    (UI::sidebarWidth, UI::headerHeight, rWidth-UI::sidebarWidth, rHeight-UI::headerHeight-UI::footerHeight);
+    page = page.reduced(16);
 
     overviewButton  .setBounds(header.removeFromLeft(rWidth / 7).reduced(10));
     quizButton      .setBounds(header.removeFromLeft(rWidth / 7).reduced(10));
