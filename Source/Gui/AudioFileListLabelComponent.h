@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Gui/ListboxLookAndFeel.h"
 #include "../ControlComponent/SourceComponent.h"
 
 //==============================================================================
@@ -28,7 +29,8 @@ public:
 private:
     SourceComponent& owner;
     int row;
-    Colour textColour;
+    
+    ListboxLookAndFeel lookAndFeel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioFileListLabelComponent)
 };

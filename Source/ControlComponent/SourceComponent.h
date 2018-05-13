@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Gui/ListboxLookAndFeel.h"
 
 //==============================================================================
 /*
@@ -48,6 +49,7 @@ public:
 //==============================================================================
 private:
     ValueTree vt;
+    ListboxLookAndFeel lookAndFeel;
     
     TableListBox fileListBox;
     DrawableButton addButton, removeButton, clearButton;

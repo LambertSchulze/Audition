@@ -29,23 +29,30 @@ SourceComponent::SourceComponent(ValueTree& tree)
     addAndMakeVisible (&addButton);
     addAndMakeVisible (&removeButton);
     addAndMakeVisible (&clearButton);
+    fileListBox             .setLookAndFeel(&lookAndFeel);
+    fileListBox.getHeader() .setLookAndFeel(&lookAndFeel);
+    addButton               .setLookAndFeel(&lookAndFeel);
+    removeButton            .setLookAndFeel(&lookAndFeel);
+    clearButton             .setLookAndFeel(&lookAndFeel);
     
     fileListBox.getHeader().addColumn("Filename", 1, 150, 100, -1, (TableHeaderComponent::visible | TableHeaderComponent::resizable));
     fileListBox.getHeader().addColumn("Start", 2, 40, 40, 40, TableHeaderComponent::visible);
     fileListBox.getHeader().setStretchToFitActive(true);
     fileListBox.setMultipleSelectionEnabled(false);
     
+    fileListBox.getHeader().Component::setSize(this->getWidth(), fileListBox.getRowHeight());
+    fileListBox.getVerticalScrollBar().setAutoHide(false);
+    
     addButton.      setConnectedEdges(Button::ConnectedOnRight);
     removeButton.   setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
     clearButton.    setConnectedEdges(Button::ConnectedOnLeft);
+    addButton.      setImages(addImage);
+    removeButton.   setImages(removeImage);
+    clearButton.    setImages(clearImage);
     
     addButton.      onClick = [this] { addFile(); };
     removeButton.   onClick = [this] { removeFile(fileListBox.getSelectedRow()); };
     clearButton.    onClick = [this] { clearFileList(); };
-    
-    addButton.      setImages(addImage);
-    removeButton.   setImages(removeImage);
-    clearButton.    setImages(clearImage);
     
     updateButtons();
 }
@@ -53,12 +60,28 @@ SourceComponent::SourceComponent(ValueTree& tree)
 SourceComponent::~SourceComponent()         {}
 //==============================================================================
 
-void SourceComponent::paint (Graphics& g)   {}
+void SourceComponent::paint (Graphics& g)
+{
+    const int rowHeight (fileListBox.getRowHeight());
+    auto r (getLocalBounds().withTrimmedTop(rowHeight).withTrimmedBottom(UI::fileListButtonRowHeight));
+    
+    g.setColour(lookAndFeel.altRowColour);
+    
+    while (!r.isEmpty()) {
+        g.fillRect(r.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
+        g.fillRect(r.removeFromTop(rowHeight));
+    }
+    
+    if (getNumRows() < 1) {
+        g.setColour(lookAndFeel.bgTextColour);
+        g.drawText("Add an audio file to start listening.", 0, 0, this->getWidth(), this->getHeight(), Justification::horizontallyCentred);
+    }
+}
 
 void SourceComponent::resized()
 {
     auto r (getLocalBounds());
-    auto buttonRow (r.removeFromBottom(29).reduced(5));
+    auto buttonRow (r.removeFromBottom(UI::fileListButtonRowHeight).reduced(5));
     addButton      .setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 3));
     removeButton   .setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 2));
     clearButton    .setBounds(buttonRow);
@@ -68,29 +91,34 @@ void SourceComponent::resized()
 //==============================================================================
 int SourceComponent::getNumRows()           {return FILELIST.getNumChildren();}
 
-void SourceComponent::paintRowBackground (Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected)
+void SourceComponent::paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-    auto alternateColour = getLookAndFeel().findColour (ListBox::backgroundColourId).interpolatedWith (getLookAndFeel().findColour (ListBox::textColourId), 0.03f);
-    if (rowIsSelected)              g.fillAll (Colours::lightblue);
-    else if (rowNumber % 2)         g.fillAll (alternateColour);
+    if (rowIsSelected) {
+        g.fillAll (lookAndFeel.highlightedRowColour);
+    }
+//    else if (rowNumber % 2) {
+//        g.fillAll (lookAndFeel.altRowColour);
+//    }
+//    else {
+//        g.setColour(lookAndFeel.altRowColour);
+//        g.drawVerticalLine(width - 1, 2, height - 2);
+//    }
 }
 
 void SourceComponent::paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
-    g.setColour ((rowIsSelected) ? Colours::black : getLookAndFeel().findColour (ListBox::textColourId));
+    g.setColour ((rowIsSelected) ? lookAndFeel.findColour(TableHeaderComponent::highlightColourId) : lookAndFeel.findColour(ListBox::textColourId));
     if (FILELIST.getChild(rowNumber).isValid())
     {        
         if (columnId == 1)
         {
             auto text = FILELIST.getChild(rowNumber).getProperty(IDs::FileName);
-            g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
+            g.drawText (text, 8, 0, width - 4, height, Justification::centredLeft, true);
         }
     }
-    g.setColour (getLookAndFeel().findColour (ListBox::backgroundColourId));
-    g.fillRect (width - 1, 0, 1, height);
 }
 
-Component* SourceComponent::refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+Component* SourceComponent::refreshComponentForCell (int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate)
 {
     if (columnId == 2)
     {
@@ -98,9 +126,11 @@ Component* SourceComponent::refreshComponentForCell (int rowNumber, int columnId
         
         if (timeLabel == nullptr) timeLabel = new AudioFileListLabelComponent(*this);
         timeLabel->setRow(rowNumber);
+        if (isRowSelected) timeLabel->setColour(Label::ColourIds::textColourId, lookAndFeel.laf.white);
+        else timeLabel->setColour(Label::ColourIds::textColourId, lookAndFeel.laf.black);
         return timeLabel;
     }
-    jassert (existingComponentToUpdate == nullptr);
+    //jassert (existingComponentToUpdate == nullptr);
     return nullptr;
 }
 
@@ -180,4 +210,5 @@ void SourceComponent::updateButtons()
     else if (getNumRows() > 0) {
         removeButton   .setEnabled(true);
         clearButton    .setEnabled(true);}
+    repaint();
 }

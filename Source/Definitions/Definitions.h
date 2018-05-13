@@ -15,9 +15,11 @@
 
 
 namespace UI {
-    const int headerHeight          = 60;
+    const int headerHeight          = 80;
     const int sidebarWidth          = 300;
     const int footerHeight          = 60;
+    
+    const int fileListButtonRowHeight   = 29;
 }
 
 #define TRANSPORT   vt.getChildWithName(IDs::Transport)

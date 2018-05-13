@@ -17,9 +17,13 @@ AudioFileListLabelComponent::AudioFileListLabelComponent(SourceComponent& sc)
 : owner(sc)
 {
     setEditable(true, true, false);
+    setLookAndFeel(&lookAndFeel);
 }
 
-AudioFileListLabelComponent::~AudioFileListLabelComponent() {}
+AudioFileListLabelComponent::~AudioFileListLabelComponent()
+{
+    setLookAndFeel(nullptr);
+}
 
 void AudioFileListLabelComponent::textWasEdited()
 {

@@ -14,7 +14,7 @@
 
 #include "Definitions/Definitions.h"
 #include "Definitions/Effects.h"
-#include "Gui/AuditionLookAndFeel.cpp"
+#include "Gui/AuditionLookAndFeel.h"
 #include "Core/DataHandler.h"
 #include "ControlComponent/ControlComponent.h"
 #include "WindowContainer/WindowContainer.h"

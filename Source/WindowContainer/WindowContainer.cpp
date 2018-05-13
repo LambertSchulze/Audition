@@ -23,12 +23,17 @@ WindowContainer::WindowContainer(ValueTree& tree)
     addAndMakeVisible(&quizScreen);
     addAndMakeVisible(&overviewButton);
     addAndMakeVisible(&quizButton);
+    
     overviewScreen  .setVisible(false);
     quizScreen      .setVisible(false);
-    
-    overviewButton  .setButtonText("Effect Collection");
-    quizButton      .setButtonText("1, 2, 3 Quiz");
-    
+    overviewButton  .setButtonText("Library");
+    quizButton      .setButtonText("Practise");
+    overviewButton  .setClickingTogglesState(true);
+    quizButton      .setClickingTogglesState(true);
+    overviewButton  .setRadioGroupId(7);
+    quizButton      .setRadioGroupId(7);
+    overviewButton  .setLookAndFeel(&lookAndFeel);
+    quizButton      .setLookAndFeel(&lookAndFeel);
     overviewButton  .addListener(this);
     quizButton      .addListener(this);
 }
@@ -40,7 +45,11 @@ WindowContainer::~WindowContainer()
 }
 
 void WindowContainer::paint (Graphics& g)
-{}
+{
+    ColourGradient bg = ColourGradient(lookAndFeel.bgColour1, 0, 0, lookAndFeel.bgColour2, this->getWidth(), this->getHeight(), true);
+    g.setGradientFill(bg);
+    g.fillRect(0, 0, this->getWidth(), UI::headerHeight);
+}
 
 void WindowContainer::resized()
 {   
@@ -51,8 +60,8 @@ void WindowContainer::resized()
     Rectangle<int>  page    (UI::sidebarWidth, UI::headerHeight, rWidth-UI::sidebarWidth, rHeight-UI::headerHeight-UI::footerHeight);
     page = page.reduced(16);
 
-    overviewButton  .setBounds(header.removeFromLeft(rWidth / 7).reduced(10));
-    quizButton      .setBounds(header.removeFromLeft(rWidth / 7).reduced(10));
+    overviewButton  .setBounds(header.removeFromLeft(rWidth / 7).reduced(16));
+    quizButton      .setBounds(header.removeFromLeft(rWidth / 7).reduced(16));
     titleScreen     .setBounds(page);
     overviewScreen  .setBounds(page);
     quizScreen      .setBounds(page);

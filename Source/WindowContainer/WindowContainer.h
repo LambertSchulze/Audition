@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Gui/MainMenuLookAndFeel.h"
 #include "TitleScreen.h"
 #include "OverviewScreen.h"
 #include "QuizScreen.h"
@@ -32,6 +33,7 @@ public:
 
 private:
     ValueTree vt;
+    MainMenuLookAndFeel lookAndFeel;
     
     TitleScreen titleScreen;
     OverviewScreen overviewScreen;

@@ -30,7 +30,7 @@ TitleScreen::TitleScreen()
     
     changelogText << "\nUpcoming Features:\n\n";
     changelogText << "- Random Button and Autostop Button (stopping playback after 5 seconds)\n";
-    changelogText << "- Better looking GUI, Icons, Colours, ( and maby Animations and Transitions in the future)\n";
+    changelogText << "- Better looking GUI, Icons, Colours, (and maby Animations and Transitions in the future)\n";
     changelogText << "- Record Clips from an audio input (hardware players or software via rewire)\n";
     changelogText << "- Reworking the Effect Base class to incorporate: Reverb, Compression, different Filterdesigns\n";
     changelogText << "- Statistics overview\n";

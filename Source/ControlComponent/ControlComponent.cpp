@@ -22,11 +22,9 @@ ControlComponent::ControlComponent(ValueTree& tree)
     addAndMakeVisible(&transportControl);
 }
 
-ControlComponent::~ControlComponent()
-{}
+ControlComponent::~ControlComponent() {}
 
-void ControlComponent::paint (Graphics& g)
-{}
+void ControlComponent::paint (Graphics& g) {}
 
 void ControlComponent::resized()
 {
@@ -36,6 +34,6 @@ void ControlComponent::resized()
     auto footerLeft (footer.removeFromLeft(UI::sidebarWidth));
     auto footerRight(footer);
     
-    sourceComponent .setBounds(sidebar.reduced(2));
+    sourceComponent .setBounds(sidebar);
     transportControl.setBounds(footerRight);
 }
