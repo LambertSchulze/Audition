@@ -22,6 +22,10 @@ TransportControl::TransportControl (ValueTree& tree)
     addAndMakeVisible(&effectButton);
     addAndMakeVisible(&originalLabel);
     addAndMakeVisible(&effectLabel);
+    originalButton  .setLookAndFeel(&lookAndFeel);
+    effectButton    .setLookAndFeel(&lookAndFeel);
+    originalLabel   .setLookAndFeel(&lookAndFeel);
+    effectLabel     .setLookAndFeel(&lookAndFeel);
     
     originalButton  .setClickingTogglesState(true);
     effectButton    .setClickingTogglesState(true);
@@ -50,7 +54,17 @@ TransportControl::~TransportControl()
     vt.removeListener(this);
 }
 
-void TransportControl::paint (Graphics& g)      {}
+void TransportControl::paint (Graphics& g)
+{
+    const auto bg1 = ColourGradient(lookAndFeel.laf.lightgrey, 0, 0, lookAndFeel.laf.grey, 0, 10, false);
+    g.setGradientFill(bg1);
+    g.fillRect(0, 0, this->getWidth(), 10);
+    g.setColour(lookAndFeel.laf.grey);
+    g.fillRect(0, 10, this->getWidth(), 80);
+    const auto bg2 = ColourGradient(lookAndFeel.laf.grey, 0, 90, lookAndFeel.laf.lightergrey, 0, 100, false);
+    g.setGradientFill(bg2);
+    g.fillRect(0, 90, this->getWidth(), 10);
+}
 
 void TransportControl::resized()
 {

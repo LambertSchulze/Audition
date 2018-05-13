@@ -31,9 +31,7 @@ void ControlComponent::resized()
     auto r          (getLocalBounds());
     auto footer     (r.removeFromBottom(UI::footerHeight));
     auto sidebar    (r.removeFromLeft(UI::sidebarWidth).withTrimmedTop(UI::headerHeight));
-    auto footerLeft (footer.removeFromLeft(UI::sidebarWidth));
-    auto footerRight(footer);
     
     sourceComponent .setBounds(sidebar);
-    transportControl.setBounds(footerRight);
+    transportControl.setBounds(footer);
 }

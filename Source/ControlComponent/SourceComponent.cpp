@@ -41,7 +41,7 @@ SourceComponent::SourceComponent(ValueTree& tree)
     fileListBox.setMultipleSelectionEnabled(false);
     
     fileListBox.getHeader().Component::setSize(this->getWidth(), fileListBox.getRowHeight());
-    fileListBox.getVerticalScrollBar().setAutoHide(false);
+//    fileListBox.getVerticalScrollBar().setAutoHide(false);
     
     addButton.      setConnectedEdges(Button::ConnectedOnRight);
     removeButton.   setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
@@ -63,7 +63,7 @@ SourceComponent::~SourceComponent()         {}
 void SourceComponent::paint (Graphics& g)
 {
     const int rowHeight (fileListBox.getRowHeight());
-    auto r (getLocalBounds().withTrimmedTop(rowHeight).withTrimmedBottom(UI::fileListButtonRowHeight));
+    auto r (getLocalBounds().withTrimmedTop(rowHeight * getNumRows() + 1).withTrimmedBottom(UI::fileListButtonRowHeight));
     
     g.setColour(lookAndFeel.altRowColour);
     
@@ -81,10 +81,11 @@ void SourceComponent::paint (Graphics& g)
 void SourceComponent::resized()
 {
     auto r (getLocalBounds());
-    auto buttonRow (r.removeFromBottom(UI::fileListButtonRowHeight).reduced(5));
-    addButton      .setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 3));
-    removeButton   .setBounds(buttonRow.removeFromLeft(buttonRow.getWidth() / 2));
-    clearButton    .setBounds(buttonRow);
+    auto buttonRow (r.removeFromBottom(UI::fileListButtonRowHeight).reduced(14, 5));
+
+    addButton      .setBounds(buttonRow.removeFromLeft(UI::fileListButtonWidth));
+    removeButton   .setBounds(buttonRow.removeFromLeft(UI::fileListButtonWidth));
+    clearButton    .setBounds(buttonRow.removeFromRight(UI::fileListButtonWidth));
     fileListBox    .setBounds(r);
 }
 
@@ -93,16 +94,13 @@ int SourceComponent::getNumRows()           {return FILELIST.getNumChildren();}
 
 void SourceComponent::paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-    if (rowIsSelected) {
-        g.fillAll (lookAndFeel.highlightedRowColour);
+    if (rowIsSelected) g.fillAll (lookAndFeel.highlightedRowColour);
+    
+    else if (rowNumber % 2) g.fillAll (lookAndFeel.altRowColour);
+    else {
+        g.setColour(lookAndFeel.altRowColour);
+        g.drawVerticalLine(width - 1, 2, height - 2);
     }
-//    else if (rowNumber % 2) {
-//        g.fillAll (lookAndFeel.altRowColour);
-//    }
-//    else {
-//        g.setColour(lookAndFeel.altRowColour);
-//        g.drawVerticalLine(width - 1, 2, height - 2);
-//    }
 }
 
 void SourceComponent::paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
@@ -113,7 +111,7 @@ void SourceComponent::paintCell (Graphics& g, int rowNumber, int columnId, int w
         if (columnId == 1)
         {
             auto text = FILELIST.getChild(rowNumber).getProperty(IDs::FileName);
-            g.drawText (text, 8, 0, width - 4, height, Justification::centredLeft, true);
+            g.drawText (text, 14, 0, width - 4, height, Justification::centredLeft, true);
         }
     }
 }

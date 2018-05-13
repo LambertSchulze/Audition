@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Gui/TransportLookAndFeel.h"
 #include "../Gui/PlayStopButton.h"
 
 //==============================================================================
@@ -38,6 +39,7 @@ public:
     
 private:
     ValueTree vt;
+    TransportLookAndFeel lookAndFeel;
     
     PlayStopButton originalButton, effectButton;
     Label originalLabel, effectLabel;

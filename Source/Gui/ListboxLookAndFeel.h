@@ -38,10 +38,12 @@ public:
         setColour(TextEditor::ColourIds::highlightColourId, laf.blue.brighter());
         
         setColour(ScrollBar::ColourIds::thumbColourId, laf.grey);
+//        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::red);
+//        setColour(ScrollBar::ColourIds::trackColourId, Colours::red);
         
-        setColour(TextButton::ColourIds::buttonColourId, laf.lightergrey);
-        setColour(TextButton::ColourIds::buttonOnColourId, laf.lightgrey);
-        setColour(TextButton::ColourIds::textColourOffId, laf.black);
+//        setColour(TextButton::ColourIds::buttonColourId, Colours::transparentWhite);
+//        setColour(TextButton::ColourIds::buttonOnColourId, laf.lightgrey);
+//        setColour(TextButton::ColourIds::textColourOffId, laf.black);
     };
     
     ~ListboxLookAndFeel()
@@ -67,7 +69,7 @@ public:
     void drawTableHeaderColumn (Graphics& g, TableHeaderComponent& header, const String& columnName, int columnId, int width, int height, bool isMouseOver, bool isMouseDown, int columnFlags) override
     {
         Rectangle<int> area (width, height);
-        area.reduce (8, 0);
+        area.reduce (14, 0);
         
         g.setColour (header.findColour (TableHeaderComponent::textColourId));
         g.setFont (Font (height * 0.5f, Font::plain));
@@ -95,26 +97,34 @@ public:
         }
     };
     
-    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
-                               bool isMouseOverButton, bool isButtonDown) override
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) override
     {
-        Rectangle<float> buttonArea = button.getLocalBounds().toFloat();
-        int cornerSize          = 4;
-        int outlineThickness    = 2;
+        auto cornerSize = 4.0f;
+        auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
         
         if (isButtonDown) {
-            g.setColour(laf.white.withAlpha(0.8f));
-            g.fillRoundedRectangle(buttonArea.reduced(outlineThickness/2), cornerSize);
+            g.setColour (laf.lightgrey);
+            g.fillRoundedRectangle (bounds, cornerSize);
         }
         
-        else {
-            //draw outline
-            g.setColour (laf.white);
-            g.drawRoundedRectangle(buttonArea, cornerSize, outlineThickness);
-            //fill background
-            g.setColour (backgroundColour);
-            g.fillRoundedRectangle(buttonArea, cornerSize);
-        }
+        g.setColour (laf.lightergrey);
+        g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
+    };
+    
+    void drawScrollbar (Graphics& g, ScrollBar& scrollbar, int x, int y, int width, int height, bool isScrollbarVertical, int thumbStartPosition, int thumbSize, bool isMouseOver, bool isMouseDown) override
+    {
+        ignoreUnused (isMouseDown);
+        
+        Rectangle<int> thumbBounds;
+        
+        if (isScrollbarVertical)
+            thumbBounds = { x, thumbStartPosition, width, thumbSize };
+        else
+            thumbBounds = { thumbStartPosition, y, thumbSize, height };
+        
+        auto c = scrollbar.findColour (ScrollBar::ColourIds::thumbColourId);
+        //g.setColour (isMouseOver ? c.brighter (0.25f) : c);
+        g.fillRoundedRectangle (thumbBounds.reduced (1).toFloat(), 4.0f);
     };
     
     AuditionLookAndFeel laf;
