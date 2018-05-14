@@ -8,6 +8,7 @@
 
 #include "../JuceHeader.h"
 #include "TransportComponentLookAndFeel.h"
+#include "../Definitions/Definitions.h"
 
 class TransportComponent :  Component,
                             ValueTree::Listener
@@ -38,4 +39,4 @@ public:
     Label           InfoLabel;
     
     
-}
+};
