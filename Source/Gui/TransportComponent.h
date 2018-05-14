@@ -14,28 +14,31 @@ class TransportComponent :  Component,
                             ValueTree::Listener
 {
 public:
-    TransportComponent (ValueTree);
+    TransportComponent (ValueTree&);
     
-    ˜TransportComponent();
+    ~TransportComponent();
     
     void paint (Graphics);
     void resized ();
     
-    void valueTreePropertyChanged (ValueTree&, const Identifier&);
-    void valueTreeChildAdded (ValueTree&, ValueTree&);
-    void valueTreeChildRemoved (ValueTree&, ValueTree&, int);
-    void valueTreeChildOrderChanged (ValueTree&, int, int);
-    void valueTreeParentChanged (ValueTree&);
-    void valueTreeRedirected (ValueTree&);
+    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
+    void valueTreeChildAdded (ValueTree&, ValueTree&) override;
+    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override;
+    void valueTreeChildOrderChanged (ValueTree&, int, int) override;
+    void valueTreeParentChanged (ValueTree&) override;
+    void valueTreeRedirected (ValueTree&) override;
     
     void originalButtonClicked();
     void effectButtonClicked();
+    
+    void setupChildComponents();
+    void setupShape();
     
 public:
     ValueTree tree;
     TransportComponentLookAndFeel lookAndFeel;
 
-    DrawableButton  OriginalButton, EffectButton;
+    ShapeButton     OriginalButton, EffectButton;
     Label           InfoLabel;
     
     
