@@ -5,3 +5,17 @@
     Author:  Lambert Schulze
   ==============================================================================
 */
+
+#include "../../JuceLibraryCode/JuceHeader.h"
+#include "TransportComponent.cpp"
+
+//==============================================================================
+TransportComponent::TransportComponent(ValueTree vt)
+:   tree(vt),
+    originalButton("Original Button"), effectButton("Effect Button"),
+    infoLabel("TransportComponent Label")
+{
+    addAndMakeVisible(&originalButton);
+    addAndMakeVisible(&effectButton);
+    addAndMakeVisible(&
+}
