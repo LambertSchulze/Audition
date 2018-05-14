@@ -63,13 +63,18 @@ SourceComponent::~SourceComponent()         {}
 void SourceComponent::paint (Graphics& g)
 {
     const int rowHeight (fileListBox.getRowHeight());
-    auto r (getLocalBounds().withTrimmedTop(rowHeight * getNumRows() + 1).withTrimmedBottom(UI::fileListButtonRowHeight));
+    auto r (getLocalBounds());
+    auto buttonrowArea (r.removeFromBottom(UI::fileListButtonRowHeight));
+    auto listboxArea (r.withTrimmedTop(rowHeight * getNumRows() + 1));
+    
+    g.setColour(lookAndFeel.laf.lightergrey);
+    g.fillRect(buttonrowArea.removeFromTop(1));
+    g.fillRect(buttonrowArea.removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
     
     g.setColour(lookAndFeel.altRowColour);
-    
-    while (!r.isEmpty()) {
-        g.fillRect(r.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
-        g.fillRect(r.removeFromTop(rowHeight));
+    while (!listboxArea.isEmpty()) {
+        g.fillRect(listboxArea.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
+        g.fillRect(listboxArea.removeFromTop(rowHeight));
     }
     
     if (getNumRows() < 1) {

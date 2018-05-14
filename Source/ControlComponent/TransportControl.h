@@ -34,12 +34,17 @@ public:
     void valueTreeParentChanged (ValueTree&) override;
     void valueTreeRedirected (ValueTree&) override;
     
+    void shuffleButtonclicked();
+    void repeatButtonclicked();
+    void autostopButtonclicked();
     void originalButtonclicked();
     void effectButtonclicked();
     
 private:
     ValueTree vt;
     TransportLookAndFeel lookAndFeel;
+    
+    DrawableButton shuffleButton, repeatButton, autostopButton;
     
     PlayStopButton originalButton, effectButton;
     Label originalLabel, effectLabel;

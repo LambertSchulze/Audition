@@ -15,18 +15,39 @@
 //==============================================================================
 TransportControl::TransportControl (ValueTree& tree)
 :   vt(tree),
+    shuffleButton("Shuffle", DrawableButton::ButtonStyle::ImageRaw),
+    repeatButton("Repeat", DrawableButton::ButtonStyle::ImageRaw),
+    autostopButton("Autostop", DrawableButton::ButtonStyle::ImageRaw),
     originalButton("Original"), effectButton("Effect"),
     originalLabel("Original"), effectLabel("Effect")
-{    
+{
+    ScopedPointer<Drawable> shuffleImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_shuffle_black_48px.svg"));
+    ScopedPointer<Drawable> shuffleOverImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_shuffle_black_48px.svg"));
+    
+    ScopedPointer<Drawable> repeatImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_repeat_one_black_48px.svg"));
+    ScopedPointer<Drawable> autostopImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
+    
+    //ScopedPointer<Drawable> redShuffleImage
+    shuffleOverImage->replaceColour(Colours::black, Colours::transparentWhite);
+    
+    addAndMakeVisible(&shuffleButton);
+    addAndMakeVisible(&repeatButton);
+    addAndMakeVisible(&autostopButton);
     addAndMakeVisible(&originalButton);
     addAndMakeVisible(&effectButton);
     addAndMakeVisible(&originalLabel);
     addAndMakeVisible(&effectLabel);
+    shuffleButton   .setLookAndFeel(&lookAndFeel);
+    repeatButton    .setLookAndFeel(&lookAndFeel);
+    autostopButton  .setLookAndFeel(&lookAndFeel);
     originalButton  .setLookAndFeel(&lookAndFeel);
     effectButton    .setLookAndFeel(&lookAndFeel);
     originalLabel   .setLookAndFeel(&lookAndFeel);
     effectLabel     .setLookAndFeel(&lookAndFeel);
     
+    shuffleButton   .setClickingTogglesState(true);
+    repeatButton    .setClickingTogglesState(true);
+    autostopButton  .setClickingTogglesState(true);
     originalButton  .setClickingTogglesState(true);
     effectButton    .setClickingTogglesState(true);
     
@@ -34,6 +55,10 @@ TransportControl::TransportControl (ValueTree& tree)
     originalLabel   .setJustificationType(Justification::centred);
     effectLabel     .setText("Effect", dontSendNotification);
     effectLabel     .setJustificationType(Justification::centred);
+    
+    shuffleButton   .setImages(shuffleImage, shuffleOverImage);
+    repeatButton    .setImages(repeatImage);
+    autostopButton  .setImages(autostopImage);
     
     // originalButton should only be enabled if Filelist is not empty and a file is selected.
     // effectButton should only be enabled if a file is loaded and a effect for playback is set.
@@ -44,8 +69,11 @@ TransportControl::TransportControl (ValueTree& tree)
     // the effect button is always disabled in the beginning.
     effectButton.setEnabled(false);
 
-    originalButton.onClick = [this] { originalButtonclicked(); };
-    effectButton.onClick   = [this] { effectButtonclicked(); };
+    shuffleButton.onClick   = [this] { shuffleButtonclicked(); };
+    repeatButton.onClick    = [this] { repeatButtonclicked(); };
+    autostopButton.onClick  = [this] { autostopButtonclicked(); };
+    originalButton.onClick  = [this] { originalButtonclicked(); };
+    effectButton.onClick    = [this] { effectButtonclicked(); };
     vt.addListener(this);
 }
 
@@ -56,27 +84,32 @@ TransportControl::~TransportControl()
 
 void TransportControl::paint (Graphics& g)
 {
-    const auto bg1 = ColourGradient(lookAndFeel.laf.lightgrey, 0, 0, lookAndFeel.laf.grey, 0, 10, false);
-    g.setGradientFill(bg1);
-    g.fillRect(0, 0, this->getWidth(), 10);
+    g.setColour(lookAndFeel.laf.lightergrey);
+    g.fillRect(0, 0, this->getWidth(), UI::footerHeight);
+    
     g.setColour(lookAndFeel.laf.grey);
-    g.fillRect(0, 10, this->getWidth(), 80);
-    const auto bg2 = ColourGradient(lookAndFeel.laf.grey, 0, 90, lookAndFeel.laf.lightergrey, 0, 100, false);
-    g.setGradientFill(bg2);
-    g.fillRect(0, 90, this->getWidth(), 10);
+    g.drawVerticalLine(UI::sidebarWidth - 1, 8, UI::footerHeight - 8);
 }
 
 void TransportControl::resized()
 {
-    auto r (getLocalBounds().reduced(8));
+    auto r (getLocalBounds());
+    auto leftRowArea (r.removeFromLeft(UI::sidebarWidth).reduced(14, UI::footerHeight / 5));
+    
+    //control Buttons
+    shuffleButton   .setBounds(leftRowArea.removeFromLeft(leftRowArea.getWidth() / 3).withSizeKeepingCentre(leftRowArea.getHeight(), leftRowArea.getHeight()));
+    repeatButton    .setBounds(leftRowArea.removeFromLeft(leftRowArea.getWidth() / 2).withSizeKeepingCentre(leftRowArea.getHeight(), leftRowArea.getHeight()));
+    autostopButton  .setBounds(leftRowArea.withSizeKeepingCentre(leftRowArea.getHeight(), leftRowArea.getHeight()));
+    
+    //PlayStopButtons
     auto l (r.removeFromLeft(r.getWidth() / 2));
     l = l.removeFromRight(100);
     r = r.removeFromLeft(100);
     
     originalButton  .setBounds(l.removeFromTop(50));
-    originalLabel   .setBounds(l.withTrimmedTop(4));
+//    originalLabel   .setBounds(l.withTrimmedTop(4));
     effectButton    .setBounds(r.removeFromTop(50));
-    effectLabel     .setBounds(r.withTrimmedTop(4));
+//    effectLabel     .setBounds(r.withTrimmedTop(4));
 }
 
 //==============================================================================
@@ -134,6 +167,21 @@ void TransportControl::valueTreeParentChanged (ValueTree&) {}
 void TransportControl::valueTreeRedirected (ValueTree&) {}
 
 //==============================================================================
+void TransportControl::shuffleButtonclicked()
+{
+    DBG("Shuffle Button clicked.");
+}
+
+void TransportControl::repeatButtonclicked()
+{
+    DBG("Repeat Button clicked.");
+}
+
+void TransportControl::autostopButtonclicked()
+{
+    DBG("Debug Button clicked.");
+}
+
 void TransportControl::originalButtonclicked()
 {
     DBG("originalButton: clicked");

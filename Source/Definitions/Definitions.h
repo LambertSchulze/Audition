@@ -17,7 +17,7 @@
 namespace UI {
     const int headerHeight          = 80;
     const int sidebarWidth          = 300;
-    const int footerHeight          = 100;
+    const int footerHeight          = 68;
     
     const int fileListButtonRowHeight   = 33;
     const int fileListButtonWidth       = 30;
