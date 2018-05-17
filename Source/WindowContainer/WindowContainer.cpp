@@ -46,7 +46,7 @@ WindowContainer::~WindowContainer()
 
 void WindowContainer::paint (Graphics& g)
 {
-    ColourGradient bg = ColourGradient(lookAndFeel.bgColour1, 0, 0, lookAndFeel.bgColour2, this->getWidth(), this->getHeight(), true);
+    ColourGradient bg = ColourGradient(Colour(52, 143, 80), 0, 0, Colour(86, 180, 211), this->getWidth(), this->getHeight(), true);
     g.setGradientFill(bg);
     g.fillRect(0, 0, this->getWidth(), UI::headerHeight);
 }

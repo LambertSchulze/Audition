@@ -6,21 +6,26 @@
   ==============================================================================
 */
 
-#include "../JuceHeader.h"
+#include "../../JuceLibraryCode/JuceHeader.h"
 #include "TransportComponentLookAndFeel.h"
 #include "../Definitions/Definitions.h"
 
-class TransportComponent :  Component,
-                            ValueTree::Listener
+class TransportComponent :  public  Component,
+                                    ValueTree::Listener
 {
 public:
     TransportComponent (ValueTree&);
     
     ~TransportComponent();
     
-    void paint (Graphics);
-    void resized ();
+    //==============================================================================
+    enum State {Disabled, OriginalEnabled, TotalyEnabled} state;
     
+    //==============================================================================
+    void paint (Graphics&) override;
+    void resized () override;
+    
+    //==============================================================================
     void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
     void valueTreeChildAdded (ValueTree&, ValueTree&) override;
     void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override;
@@ -31,15 +36,15 @@ public:
     void originalButtonClicked();
     void effectButtonClicked();
     
-    void setupChildComponents();
-    void setupShape();
+    void setState (State&);
+//    bool hitTest(int, int) override;
     
-public:
+private:
     ValueTree tree;
     TransportComponentLookAndFeel lookAndFeel;
-
-    ShapeButton     OriginalButton, EffectButton;
-    Label           InfoLabel;
+        
+    void paintTriangle  (Graphics&, Rectangle<float>&, bool isFilled);
+    void paintSquare    (Graphics&, Rectangle<float>&);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportComponent)
 };

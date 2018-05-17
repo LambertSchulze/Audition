@@ -12,7 +12,9 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Gui/TransportLookAndFeel.h"
+#include "../Gui/TransportComponentLookAndFeel.h"
 #include "../Gui/PlayStopButton.h"
+#include "../Gui/TransportComponent.h"
 
 //==============================================================================
 /*
@@ -43,11 +45,12 @@ public:
 private:
     ValueTree vt;
     TransportLookAndFeel lookAndFeel;
+    TransportComponentLookAndFeel tcLookAndFeel;
     
     DrawableButton shuffleButton, repeatButton, autostopButton;
-    
     PlayStopButton originalButton, effectButton;
     Label originalLabel, effectLabel;
+    TransportComponent transport;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportControl)
 };

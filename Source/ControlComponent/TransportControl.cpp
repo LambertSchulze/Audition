@@ -15,20 +15,33 @@
 //==============================================================================
 TransportControl::TransportControl (ValueTree& tree)
 :   vt(tree),
-    shuffleButton("Shuffle", DrawableButton::ButtonStyle::ImageRaw),
-    repeatButton("Repeat", DrawableButton::ButtonStyle::ImageRaw),
-    autostopButton("Autostop", DrawableButton::ButtonStyle::ImageRaw),
+    shuffleButton("Shuffle", DrawableButton::ButtonStyle::ImageFitted),
+    repeatButton("Repeat", DrawableButton::ButtonStyle::ImageFitted),
+    autostopButton("Autostop", DrawableButton::ButtonStyle::ImageFitted),
     originalButton("Original"), effectButton("Effect"),
-    originalLabel("Original"), effectLabel("Effect")
+    originalLabel("Original"), effectLabel("Effect"),
+    transport(vt)
 {
     ScopedPointer<Drawable> shuffleImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_shuffle_black_48px.svg"));
-    ScopedPointer<Drawable> shuffleOverImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_shuffle_black_48px.svg"));
+    ScopedPointer<Drawable> shuffleDownImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_shuffle_black_48px.svg"));
+    ScopedPointer<Drawable> shuffleOnImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_shuffle_black_48px.svg"));
     
     ScopedPointer<Drawable> repeatImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_repeat_one_black_48px.svg"));
-    ScopedPointer<Drawable> autostopImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
+    ScopedPointer<Drawable> repeatDownImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_repeat_one_black_48px.svg"));
+    ScopedPointer<Drawable> repeatOnImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_repeat_one_black_48px.svg"));
     
-    //ScopedPointer<Drawable> redShuffleImage
-    shuffleOverImage->replaceColour(Colours::black, Colours::transparentWhite);
+    ScopedPointer<Drawable> autostopImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
+    ScopedPointer<Drawable> autostopDownImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
+    ScopedPointer<Drawable> autostopOnImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
+
+    
+    shuffleDownImage->replaceColour(Colours::black, Colours::white);
+    shuffleOnImage->replaceColour(Colours::black, Colours::red);
+    repeatDownImage->replaceColour(Colours::black, Colours::white);
+    repeatOnImage->replaceColour(Colours::black, Colours::red);
+    autostopDownImage->replaceColour(Colours::black, Colours::white);
+    autostopOnImage->replaceColour(Colours::black, Colours::red);
+
     
     addAndMakeVisible(&shuffleButton);
     addAndMakeVisible(&repeatButton);
@@ -37,6 +50,7 @@ TransportControl::TransportControl (ValueTree& tree)
     addAndMakeVisible(&effectButton);
     addAndMakeVisible(&originalLabel);
     addAndMakeVisible(&effectLabel);
+    addAndMakeVisible(&transport);
     shuffleButton   .setLookAndFeel(&lookAndFeel);
     repeatButton    .setLookAndFeel(&lookAndFeel);
     autostopButton  .setLookAndFeel(&lookAndFeel);
@@ -44,6 +58,7 @@ TransportControl::TransportControl (ValueTree& tree)
     effectButton    .setLookAndFeel(&lookAndFeel);
     originalLabel   .setLookAndFeel(&lookAndFeel);
     effectLabel     .setLookAndFeel(&lookAndFeel);
+    transport       .setLookAndFeel(&tcLookAndFeel);
     
     shuffleButton   .setClickingTogglesState(true);
     repeatButton    .setClickingTogglesState(true);
@@ -56,9 +71,9 @@ TransportControl::TransportControl (ValueTree& tree)
     effectLabel     .setText("Effect", dontSendNotification);
     effectLabel     .setJustificationType(Justification::centred);
     
-    shuffleButton   .setImages(shuffleImage, shuffleOverImage);
-    repeatButton    .setImages(repeatImage);
-    autostopButton  .setImages(autostopImage);
+    shuffleButton   .setImages(shuffleImage, nullptr, shuffleDownImage, nullptr, shuffleOnImage, nullptr, shuffleDownImage);
+    repeatButton    .setImages(repeatImage, nullptr, repeatDownImage, nullptr, repeatOnImage, nullptr, repeatDownImage);
+    autostopButton  .setImages(autostopImage, nullptr, autostopDownImage, nullptr, autostopOnImage, nullptr, autostopDownImage);
     
     // originalButton should only be enabled if Filelist is not empty and a file is selected.
     // effectButton should only be enabled if a file is loaded and a effect for playback is set.
@@ -106,10 +121,12 @@ void TransportControl::resized()
     l = l.removeFromRight(100);
     r = r.removeFromLeft(100);
     
-    originalButton  .setBounds(l.removeFromTop(50));
+//    originalButton  .setBounds(l.removeFromTop(50));
 //    originalLabel   .setBounds(l.withTrimmedTop(4));
-    effectButton    .setBounds(r.removeFromTop(50));
+//    effectButton    .setBounds(r.removeFromTop(50));
 //    effectLabel     .setBounds(r.withTrimmedTop(4));
+    
+    transport.setBounds(getLocalBounds().withTrimmedLeft(UI::sidebarWidth).withSizeKeepingCentre(200, UI::footerHeight).reduced(3));
 }
 
 //==============================================================================

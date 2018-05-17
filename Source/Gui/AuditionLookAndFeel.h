@@ -44,10 +44,10 @@ public:
         
     };
     
-    Colour  grey        {142, 142, 145},
+    Colour  black       {0, 0, 0},
+            grey        {142, 142, 145},
             lightergrey {205, 205, 208},
             lightgrey   {242, 242, 245},
-            black       {0, 0, 0},
             white       {255, 255, 255},
             blue        {27, 173, 248},
             brown       {162, 132, 94},
