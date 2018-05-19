@@ -19,7 +19,7 @@ public:
     ~TransportComponent();
     
     //==============================================================================
-    enum State {Disabled, OriginalEnabled, TotalyEnabled} state;
+    enum State {Disabled, OriginalEnabled, BothEnabled} state;
     
     //==============================================================================
     void paint (Graphics&) override;
@@ -33,18 +33,22 @@ public:
     void valueTreeParentChanged (ValueTree&) override;
     void valueTreeRedirected (ValueTree&) override;
     
+    void mouseDown (const MouseEvent&) override;
     void originalButtonClicked();
     void effectButtonClicked();
     
     void setState (State&);
-//    bool hitTest(int, int) override;
     
 private:
-    ValueTree tree;
+    ValueTree vt;
     TransportComponentLookAndFeel lookAndFeel;
-        
+    
+    bool labelShowingOriginal;
+    
     void paintTriangle  (Graphics&, Rectangle<float>&, bool isFilled);
     void paintSquare    (Graphics&, Rectangle<float>&);
+    void switchLabelText (bool);
+    void updateState();
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportComponent)
 };

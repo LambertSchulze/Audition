@@ -126,7 +126,7 @@ void TransportControl::resized()
 //    effectButton    .setBounds(r.removeFromTop(50));
 //    effectLabel     .setBounds(r.withTrimmedTop(4));
     
-    transport.setBounds(getLocalBounds().withTrimmedLeft(UI::sidebarWidth).withSizeKeepingCentre(200, UI::footerHeight).reduced(3));
+    transport.setBounds(getLocalBounds().withTrimmedLeft(UI::sidebarWidth).withSizeKeepingCentre(200, UI::footerHeight).reduced(6));
 }
 
 //==============================================================================

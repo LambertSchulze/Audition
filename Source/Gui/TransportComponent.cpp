@@ -10,11 +10,12 @@
 #include "TransportComponent.h"
 
 //==============================================================================
-TransportComponent::TransportComponent(ValueTree& vt)
-:   tree(vt)
+TransportComponent::TransportComponent(ValueTree& tree)
+:   vt(tree)
 {
+    labelShowingOriginal = true;
     
-    state = State::OriginalEnabled;
+    updateState();
 }
 
 TransportComponent::~TransportComponent()
@@ -50,9 +51,36 @@ void TransportComponent::paint(Graphics& g)
     if (state == OriginalEnabled) {
         g.setGradientFill(gradient);
         g.drawText("ORIGINAL", 0, 0, width, height, Justification::centred);
-        paintTriangle(g, lBBounds, true);
+        if (TRANSPORT[IDs::TransportState] == "Playing") paintSquare(g, lBBounds);
+        if (TRANSPORT[IDs::TransportState] == "Stopped") paintTriangle(g, lBBounds, true);
         g.setColour(lookAndFeel.laf.lightergrey);
         paintTriangle(g, rBBounds, false);
+    }
+    
+    if (state == BothEnabled) {
+        if (labelShowingOriginal) {
+            g.setGradientFill(gradient);
+            g.drawText("ORIGINAL", 0, 0, width, height, Justification::centred);
+            if (TRANSPORT[IDs::TransportState] == "Playing") paintSquare(g, lBBounds);
+            if (TRANSPORT[IDs::TransportState] == "Stopped") paintTriangle(g, lBBounds, true);
+            //g.setColour(lookAndFeel.laf.grey);
+            paintTriangle(g, rBBounds, true);
+        }
+        else {
+            g.setGradientFill(gradient);
+            g.fillEllipse(lBBounds);
+            g.fillEllipse(rBBounds);
+            g.fillRect(height/2, 0, width-height, height);
+            g.setColour(lookAndFeel.laf.white);
+            g.fillEllipse(rBBounds.reduced(3));
+            g.drawText("EFFECT", 0, 0, width, height, Justification::centred);
+            paintTriangle(g, lBBounds, true);
+            g.setGradientFill(gradient);
+            if (TRANSPORT[IDs::TransportState] == "Playing") paintSquare(g, rBBounds);
+            if (TRANSPORT[IDs::TransportState] == "Stopped") paintTriangle(g, rBBounds, true);
+            //g.setColour(lookAndFeel.laf.grey);
+            //paintTriangle(g, lBBounds, true);
+        }
     }
 }
 
@@ -61,20 +89,65 @@ void TransportComponent::resized()
     auto r (getLocalBounds());
 }
 
-void TransportComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property) {}
-void TransportComponent::valueTreeChildAdded (ValueTree& parentTree, ValueTree& childTree) {}
-void TransportComponent::valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childTree, int index) {}
+void TransportComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
+{
+//    if (changedTree[property] == "Stopping") {
+//        TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
+//        TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
+//        TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
+//        TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
+//    }
+//    repaint();
+}
+
+void TransportComponent::valueTreeChildAdded (ValueTree& parentTree, ValueTree& childTree)              { updateState(); }
+void TransportComponent::valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childTree, int index) { updateState(); }
 void TransportComponent::valueTreeChildOrderChanged (ValueTree& parentTree, int oldIndex, int newIndex) {}
 void TransportComponent::valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged) {}
 void TransportComponent::valueTreeRedirected (ValueTree& treeWhichHasBeenChanged) {}
 
+void TransportComponent::mouseDown (const MouseEvent& event)
+{
+    if (state != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition())) originalButtonClicked();
+
+    if (state == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition())) effectButtonClicked();
+}
+
 void TransportComponent::originalButtonClicked()
 {
+    if (state != Disabled) {
+        if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == false) {
+            //already playing original, so stop
+            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+        }
+        else if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == true) {
+            // already playing effect and start original playback
+            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+            switchLabelText(true);
+            TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
+            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
+        }
+    }
+    repaint();
     DBG("Play Original Button clicked");  
 }
 
 void TransportComponent::effectButtonClicked()
 {
+    if (state == BothEnabled) {
+        if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == true) {
+            // aleady playing effect
+            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+        }
+        else if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == false) {
+            // already playing original, so stop playback and start effect playback
+            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+            switchLabelText(false);
+            TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
+            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
+        }
+    }
+    repaint();
     DBG("Play Effect Button clicked");  
 }
 
@@ -91,7 +164,16 @@ void TransportComponent::paintTriangle(Graphics& g, Rectangle<float>& r, bool is
     }
 }
 
-void TransportComponent::paintSquare(Graphics& g, Rectangle<float>& r)
+void TransportComponent::paintSquare(Graphics& g, Rectangle<float>& r)  { g.fillRect(r.withSizeKeepingCentre(r.getWidth()/2.7, r.getWidth()/2.7)); }
+
+void TransportComponent::switchLabelText (bool toOriginal)
 {
-    g.fillRect(r.withSizeKeepingCentre(r.getWidth()/2.7, r.getWidth()/2.7));
+    labelShowingOriginal = toOriginal;
+    repaint();
+}
+
+void TransportComponent::updateState()
+{
+    if (FILELIST.getNumChildren() > 0) state = State::OriginalEnabled;
+    else state = State::Disabled;
 }
