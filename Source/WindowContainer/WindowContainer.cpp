@@ -15,17 +15,17 @@
 //==============================================================================
 WindowContainer::WindowContainer(ValueTree& tree)
 :   vt(tree),
-    overviewScreen(vt), quizScreen(vt),
+    overviewScreen(vt), quickQuizScreen(vt),
     overviewButton ("Overview Screen Button"), quizButton ("Quiz Screen Button")
 {
     addAndMakeVisible(&titleScreen);
     addAndMakeVisible(&overviewScreen);
-    addAndMakeVisible(&quizScreen);
+    addAndMakeVisible(&quickQuizScreen);
     addAndMakeVisible(&overviewButton);
     addAndMakeVisible(&quizButton);
     
     overviewScreen  .setVisible(false);
-    quizScreen      .setVisible(false);
+    quickQuizScreen .setVisible(false);
     overviewButton  .setButtonText("Library");
     quizButton      .setButtonText("Practise");
     overviewButton  .setClickingTogglesState(true);
@@ -64,7 +64,7 @@ void WindowContainer::resized()
     quizButton      .setBounds(header.removeFromLeft(rWidth / 7).reduced(16));
     titleScreen     .setBounds(page);
     overviewScreen  .setBounds(page);
-    quizScreen      .setBounds(page);
+    quickQuizScreen      .setBounds(page);
 }
 
 void WindowContainer::buttonClicked(Button* b)
@@ -72,13 +72,13 @@ void WindowContainer::buttonClicked(Button* b)
     if (b == &overviewButton)
     {
         if (titleScreen.isVisible())        titleScreen.setVisible(false);
-        if (quizScreen.isVisible())         quizScreen.setVisible(false);
+        if (quickQuizScreen.isVisible())    quickQuizScreen.setVisible(false);
         if (!overviewScreen.isVisible())    overviewScreen.setVisible(true);
     }
     if (b == &quizButton)
     {
         if (titleScreen.isVisible())        titleScreen.setVisible(false);
         if (overviewScreen.isVisible())     overviewScreen.setVisible(false);
-        if (!quizScreen.isVisible())        quizScreen.setVisible(true);
+        if (!quickQuizScreen.isVisible())   quickQuizScreen.setVisible(true);
     }
 }

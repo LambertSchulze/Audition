@@ -39,8 +39,6 @@ public:
     void shuffleButtonclicked();
     void repeatButtonclicked();
     void autostopButtonclicked();
-    void originalButtonclicked();
-    void effectButtonclicked();
     
 private:
     ValueTree vt;
@@ -48,8 +46,6 @@ private:
     TransportComponentLookAndFeel tcLookAndFeel;
     
     DrawableButton shuffleButton, repeatButton, autostopButton;
-    PlayStopButton originalButton, effectButton;
-    Label originalLabel, effectLabel;
     TransportComponent transport;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportControl)

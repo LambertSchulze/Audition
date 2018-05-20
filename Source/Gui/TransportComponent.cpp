@@ -13,13 +13,16 @@
 TransportComponent::TransportComponent(ValueTree& tree)
 :   vt(tree)
 {
+    vt.addListener(this);
     labelShowingOriginal = true;
     
     updateState();
 }
 
 TransportComponent::~TransportComponent()
-{}
+{
+    vt.removeListener(this);
+}
 
 void TransportComponent::paint(Graphics& g)
 {
@@ -91,13 +94,12 @@ void TransportComponent::resized()
 
 void TransportComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
 {
-//    if (changedTree[property] == "Stopping") {
-//        TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
-//        TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
-//        TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
-//        TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
-//    }
-//    repaint();
+    // if there is a selected effect
+    if (property == IDs::EffectToPlay) {
+        state = BothEnabled;
+        DBG("Control fully enabled");   
+    }
+    repaint();
 }
 
 void TransportComponent::valueTreeChildAdded (ValueTree& parentTree, ValueTree& childTree)              { updateState(); }
@@ -115,40 +117,58 @@ void TransportComponent::mouseDown (const MouseEvent& event)
 
 void TransportComponent::originalButtonClicked()
 {
+    // if Button is enabled
     if (state != Disabled) {
+        // if original is playing
         if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == false) {
-            //already playing original, so stop
+            // stop playback
             TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
         }
+        // if effect is playing
         else if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == true) {
-            // already playing effect and start original playback
+            // start original playback
             TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+            switchLabelText(true);
+            TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
+            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
+        }
+        // if nothing is playing
+        else if (TRANSPORT[IDs::TransportState] == "Stopped") {
+            // start original playback
             switchLabelText(true);
             TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
             TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
         }
     }
     repaint();
-    DBG("Play Original Button clicked");  
 }
 
 void TransportComponent::effectButtonClicked()
 {
+    // if Button is enabled
     if (state == BothEnabled) {
+        // if effect is playing
         if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == true) {
-            // aleady playing effect
+            // stop playback
             TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
         }
+        // if original is playing
         else if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == false) {
-            // already playing original, so stop playback and start effect playback
+            // start effect playback
             TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+            switchLabelText(false);
+            TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
+            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
+        }
+        // if nothing is playing
+        else if (TRANSPORT[IDs::TransportState] == "Stopped") {
+            // start effect playback
             switchLabelText(false);
             TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
             TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
         }
     }
     repaint();
-    DBG("Play Effect Button clicked");  
 }
 
 void TransportComponent::paintTriangle(Graphics& g, Rectangle<float>& r, bool isFilled)
@@ -176,4 +196,5 @@ void TransportComponent::updateState()
 {
     if (FILELIST.getNumChildren() > 0) state = State::OriginalEnabled;
     else state = State::Disabled;
+    repaint();
 }

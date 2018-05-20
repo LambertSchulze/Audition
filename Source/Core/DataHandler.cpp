@@ -13,7 +13,7 @@
 #include "../Definitions/Definitions.h"
 
 DataHandler::DataHandler()
-: mainVT()
+: vt()
 {
     auto appDataDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Application Support").getChildFile(JUCEApplication::getInstance()->getApplicationName());
     
@@ -34,7 +34,7 @@ DataHandler::~DataHandler()
 ValueTree& DataHandler::getValueTree()
 {
 //    DBG("DataHandler: returning the ValueTree.");
-    return mainVT;
+    return vt;
 }
 
 void DataHandler::setupProperties()
@@ -42,44 +42,44 @@ void DataHandler::setupProperties()
     loadData(saveFile);
     
     // if VT is not valid, create a new one.
-    if (!mainVT.isValid())
+    if (!vt.isValid())
     {
         //DBG ("No valid ValueTree..");
-        mainVT = ValueTree(IDs::Main);
+        vt = ValueTree(IDs::Main);
     }
     
     
     // checking for MAIN
-    if (!mainVT.hasProperty(IDs::WindowHeight)) mainVT.setProperty(IDs::WindowHeight, 600, nullptr);
-    if (!mainVT.hasProperty(IDs::WindowWidth))  mainVT.setProperty(IDs::WindowWidth, 1000, nullptr);
+    if (!vt.hasProperty(IDs::WindowHeight)) vt.setProperty(IDs::WindowHeight, 600, nullptr);
+    if (!vt.hasProperty(IDs::WindowWidth))  vt.setProperty(IDs::WindowWidth, 1000, nullptr);
     
     
     // checking for TRANSPORT
-    if (!mainVT.getChildWithName(IDs::Transport).isValid())
+    if (!vt.getChildWithName(IDs::Transport).isValid())
     {
         // setting up a fresh TRANSPORT child.
         ValueTree transport (IDs::Transport);
         transport.setProperty(IDs::LimitPlayback, false, nullptr);
-        mainVT.addChild(transport, -1, nullptr);
+        vt.addChild(transport, -1, nullptr);
     }
     // nulling TRANSPORT
-    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::TransportState,    "Stopped",  nullptr);
-    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing,      false,      nullptr);
-    mainVT.getChildWithName(IDs::Transport).setProperty(IDs::EffectToPlay,      -1,         nullptr);
+    vt.getChildWithName(IDs::Transport).setProperty(IDs::TransportState,    "Stopped",  nullptr);
+    vt.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing,      false,      nullptr);
+    vt.getChildWithName(IDs::Transport).setProperty(IDs::EffectToPlay,      -1,         nullptr);
     
     
     // checking for FILELIST
-    if (!mainVT.getChildWithName(IDs::FileList).isValid())
+    if (!vt.getChildWithName(IDs::FileList).isValid())
     {
         // setting up a fresh FILELIST child
         ValueTree fileList (IDs::FileList);
         fileList.setProperty(IDs::SelectedFile, 0, nullptr);
-        mainVT.addChild(fileList, -1, nullptr);
+        vt.addChild(fileList, -1, nullptr);
     }
-    mainVT.getChildWithName(IDs::FileList).setProperty(IDs::SelectedFile, 0, nullptr);
+    vt.getChildWithName(IDs::FileList).setProperty(IDs::SelectedFile, 0, nullptr);
     
     // checking for EFFECTLIST
-    if (!mainVT.getChildWithName(IDs::EffectList).isValid())
+    if (!vt.getChildWithName(IDs::EffectList).isValid())
     {
         // setting up a new FILELIST with Level 0 Effects
         
@@ -152,7 +152,7 @@ void DataHandler::setupProperties()
         effectList.addChild(midVolDown,     -1, nullptr);
         effectList.addChild(sideVolUp,      -1, nullptr);
         effectList.addChild(sideVolDown,    -1, nullptr);
-        mainVT.addChild(effectList, -1, nullptr);
+        vt.addChild(effectList, -1, nullptr);
     }
     
     //    if (!mainVT.getChildWithName(IDs::Quiz).isValid())
@@ -184,13 +184,14 @@ void DataHandler::loadData(File file)
         
         if (e == NULL)
         {
-            mainVT = ValueTree();
+            vt = ValueTree();
             DBG("Loading failed..");
         }
         else
         {
-            mainVT = ValueTree::fromXml(*e);
+            vt = ValueTree::fromXml(*e);
             DBG("...Loading done!");
+            DBG(vt.toXmlString());
         }
     }
     else
@@ -199,20 +200,24 @@ void DataHandler::loadData(File file)
         Result creation (file.create());
         
         if (creation.wasOk())       DBG("created a new file! Hurray!");
-        else                        {DBG("could not create a new file :-(");
-            DBG(creation.getErrorMessage());}
+        else                        DBG("could not create a new file :-(" + creation.getErrorMessage());
     }
 }
 
 void DataHandler::saveData(File file)
 {
+    // removing some properties that shouldn't be saved
+    TRANSPORT.removeProperty(IDs::TransportState, nullptr);
+    TRANSPORT.removeProperty(IDs::IsProcessing, nullptr);
+    TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
+    
     if (file.exists())
     {
-        ScopedPointer<XmlElement> e (mainVT.createXml());
+        ScopedPointer<XmlElement> e (vt.createXml());
         e->writeToFile(file, "");
         DBG("Data saved.");
         DBG("This is the saved ValueTree:");
-        DBG(mainVT.toXmlString());
+        DBG(vt.toXmlString());
     }
     if (!file.exists()) DBG("Save file doesn't exist. Could't save..");
 }

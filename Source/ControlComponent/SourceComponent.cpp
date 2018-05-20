@@ -10,7 +10,6 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "SourceComponent.h"
-#include "../Definitions/Definitions.h"
 #include "../Gui/AudioFileListLabelComponent.h"
 
 //==============================================================================
@@ -54,7 +53,7 @@ SourceComponent::SourceComponent(ValueTree& tree)
     removeButton.   onClick = [this] { removeFile(fileListBox.getSelectedRow()); };
     clearButton.    onClick = [this] { clearFileList(); };
     
-    updateButtons();
+    updateButtonRow();
 }
 
 SourceComponent::~SourceComponent()         {}
@@ -65,21 +64,24 @@ void SourceComponent::paint (Graphics& g)
     const int rowHeight (fileListBox.getRowHeight());
     auto r (getLocalBounds());
     auto buttonrowArea (r.removeFromBottom(UI::fileListButtonRowHeight));
-    auto listboxArea (r.withTrimmedTop(rowHeight * getNumRows() + 1));
+    auto emptyArea (r.withTrimmedTop(rowHeight * getNumRows()));
     
+    // draw borders of button row
     g.setColour(lookAndFeel.laf.lightergrey);
     g.fillRect(buttonrowArea.removeFromTop(1));
     g.fillRect(buttonrowArea.removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
     
+    // draw alternating colourd rows in the whitespace beneath the fileListBox
     g.setColour(lookAndFeel.altRowColour);
-    while (!listboxArea.isEmpty()) {
-        g.fillRect(listboxArea.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
-        g.fillRect(listboxArea.removeFromTop(rowHeight));
+    if (!(fileListBox.getNumRows() % 2)) g.fillRect(emptyArea.removeFromTop(rowHeight));
+    while (!emptyArea.isEmpty()) {
+        g.fillRect(emptyArea.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
+        g.fillRect(emptyArea.removeFromTop(rowHeight));
     }
     
     if (getNumRows() < 1) {
         g.setColour(lookAndFeel.bgTextColour);
-        g.drawText("Add an audio file to start listening.", 0, 0, this->getWidth(), this->getHeight(), Justification::horizontallyCentred);
+        g.drawText("Add an audio file to start listening.", 0, (getHeight() / (2*rowHeight))*rowHeight, getWidth(), rowHeight, Justification::horizontallyCentred);
     }
 }
 
@@ -167,7 +169,7 @@ void SourceComponent::addFile()
     }
     
     fileListBox.updateContent();
-    updateButtons();
+    updateButtonRow();
 }
 
 void SourceComponent::removeFile(int fileIndex)
@@ -180,7 +182,7 @@ void SourceComponent::removeFile(int fileIndex)
     FILELIST.removeChild(fileIndex, nullptr);
     fileListBox.selectRow(jmax(fileIndex - 1, 0));
     fileListBox.updateContent();
-    updateButtons();
+    updateButtonRow();
 }
 
 void SourceComponent::clearFileList()
@@ -191,7 +193,7 @@ void SourceComponent::clearFileList()
     
     FILELIST.removeAllChildren(nullptr);
     fileListBox.updateContent();
-    updateButtons();
+    updateButtonRow();
 }
 
 void SourceComponent::setStartTime (int row, String startTime)
@@ -204,7 +206,7 @@ String SourceComponent::getStartTime (int row) const
     return FILELIST.getChild(row).getProperty(IDs::FileStart);
 }
 
-void SourceComponent::updateButtons()
+void SourceComponent::updateButtonRow()
 {
     if (getNumRows() == 0) {
         removeButton   .setEnabled(false);
@@ -214,4 +216,10 @@ void SourceComponent::updateButtons()
         removeButton   .setEnabled(true);
         clearButton    .setEnabled(true);}
     repaint();
+}
+
+void SourceComponent::updateSelection()
+{
+    fileListBox.updateContent();
+    fileListBox.selectRow (0, true, true);
 }

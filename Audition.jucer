@@ -1,90 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="iSn3LK" name="Audition" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              splashScreenColour="Light" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.NewProject" includeBinaryInAppConfig="1"
               cppLanguageStandard="latest" jucerVersion="5.3.2">
   <MAINGROUP id="oJLoD1" name="Audition">
     <GROUP id="{D20C1E6F-2A1B-A665-1E74-7727D77FC94A}" name="Source">
       <GROUP id="{C46CFC10-5771-4475-DAA3-1A1BB3FB33D9}" name="ControlComponent">
-        <FILE id="SkfE7S" name="ControlComponent.cpp" compile="1" resource="0"
+        <FILE id="MXsudU" name="ControlComponent.cpp" compile="1" resource="0"
               file="Source/ControlComponent/ControlComponent.cpp"/>
-        <FILE id="w6SKca" name="ControlComponent.h" compile="0" resource="0"
+        <FILE id="QCLroq" name="ControlComponent.h" compile="0" resource="0"
               file="Source/ControlComponent/ControlComponent.h"/>
-        <FILE id="m7zpNU" name="SourceComponent.cpp" compile="1" resource="0"
+        <FILE id="CU7Cyn" name="SourceComponent.cpp" compile="1" resource="0"
               file="Source/ControlComponent/SourceComponent.cpp"/>
-        <FILE id="Z4Twq4" name="SourceComponent.h" compile="0" resource="0"
+        <FILE id="o1aYZX" name="SourceComponent.h" compile="0" resource="0"
               file="Source/ControlComponent/SourceComponent.h"/>
-        <FILE id="F2VcxP" name="TransportControl.cpp" compile="1" resource="0"
+        <FILE id="oB1HvD" name="TransportControl.cpp" compile="1" resource="0"
               file="Source/ControlComponent/TransportControl.cpp"/>
-        <FILE id="GvfOgB" name="TransportControl.h" compile="0" resource="0"
+        <FILE id="hbP5rR" name="TransportControl.h" compile="0" resource="0"
               file="Source/ControlComponent/TransportControl.h"/>
       </GROUP>
       <GROUP id="{55E4BBB0-4431-3FBA-73E5-A1C79AE2777B}" name="Core">
-        <FILE id="CYtdwo" name="DataHandler.cpp" compile="1" resource="0" file="Source/Core/DataHandler.cpp"/>
-        <FILE id="EUnNXs" name="DataHandler.h" compile="0" resource="0" file="Source/Core/DataHandler.h"/>
+        <FILE id="wceqLQ" name="DataHandler.cpp" compile="1" resource="0" file="Source/Core/DataHandler.cpp"/>
+        <FILE id="zsDnYR" name="DataHandler.h" compile="0" resource="0" file="Source/Core/DataHandler.h"/>
       </GROUP>
       <GROUP id="{E277981C-A6E3-AA84-2B48-468647C8ED33}" name="Definitions">
-        <FILE id="WrHLlF" name="Definitions.h" compile="0" resource="0" file="Source/Definitions/Definitions.h"/>
-        <FILE id="aVm19m" name="Effects.cpp" compile="1" resource="0" file="Source/Definitions/Effects.cpp"/>
-        <FILE id="lCDIWg" name="Effects.h" compile="0" resource="0" file="Source/Definitions/Effects.h"/>
+        <FILE id="YrjvI8" name="Definitions.h" compile="0" resource="0" file="Source/Definitions/Definitions.h"/>
+        <FILE id="oeLb0Q" name="Effects.cpp" compile="1" resource="0" file="Source/Definitions/Effects.cpp"/>
+        <FILE id="BOX4z5" name="Effects.h" compile="0" resource="0" file="Source/Definitions/Effects.h"/>
       </GROUP>
       <GROUP id="{FFB1B4E2-C3B7-A624-CD2C-13BD142332D3}" name="Gui">
-        <FILE id="w9AUyS" name="AudioFileListLabelComponent.cpp" compile="1"
+        <FILE id="nuWz65" name="AudioFileListLabelComponent.cpp" compile="1"
               resource="0" file="Source/Gui/AudioFileListLabelComponent.cpp"/>
-        <FILE id="AOgHLH" name="AudioFileListLabelComponent.h" compile="0"
+        <FILE id="xu9qjN" name="AudioFileListLabelComponent.h" compile="0"
               resource="0" file="Source/Gui/AudioFileListLabelComponent.h"/>
-        <FILE id="QpjCiD" name="AuditionLookAndFeel.h" compile="0" resource="0"
+        <FILE id="IJ0sBo" name="AuditionLookAndFeel.h" compile="0" resource="0"
               file="Source/Gui/AuditionLookAndFeel.h"/>
-        <FILE id="q6DRCX" name="ListboxLookAndFeel.h" compile="0" resource="0"
+        <FILE id="YsQycX" name="ListboxLookAndFeel.h" compile="0" resource="0"
               file="Source/Gui/ListboxLookAndFeel.h"/>
-        <FILE id="zDPd7y" name="MainMenuLookAndFeel.h" compile="0" resource="0"
+        <FILE id="II3tbR" name="MainMenuLookAndFeel.h" compile="0" resource="0"
               file="Source/Gui/MainMenuLookAndFeel.h"/>
-        <FILE id="nINRkZ" name="PlayStopButton.cpp" compile="1" resource="0"
+        <FILE id="HSaZq9" name="PlayStopButton.cpp" compile="1" resource="0"
               file="Source/Gui/PlayStopButton.cpp"/>
-        <FILE id="aRU8hj" name="PlayStopButton.h" compile="0" resource="0"
+        <FILE id="MQNtHw" name="PlayStopButton.h" compile="0" resource="0"
               file="Source/Gui/PlayStopButton.h"/>
-        <FILE id="DmbHTF" name="TransportComponent.cpp" compile="1" resource="0"
+        <FILE id="AV1P6W" name="TransportComponent.cpp" compile="1" resource="0"
               file="Source/Gui/TransportComponent.cpp"/>
-        <FILE id="lTOFjn" name="TransportComponent.h" compile="0" resource="0"
+        <FILE id="VxbhFR" name="TransportComponent.h" compile="0" resource="0"
               file="Source/Gui/TransportComponent.h"/>
-        <FILE id="Up8wbk" name="TransportComponentLookAndFeel.h" compile="0"
+        <FILE id="UasPTx" name="TransportComponentLookAndFeel.h" compile="0"
               resource="0" file="Source/Gui/TransportComponentLookAndFeel.h"/>
-        <FILE id="hAAqfH" name="TransportLookAndFeel.h" compile="0" resource="0"
+        <FILE id="GZK96i" name="TransportLookAndFeel.h" compile="0" resource="0"
               file="Source/Gui/TransportLookAndFeel.h"/>
       </GROUP>
       <GROUP id="{041D9725-DBB4-F3C7-5BF7-B060AF6B26DC}" name="WindowContainer">
         <GROUP id="{6332BC2D-B006-D8F4-40BC-74DD1DE196F9}" name="QuizStates">
-          <FILE id="Lx6nMj" name="BeginState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/BeginState.cpp"/>
-          <FILE id="ET4YyF" name="BeginState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/BeginState.h"/>
-          <FILE id="ISR3sA" name="ChooseState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/ChooseState.cpp"/>
-          <FILE id="UppzDJ" name="ChooseState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/ChooseState.h"/>
-          <FILE id="LUGUT6" name="EndState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/EndState.cpp"/>
-          <FILE id="nRVDKG" name="EndState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/EndState.h"/>
-          <FILE id="cN8naS" name="LooseState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/LooseState.cpp"/>
-          <FILE id="MxXwx3" name="LooseState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/LooseState.h"/>
-          <FILE id="woSo6S" name="QuizState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/QuizState.cpp"/>
-          <FILE id="zqL7bU" name="QuizState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/QuizState.h"/>
-          <FILE id="PdgtA8" name="WinState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/WinState.cpp"/>
-          <FILE id="l4LhjA" name="WinState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/WinState.h"/>
+          <FILE id="x6Zs8g" name="BeginState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/BeginState.cpp"/>
+          <FILE id="yQAGpU" name="BeginState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/BeginState.h"/>
+          <FILE id="NlE3Ib" name="ChooseState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/ChooseState.cpp"/>
+          <FILE id="VDdzfh" name="ChooseState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/ChooseState.h"/>
+          <FILE id="W88S2U" name="EndState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/EndState.cpp"/>
+          <FILE id="GVTiUI" name="EndState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/EndState.h"/>
+          <FILE id="OkypBm" name="LooseState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/LooseState.cpp"/>
+          <FILE id="UnrKu5" name="LooseState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/LooseState.h"/>
+          <FILE id="ZiqvTt" name="QuizState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/QuizState.cpp"/>
+          <FILE id="JcD5qB" name="QuizState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/QuizState.h"/>
+          <FILE id="cQms45" name="WinState.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizStates/WinState.cpp"/>
+          <FILE id="u7BEqI" name="WinState.h" compile="0" resource="0" file="Source/WindowContainer/QuizStates/WinState.h"/>
         </GROUP>
-        <FILE id="XgggYX" name="OverviewScreen.cpp" compile="1" resource="0"
+        <FILE id="HS5yoK" name="OverviewScreen.cpp" compile="1" resource="0"
               file="Source/WindowContainer/OverviewScreen.cpp"/>
-        <FILE id="Ic91lB" name="OverviewScreen.h" compile="0" resource="0"
+        <FILE id="R70LBn" name="OverviewScreen.h" compile="0" resource="0"
               file="Source/WindowContainer/OverviewScreen.h"/>
-        <FILE id="KeHY0G" name="QuizScreen.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizScreen.cpp"/>
-        <FILE id="GyWEyr" name="QuizScreen.h" compile="0" resource="0" file="Source/WindowContainer/QuizScreen.h"/>
-        <FILE id="b5zjQM" name="TitleScreen.cpp" compile="1" resource="0" file="Source/WindowContainer/TitleScreen.cpp"/>
-        <FILE id="VueqdF" name="TitleScreen.h" compile="0" resource="0" file="Source/WindowContainer/TitleScreen.h"/>
-        <FILE id="VOG45c" name="WindowContainer.cpp" compile="1" resource="0"
+        <FILE id="L2EVtE" name="QuickQuizScreen.h" compile="0" resource="0"
+              file="Source/WindowContainer/QuickQuizScreen.h"/>
+        <FILE id="TZj9Cz" name="QuizScreen.cpp" compile="1" resource="0" file="Source/WindowContainer/QuizScreen.cpp"/>
+        <FILE id="EsQ6Ll" name="QuizScreen.h" compile="0" resource="0" file="Source/WindowContainer/QuizScreen.h"/>
+        <FILE id="TQ2SZJ" name="TitleScreen.cpp" compile="1" resource="0" file="Source/WindowContainer/TitleScreen.cpp"/>
+        <FILE id="OEJQjb" name="TitleScreen.h" compile="0" resource="0" file="Source/WindowContainer/TitleScreen.h"/>
+        <FILE id="lQL7KB" name="WindowContainer.cpp" compile="1" resource="0"
               file="Source/WindowContainer/WindowContainer.cpp"/>
-        <FILE id="k8ZzKs" name="WindowContainer.h" compile="0" resource="0"
+        <FILE id="mD1OEY" name="WindowContainer.h" compile="0" resource="0"
               file="Source/WindowContainer/WindowContainer.h"/>
       </GROUP>
-      <FILE id="MlyU9d" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="izaJVD" name="MainContentComponent.cpp" compile="1" resource="0"
+      <FILE id="It0fGr" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="unsQtt" name="MainContentComponent.cpp" compile="1" resource="0"
             file="Source/MainContentComponent.cpp"/>
-      <FILE id="wyOLbL" name="MainContentComponent.h" compile="0" resource="0"
+      <FILE id="k4Br0T" name="MainContentComponent.h" compile="0" resource="0"
             file="Source/MainContentComponent.h"/>
     </GROUP>
   </MAINGROUP>

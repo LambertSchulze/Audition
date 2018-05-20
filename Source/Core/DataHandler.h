@@ -34,7 +34,7 @@ private:
     void setupProperties();
 
     File saveFile;
-    ValueTree mainVT;
+    ValueTree vt;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DataHandler)
 };

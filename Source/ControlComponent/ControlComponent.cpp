@@ -20,6 +20,8 @@ ControlComponent::ControlComponent(ValueTree& tree)
 {
     addAndMakeVisible(&sourceComponent);
     addAndMakeVisible(&transportControl);
+    DBG("updating Rows.");
+    sourceComponent.updateSelection();
 }
 
 ControlComponent::~ControlComponent() {}

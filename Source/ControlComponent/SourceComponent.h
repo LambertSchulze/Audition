@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Definitions/Definitions.h"
 #include "../Gui/ListboxLookAndFeel.h"
 
 //==============================================================================
@@ -44,7 +45,8 @@ public:
     void setStartTime (int, String);
     String getStartTime (int) const;
     
-    void updateButtons();
+    void updateButtonRow();
+    void updateSelection();
 
 //==============================================================================
 private:

@@ -14,7 +14,7 @@
 #include "../Gui/MainMenuLookAndFeel.h"
 #include "TitleScreen.h"
 #include "OverviewScreen.h"
-#include "QuizScreen.h"
+#include "QuickQuizScreen.h"
 
 //==============================================================================
 /*
@@ -37,7 +37,7 @@ private:
     
     TitleScreen titleScreen;
     OverviewScreen overviewScreen;
-    QuizScreen quizScreen;
+    QuickQuizScreen quickQuizScreen;
     
     TextButton overviewButton, quizButton;
     

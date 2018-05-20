@@ -6,6 +6,8 @@
   ==============================================================================
 */
 
+#pragma once
+
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "TransportComponentLookAndFeel.h"
 #include "../Definitions/Definitions.h"

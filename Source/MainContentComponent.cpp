@@ -56,14 +56,11 @@ MainContentComponent::~MainContentComponent()
     vt.removeListener(this);
     transportSource.removeChangeListener(this);
     setLookAndFeel (nullptr);
-
-    DBG ("End of Destructor");
 }
 
 void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay (samplesPerBlockExpected, sampleRate);
-    DBG ("inside prepareToPlay()");
 }
 
 void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -90,22 +87,7 @@ void MainContentComponent::releaseResources()
     transportSource.releaseResources();
 }
 
-void MainContentComponent::paint (Graphics& g)
-{
-//    int width = getLocalBounds().getWidth();
-//    int height = getLocalBounds().getHeight();
-//    Colour gray {142, 142, 145};
-//    Colour lightgray = gray.brighter(0.9);
-//
-//    g.setColour(Colours::lightblue.brighter(0.9));
-//    g.fillRect(0, UI::headerHeight, UI::sidebarWidth, height - UI::headerHeight - UI::footerHeight);
-//    g.setColour(lightgray);
-//    g.fillRect(0, height - UI::footerHeight, width, UI::footerHeight);
-//
-//    g.setColour(lightgray);
-//    g.drawHorizontalLine(UI::headerHeight, 0, width);
-    
-}
+void MainContentComponent::paint (Graphics& g) {}
 
 void MainContentComponent::resized()
 {
@@ -185,5 +167,5 @@ void MainContentComponent::setReaderSource (String filePathToSet)
         transportSource.setPosition(startPosition);
         readerSource = newSource.release();
     }
-    DBG ("Set ReaderSource to "<< filePathToSet);
+    DBG ("Set ReaderSource to " + file.getFileName());
 }
