@@ -173,18 +173,37 @@ void TransportComponent::effectButtonClicked()
 
 void TransportComponent::paintTriangle(Graphics& g, Rectangle<float>& r, bool isFilled)
 {
-    if (isFilled) {
-        g.drawArrow(Line<float>(r.getX()+r.getWidth()/4, r.getCentreY(), r.getX()+r.getWidth()*3/4, r.getCentreY()), 0, r.getWidth()/2.2, r.getWidth()/2);
-    }
-    if (!isFilled) {
-        // needs some attention!
-        g.drawLine(r.getX()+r.getWidth()/4, (r.getHeight()-r.getWidth()/1.73)/2, r.getX()+r.getWidth()*3/4, r.getCentreY(), 2);
-        g.drawLine(r.getX()+r.getWidth()/4, (r.getHeight()+r.getWidth()/1.73)/2, r.getX()+r.getWidth()*3/4, r.getCentreY(), 2);
-        g.drawLine(r.getX()+r.getWidth()/4, (r.getHeight()+r.getWidth()/1.73)/2, r.getX()+r.getWidth()/4, (r.getHeight()-r.getWidth()/1.73)/2);
-    }
+    float rad    = r.getHeight() / 2;
+    float side   = rad * 1.1;
+    float height = (side * 1.73) / 2;
+    auto pos     = r.getPosition();
+    auto pointA  = Point<float>(pos.getX()+(rad - height/3), pos.getY()+(rad + side/2));
+    auto pointB  = Point<float>(pos.getX()+(rad + (2*height/3)), pos.getY()+(rad));
+    auto pointC  = Point<float>(pos.getX()+(rad - height/3), pos.getY()+(rad - side/2));
+    
+    Path p;
+    p.startNewSubPath(pointA);
+    p.lineTo(pointB);
+    p.lineTo(pointC);
+    p.closeSubPath();
+    
+    if (isFilled)   g.fillPath(p);
+    else            g.strokePath(p, PathStrokeType(2));
 }
 
-void TransportComponent::paintSquare(Graphics& g, Rectangle<float>& r)  { g.fillRect(r.withSizeKeepingCentre(r.getWidth()/2.7, r.getWidth()/2.7)); }
+void TransportComponent::paintSquare(Graphics& g, Rectangle<float>& r)
+{
+    auto square = r.withSizeKeepingCentre(r.getWidth()/2.2, r.getHeight()/2.22);
+    
+    Path p;
+    p.startNewSubPath(square.getTopLeft());
+    p.lineTo(square.getTopRight());
+    p.lineTo(square.getBottomRight());
+    p.lineTo(square.getBottomLeft());
+    p.closeSubPath();
+    
+    g.fillPath(p);
+}
 
 void TransportComponent::switchLabelText (bool toOriginal)
 {

@@ -8,8 +8,17 @@
  ==============================================================================
  */
 
-// All in one Screen for the 1,2,3 Quiz
-// This will replace the old QuizScreen and its QuizStates.
+/*
+ <QUICKQUIZ
+    Identifier QuizState      = "Quiz_State"
+    Identifier Answer         = "Right_Answer",     int ButtonNumber
+ >
+    <PLAYER
+        Identifier Choice     = "Choice",           int ButtonNumber
+    />
+ </QUICKQUIZ>
+ 
+ */
 
 #pragma once
 
@@ -17,102 +26,216 @@
 #include "../Definitions/Definitions.h"
 #include "../Gui/PlayStopButton.h"
 
+enum State {BEGIN   = 0,
+            CHOOSE  = 1,
+            WIN     = 2,
+            LOOSE   = 3,
+            END     = 4
+};
+
 class QuickQuizScreen;
 
 //==============================================================================
 
 class QuickQuizState {                                              // interface
 public:
-    QuickQuizState (ValueTree& tree) : vt(tree) {};
-    virtual ~QuickQuizState() {};
+    QuickQuizState (QuickQuizScreen* qqs, ValueTree& tree)
+    : vt(tree), owner(qqs)      {};
+    virtual ~QuickQuizState()   {owner = nullptr;};
     
     virtual void nextButtonClicked  () = 0;
     virtual void updateUI           () = 0;
-    virtual void setPlayerChoice    (String) = 0;
+    virtual void setPlayerChoice    (int) = 0;
     
 protected:
     ValueTree vt;
+    QuickQuizScreen* owner;
     
-    void switchState (QuickQuizScreen*, int);
+    void switchState (int);
 };
-
+    
 //==============================================================================
 
-class ChooseState  : public QuickQuizState {                        // concrete State
-public :
-    ChooseState (ValueTree& tree) : QuickQuizState(tree)   {};
-    ~ChooseState() {};
-    
-    void nextButtonClicked  () override {};
-    void updateUI           () override {};
-    void setPlayerChoice    (String) override {};
-};
-
-//==============================================================================
-
-class QuickQuizScreen  : public Component {
+class QuickQuizScreen  : public Component {                         // context
     friend class QuickQuizState;
 public:
-    QuickQuizScreen (ValueTree& tree)
-    : vt(tree), choice1Button("Choice 1"), choice2Button("Choice 2"), choice3Button("Choice 3"),
-    nextButton("Next"), play1Button("Play Choice 1"), play2Button("Play Choice 2"), play3Button("Play Choice 3")
-    {
-        addAndMakeVisible(&choice1Button);
-        addAndMakeVisible(&choice2Button);
-        addAndMakeVisible(&choice3Button);
-        addAndMakeVisible(&play1Button);
-        addAndMakeVisible(&play2Button);
-        addAndMakeVisible(&play3Button);
-        addAndMakeVisible(&nextButton);
-        
-        if (stateList.isEmpty())
-        {
-            stateList.addIfNotAlreadyThere(new ChooseState(vt));
-        }
-        currentState = stateList[0];
-    };
-    ~QuickQuizScreen()
-    {
-        QUIZ.removeAllProperties(nullptr);
-        stateList.clear(true);
-        currentState = nullptr;
-    };
+    QuickQuizScreen (ValueTree&);
+    ~QuickQuizScreen();
     
-    void paint (Graphics&) {};
-    void resized()
-    {
-        auto r (getLocalBounds());
-        
-        Grid grid;
-        grid.templateRows       = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
-        grid.templateColumns    = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
-        grid.items =
-        {
-            GridItem(choice1Button).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-            GridItem(choice2Button).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-            GridItem(choice3Button).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-            GridItem(play1Button).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-            GridItem(play2Button).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-            GridItem(play3Button).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center)
-        };
-        grid.performLayout(r.removeFromTop(r.getHeight() / 2));
-        
-        nextButton.setBounds(r.removeFromRight(120).removeFromBottom(120));
-    };
+    void paint (Graphics&);
+    void resized();
 
     // redirected to QuizStates
-    void setPlayerChoice(String s) { currentState->setPlayerChoice(s); };
-    void nextButtonClicked()       { currentState->nextButtonClicked(); };
+    void setPlayerChoice(int);
+    void nextButtonClicked();
+    
+    Label                       infoLabel;
+    TextButton                  nextButton;
+    OwnedArray<TextButton>      choiceButtons;
+    OwnedArray<PlayStopButton>  playButtons;
     
 private:
     ValueTree vt;
     OwnedArray<QuickQuizState>       stateList;
     QuickQuizState*                  currentState;
     
-    TextButton choice1Button, choice2Button, choice3Button, nextButton;
-    PlayStopButton play1Button, play2Button, play3Button;
-    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QuickQuizScreen)
 };
 
+//==============================================================================
+
+class BeginState  : public QuickQuizState {                         // concrete State
+public:
+    BeginState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
+    ~BeginState()   {};
+    
+    void nextButtonClicked() override
+    {
+        switchState(State::CHOOSE);
+    };
+    
+    void updateUI() override
+    {
+        owner->infoLabel.setText("click the button to begin a quiz", dontSendNotification);
+        owner->nextButton.setButtonText("start");
+        
+        owner->choiceButtons[0]->setVisible(false);
+        owner->choiceButtons[1]->setVisible(false);
+        owner->choiceButtons[2]->setVisible(false);
+        owner->playButtons[0]->setVisible(false);
+        owner->playButtons[1]->setVisible(false);
+        owner->playButtons[2]->setVisible(false);
+    };
+    
+    void setPlayerChoice (int buttonNumber) override {};
+};
+
+class ChooseState  : public QuickQuizState {                        // concrete State
+    public :
+    ChooseState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree)   {};
+    ~ChooseState() {};
+    
+    void nextButtonClicked() override
+    {
+        // if player choice == right answer
+        if (QUICKQUIZ.getChildWithName(IDs::Player).getProperty(IDs::Choice) == QUICKQUIZ.getProperty(IDs::Answer)) {
+            switchState(State::WIN);
+        }
+        else switchState(State::LOOSE);
+    };
+    
+    void updateUI() override
+    {
+        owner->infoLabel.setText("Choose State", dontSendNotification);
+        
+        owner->choiceButtons[0]->setVisible(true);
+        owner->choiceButtons[1]->setVisible(true);
+        owner->choiceButtons[2]->setVisible(true);
+        owner->playButtons[0]->setVisible(false);
+        owner->playButtons[1]->setVisible(false);
+        owner->playButtons[2]->setVisible(false);
+    };
+    
+    void setPlayerChoice (int buttonNumber) override
+    {
+        if (QUICKQUIZ.isValid()) {
+            QUICKQUIZ.getOrCreateChildWithName(IDs::Player, nullptr).setProperty(IDs::Choice, buttonNumber, nullptr);
+            owner->nextButton.setEnabled(true);
+        }
+        else if (vt.isValid()) DBG("ChooseState vt valid.");
+        else DBG("ERROR! ValueTree in ChooseState not Valid!");
+    };
+};
+
+class WinState  : public QuickQuizState {                           // concrete State
+public:
+    WinState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree)   {};
+    ~WinState() {};
+    
+    void nextButtonClicked() override
+    {
+        switchState(State::END);
+    };
+    
+    void updateUI() override
+    {
+        owner->infoLabel.setText("Win State", dontSendNotification);
+        owner->choiceButtons[0]->setVisible(false);
+        owner->choiceButtons[1]->setVisible(false);
+        owner->choiceButtons[2]->setVisible(false);
+        
+        //set the correct Answer to visible
+        int rightAnswer = QUICKQUIZ.getProperty(IDs::Answer);
+        owner->choiceButtons[rightAnswer]->setVisible(true);
+        owner->choiceButtons[rightAnswer]->setEnabled(false);
+    }
+    
+    void setPlayerChoice (int buttonNumber) override
+    {
+        
+    };
+};
+
+class LooseState  : public QuickQuizState {                         // concrete State
+public:
+    LooseState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
+    ~LooseState()   {};
+    
+    void nextButtonClicked() override
+    {
+        switchState(State::END);
+    };
+    
+    void updateUI() override
+    {
+        owner->infoLabel.setText("Loose State", dontSendNotification);
+        owner->choiceButtons[0]->setVisible(false);
+        owner->choiceButtons[1]->setVisible(false);
+        owner->choiceButtons[2]->setVisible(false);
+        
+        //set the correct Answer to visible
+        int rightAnswer = QUICKQUIZ.getProperty(IDs::Answer);
+        owner->choiceButtons[rightAnswer]->setVisible(true);
+        owner->choiceButtons[rightAnswer]->setEnabled(false);
+        //set the correct PlayButton to visible
+        owner->playButtons[rightAnswer]->setVisible(true);
+    };
+    
+    void setPlayerChoice (int buttonNumber) override
+    {
+        
+    };
+};
+
+class EndState  : public QuickQuizState {                           // concrete State
+public:
+    EndState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
+    ~EndState()   {};
+    
+    void nextButtonClicked() override
+    {
+        switchState(State::BEGIN);
+    };
+    
+    void updateUI() override
+    {
+        owner->infoLabel.setText("End State", dontSendNotification);
+        owner->nextButton.setButtonText("new quiz");
+        
+        owner->choiceButtons[0]->setVisible(false);
+        owner->choiceButtons[1]->setVisible(false);
+        owner->choiceButtons[2]->setVisible(false);
+        owner->choiceButtons[0]->setEnabled(true);
+        owner->choiceButtons[1]->setEnabled(true);
+        owner->choiceButtons[2]->setEnabled(true);
+        owner->playButtons[0]->setVisible(false);
+        owner->playButtons[1]->setVisible(false);
+        owner->playButtons[2]->setVisible(false);
+    };
+    
+    void setPlayerChoice (int buttonNumber) override
+    {
+        
+    };
+};
 

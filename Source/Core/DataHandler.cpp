@@ -210,6 +210,7 @@ void DataHandler::saveData(File file)
     TRANSPORT.removeProperty(IDs::TransportState, nullptr);
     TRANSPORT.removeProperty(IDs::IsProcessing, nullptr);
     TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
+    vt.removeChild(vt.getChildWithName(IDs::QuickQuiz), nullptr);
     
     if (file.exists())
     {

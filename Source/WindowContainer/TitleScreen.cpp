@@ -23,14 +23,14 @@ TitleScreen::TitleScreen()
     
     changelogText << "AUDITION - Technical Hearing\n";
     changelogText << "********* Alpha1.0 *********\n\n";
-    changelogText << "\nChangelog:\n\n";
-    changelogText << "- Overview Page for live listening to the effects\n";
+    changelogText << "\nChangelog 21.5.18:\n\n";
+    changelogText << "- Overview Page (Library) for live listening to the Effects\n";
     changelogText << "- reworked the internal ValueTree structure\n";
-    changelogText << "(still work in proggress)\n";
+    changelogText << "- Better looking GUI, Icons, Colours, (and maby Animations and Transitions in the future)\n";
+//    changelogText << "(still work in proggress)\n";
     
     changelogText << "\nUpcoming Features:\n\n";
     changelogText << "- Random Button and Autostop Button (stopping playback after 5 seconds)\n";
-    changelogText << "- Better looking GUI, Icons, Colours, (and maby Animations and Transitions in the future)\n";
     changelogText << "- Record Clips from an audio input (hardware players or software via rewire)\n";
     changelogText << "- Reworking the Effect Base class to incorporate: Reverb, Compression, different Filterdesigns\n";
     changelogText << "- Statistics overview\n";

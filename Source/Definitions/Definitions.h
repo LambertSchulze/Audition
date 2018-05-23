@@ -26,7 +26,7 @@ namespace UI {
 #define TRANSPORT   vt.getChildWithName(IDs::Transport)
 #define FILELIST    vt.getChildWithName(IDs::FileList)
 #define EFFECTLIST  vt.getChildWithName(IDs::EffectList)
-#define QUIZ        vt.getChildWithName(IDs::Quiz)
+#define QUICKQUIZ   vt.getChildWithName(IDs::QuickQuiz)
 #define STATISTICS  vt.getChildWithName(IDs::Statistics)
 
 namespace IDs
@@ -62,6 +62,7 @@ namespace IDs
     const Identifier FilePath       = "File_Path";
     const Identifier FileStart      = "Start_Playback";
     const Identifier IsLossless     = "Is_Lossless";
+
     
     const Identifier EffectList     = "EFFECTLIST";
     
@@ -70,18 +71,16 @@ namespace IDs
     const Identifier EffectType     = "Effect_Type";
     const Identifier EffectName     = "Effect_Name";
     const Identifier Level          = "Level";
-    const Identifier forPlayback    = "For_Playback";
+
     
-    const Identifier Quiz           = "QUIZ";
+    const Identifier QuickQuiz      = "QUICKQUIZ";
     const Identifier QuizState      = "Quiz_State";
-    const Identifier RoundCounter   = "Round_Counter";
-    const Identifier WonRounds      = "Won_In_Round";
-    const Identifier LostRounds     = "Lost_In_Round";
-    const Identifier PlayerChoice   = "Player_Choice";
+    const Identifier Answer         = "Right_Answer";
+
     
-    const Identifier Choice          = "CHOICE";
-    const Identifier Name           = "Name";
-    const Identifier isRight        = "Is_Right";
+    const Identifier Player         = "PLAYER";
+    const Identifier Choice         = "Choice";
+
     
     const Identifier Statistics     = "STATISTICS";
     const Identifier TotalPlayed    = "Total_Games_Played";
