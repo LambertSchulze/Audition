@@ -109,7 +109,7 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, con
         if (tS == "Stopped") {
             //
             //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::
-            }
+        }
         if (tS == "Starting") {
             //setting readerSource to the last selected file
             int selectedFile = FILELIST.getProperty(IDs::SelectedFile);
@@ -118,12 +118,14 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, con
             
             transportSource.start();
             changedTree.setProperty(IDs::TransportState, "Playing", nullptr);
-            DBG("starting transportSource");}
+            //DBG("starting transportSource");
+        }
         if (tS == "Playing") {}
         if (tS == "Stopping") {
             changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);
             transportSource.stop();
-            DBG("stopping transportSource");}
+            //DBG("stopping transportSource");
+        }
     }
     
     // sets the shouldProcessEffect flag
@@ -132,7 +134,8 @@ void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, con
     // sets the audible Effect
     if (property == IDs::EffectToPlay) {
         currentEffect = effectList[(int) changedTree.getProperty(property)];
-        DBG ("Effect to play: " + changedTree.getProperty(property).toString());}
+        DBG ("Effect to play: " + changedTree.getProperty(property).toString());
+    }
     
 //    if (property == IDs::FileStart)
 //    {
@@ -167,5 +170,5 @@ void MainContentComponent::setReaderSource (String filePathToSet)
         transportSource.setPosition(startPosition);
         readerSource = newSource.release();
     }
-    DBG ("Set ReaderSource to " + file.getFileName());
+    //DBG ("Set ReaderSource to " + file.getFileName());
 }

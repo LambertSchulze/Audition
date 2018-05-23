@@ -74,11 +74,16 @@ namespace IDs
 
     
     const Identifier QuickQuiz      = "QUICKQUIZ";
-    const Identifier QuizState      = "Quiz_State";
-    const Identifier Answer         = "Right_Answer";
+    const Identifier RightEffect    = "Right_Effect";
+    const Identifier WrongEffectA   = "Wrong_EffectA";
+    const Identifier WrongEffectB   = "Wrong_EffectB";
+    const Identifier RightButton    = "Right_Button_Num";
+    const Identifier WrongButtonA   = "Wrong_ButtonA_Num";
+    const Identifier WrongButtonB   = "Wrong_ButtonB_Num";
 
     
     const Identifier Player         = "PLAYER";
+    // the number of the button that the player chose
     const Identifier Choice         = "Choice";
 
     

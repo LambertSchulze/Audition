@@ -17,34 +17,42 @@ void QuickQuizState::switchState (int i)
     owner->currentState->updateUI();
 }
 
+void BeginState::newQuiz()
+{
+    game.newQuickQuiz();
+}
+
 //==============================================================================
 
 QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
 :   nextButton("Next"), vt(tree)
 {
-    choiceButtons.add(new TextButton("Choice 1"));
-    choiceButtons.add(new TextButton("Choice 2"));
-    choiceButtons.add(new TextButton("Choice 3"));
-    playButtons.add(new PlayStopButton("Play Choice 1"));
-    playButtons.add(new PlayStopButton("Play Choice 2"));
-    playButtons.add(new PlayStopButton("Play Choice 3"));
-    addAndMakeVisible(choiceButtons[0]);
-    addAndMakeVisible(choiceButtons[1]);
-    addAndMakeVisible(choiceButtons[2]);
+    playButtons.add(new PlayStopButton("Play Choice 1", vt));
+    playButtons.add(new PlayStopButton("Play Choice 2", vt));
+    playButtons.add(new PlayStopButton("Play Choice 3", vt));
     addAndMakeVisible(playButtons[0]);
     addAndMakeVisible(playButtons[1]);
     addAndMakeVisible(playButtons[2]);
     addAndMakeVisible(&nextButton);
     addAndMakeVisible(&infoLabel);
-    choiceButtons[0]->onClick   = [this] { setPlayerChoice(1); };
-    choiceButtons[1]->onClick   = [this] { setPlayerChoice(2); };
-    choiceButtons[2]->onClick   = [this] { setPlayerChoice(3); };
     nextButton.onClick      = [this] { nextButtonClicked(); };
+ 
+    choiceButtons.add(new TextButton("Choice 1"));
+    choiceButtons.add(new TextButton("Choice 2"));
+    choiceButtons.add(new TextButton("Choice 3"));
+    for (int i = 0; i < choiceButtons.size(); i++) {
+        addAndMakeVisible(choiceButtons[i]);
+        choiceButtons[i]->setClickingTogglesState(true);
+        choiceButtons[i]->setRadioGroupId(8426);
+    }
+    choiceButtons[0]->onClick   = [this] { setPlayerChoice(0); };
+    choiceButtons[1]->onClick   = [this] { setPlayerChoice(1); };
+    choiceButtons[2]->onClick   = [this] { setPlayerChoice(2); };
     
     if (!vt.getChildWithName(IDs::QuickQuiz).isValid()) {
         ValueTree qq(IDs::QuickQuiz);
         vt.addChild(qq, -1, nullptr);
-        DBG("added QuickQuiz Node");
+        //DBG("added QuickQuiz Node");
     }
     
     if (stateList.isEmpty())
@@ -65,8 +73,6 @@ QuickQuizScreen::~QuickQuizScreen()
     stateList.clear(true);
     currentState = nullptr;
 }
-
-void QuickQuizScreen::paint (Graphics& g) {};
 
 void QuickQuizScreen::resized()
 {
@@ -89,16 +95,4 @@ void QuickQuizScreen::resized()
     grid.performLayout(r.removeFromTop(r.getHeight() / 2));
     
     nextButton.setBounds(r.removeFromRight(120).removeFromBottom(120));
-}
-
-void QuickQuizScreen::setPlayerChoice(int buttonNumber)
-{
-    currentState->setPlayerChoice(buttonNumber);
-    
-}
-
-void QuickQuizScreen::nextButtonClicked()
-{
-    currentState->nextButtonClicked();
-    
 }

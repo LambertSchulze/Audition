@@ -10,11 +10,15 @@
 
 /*
  <QUICKQUIZ
-    Identifier QuizState      = "Quiz_State"
-    Identifier Answer         = "Right_Answer",     int ButtonNumber
+    Identifier RightEffect    = "Right_Effect";     int EffectNumber
+    Identifier WrongEffectA   = "Wrong_Effect_A";   int EffectNumber
+    Identifier WrongEffectB   = "Wrong_Effect_B";   int EffectNumber
+    Identifier RightButton    = "Right_Button_Num"; int ButtonNumber
+    Identifier WrongButtonA   = "Wrong_Button_A";   int ButtonNumber
+    Identifier WrongButtonB   = "Wrong_Button_B";   int ButtonNumber
  >
     <PLAYER
-        Identifier Choice     = "Choice",           int ButtonNumber
+ Identifier Choice     = "Choice";                  int ButtonNumber
     />
  </QUICKQUIZ>
  
@@ -25,6 +29,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
 #include "../Gui/PlayStopButton.h"
+#include "../Core/RandomEffects.h"
 
 enum State {BEGIN   = 0,
             CHOOSE  = 1,
@@ -43,9 +48,9 @@ public:
     : vt(tree), owner(qqs)      {};
     virtual ~QuickQuizState()   {owner = nullptr;};
     
-    virtual void nextButtonClicked  () = 0;
-    virtual void updateUI           () = 0;
-    virtual void setPlayerChoice    (int) = 0;
+    virtual void nextButtonClicked      () = 0;
+    virtual void updateUI               () = 0;
+    virtual void setPlayerChoice        (int) = 0;
     
 protected:
     ValueTree vt;
@@ -62,12 +67,12 @@ public:
     QuickQuizScreen (ValueTree&);
     ~QuickQuizScreen();
     
-    void paint (Graphics&);
+    void paint (Graphics&)          {};
     void resized();
 
     // redirected to QuizStates
-    void setPlayerChoice(int);
-    void nextButtonClicked();
+    void setPlayerChoice(int num)   {currentState->setPlayerChoice(num);};
+    void nextButtonClicked()        {currentState->nextButtonClicked();};
     
     Label                       infoLabel;
     TextButton                  nextButton;
@@ -86,11 +91,13 @@ private:
 
 class BeginState  : public QuickQuizState {                         // concrete State
 public:
-    BeginState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
+    BeginState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree), game(tree) {};
     ~BeginState()   {};
     
     void nextButtonClicked() override
     {
+        newQuiz();
+        TRANSPORT.setProperty(IDs::EffectToPlay, QUICKQUIZ[IDs::RightEffect], nullptr);
         switchState(State::CHOOSE);
     };
     
@@ -108,6 +115,9 @@ public:
     };
     
     void setPlayerChoice (int buttonNumber) override {};
+    
+    void newQuiz();
+    RandomEffects game;
 };
 
 class ChooseState  : public QuickQuizState {                        // concrete State
@@ -118,7 +128,7 @@ class ChooseState  : public QuickQuizState {                        // concrete 
     void nextButtonClicked() override
     {
         // if player choice == right answer
-        if (QUICKQUIZ.getChildWithName(IDs::Player).getProperty(IDs::Choice) == QUICKQUIZ.getProperty(IDs::Answer)) {
+        if (QUICKQUIZ.getChildWithName(IDs::Player).getProperty(IDs::Choice) == QUICKQUIZ.getProperty(IDs::RightButton)) {
             switchState(State::WIN);
         }
         else switchState(State::LOOSE);
@@ -127,6 +137,13 @@ class ChooseState  : public QuickQuizState {                        // concrete 
     void updateUI() override
     {
         owner->infoLabel.setText("Choose State", dontSendNotification);
+        owner->nextButton.setButtonText("solve");
+        owner->nextButton.setEnabled(false);
+        
+        // write the Effect names on the buttons
+        owner->choiceButtons[QUICKQUIZ[IDs::RightButton]]->setButtonText(EFFECTLIST.getChild(QUICKQUIZ[IDs::RightEffect])[IDs::EffectName].toString());
+        owner->choiceButtons[QUICKQUIZ[IDs::WrongButtonA]]->setButtonText(EFFECTLIST.getChild(QUICKQUIZ[IDs::WrongEffectA])[IDs::EffectName].toString());
+        owner->choiceButtons[QUICKQUIZ[IDs::WrongButtonB]]->setButtonText(EFFECTLIST.getChild(QUICKQUIZ[IDs::WrongEffectB])[IDs::EffectName].toString());
         
         owner->choiceButtons[0]->setVisible(true);
         owner->choiceButtons[1]->setVisible(true);
@@ -138,12 +155,10 @@ class ChooseState  : public QuickQuizState {                        // concrete 
     
     void setPlayerChoice (int buttonNumber) override
     {
-        if (QUICKQUIZ.isValid()) {
-            QUICKQUIZ.getOrCreateChildWithName(IDs::Player, nullptr).setProperty(IDs::Choice, buttonNumber, nullptr);
-            owner->nextButton.setEnabled(true);
-        }
-        else if (vt.isValid()) DBG("ChooseState vt valid.");
-        else DBG("ERROR! ValueTree in ChooseState not Valid!");
+        QUICKQUIZ.getChildWithName(IDs::Player).setProperty(IDs::Choice, buttonNumber, nullptr);
+        owner->nextButton.setEnabled(true);
+        
+        //DBG("Player Choice: " << QUICKQUIZ.getChildWithName(IDs::Player)[IDs::Choice].toString());
     };
 };
 
@@ -159,15 +174,20 @@ public:
     
     void updateUI() override
     {
-        owner->infoLabel.setText("Win State", dontSendNotification);
+        owner->infoLabel.setText("Win State: The correct Effect is shown.", dontSendNotification);
+        owner->nextButton.setButtonText("next");
+        
+        owner->choiceButtons[0]->setToggleState(false, dontSendNotification);
+        owner->choiceButtons[1]->setToggleState(false, dontSendNotification);
+        owner->choiceButtons[2]->setToggleState(false, dontSendNotification);
         owner->choiceButtons[0]->setVisible(false);
         owner->choiceButtons[1]->setVisible(false);
         owner->choiceButtons[2]->setVisible(false);
         
         //set the correct Answer to visible
-        int rightAnswer = QUICKQUIZ.getProperty(IDs::Answer);
-        owner->choiceButtons[rightAnswer]->setVisible(true);
-        owner->choiceButtons[rightAnswer]->setEnabled(false);
+        int rightButtonNum = QUICKQUIZ.getProperty(IDs::RightButton);
+        owner->choiceButtons[rightButtonNum]->setVisible(true);
+        owner->choiceButtons[rightButtonNum]->setEnabled(false);
     }
     
     void setPlayerChoice (int buttonNumber) override
@@ -188,17 +208,26 @@ public:
     
     void updateUI() override
     {
-        owner->infoLabel.setText("Loose State", dontSendNotification);
+        owner->infoLabel.setText("Loose State: This was the correct one and you chose this.", dontSendNotification);
+        owner->nextButton.setButtonText("next");
+        
+        owner->choiceButtons[0]->setToggleState(false, dontSendNotification);
+        owner->choiceButtons[1]->setToggleState(false, dontSendNotification);
+        owner->choiceButtons[2]->setToggleState(false, dontSendNotification);
         owner->choiceButtons[0]->setVisible(false);
         owner->choiceButtons[1]->setVisible(false);
         owner->choiceButtons[2]->setVisible(false);
         
-        //set the correct Answer to visible
-        int rightAnswer = QUICKQUIZ.getProperty(IDs::Answer);
-        owner->choiceButtons[rightAnswer]->setVisible(true);
-        owner->choiceButtons[rightAnswer]->setEnabled(false);
-        //set the correct PlayButton to visible
-        owner->playButtons[rightAnswer]->setVisible(true);
+        //make the correct Answer Button visible
+        int rightButtonNum = QUICKQUIZ.getProperty(IDs::RightButton);
+        owner->choiceButtons[rightButtonNum]->setVisible(true);
+        owner->choiceButtons[rightButtonNum]->setEnabled(false);
+        
+        //make the Choice and PlayButton of the players choice visible
+        int choiceButtonNum = QUICKQUIZ.getChildWithName(IDs::Player)[IDs::Choice];
+        owner->choiceButtons[choiceButtonNum]->setVisible(true);
+        owner->choiceButtons[choiceButtonNum]->setEnabled(false);
+        owner->playButtons[choiceButtonNum]->setVisible(true);
     };
     
     void setPlayerChoice (int buttonNumber) override
@@ -219,6 +248,9 @@ public:
     
     void updateUI() override
     {
+        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+        TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
+        
         owner->infoLabel.setText("End State", dontSendNotification);
         owner->nextButton.setButtonText("new quiz");
         
@@ -231,6 +263,9 @@ public:
         owner->playButtons[0]->setVisible(false);
         owner->playButtons[1]->setVisible(false);
         owner->playButtons[2]->setVisible(false);
+//        owner->playButtons[0]->setStateToOff();
+//        owner->playButtons[1]->setStateToOff();
+//        owner->playButtons[2]->setStateToOff();
     };
     
     void setPlayerChoice (int buttonNumber) override
@@ -238,4 +273,3 @@ public:
         
     };
 };
-

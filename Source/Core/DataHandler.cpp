@@ -177,7 +177,7 @@ void DataHandler::setupProperties()
 
 void DataHandler::loadData(File file)
 {
-    DBG("Loading Data...");
+    //DBG("Loading Data...");
     if (file.exists())
     {
         ScopedPointer<XmlElement> e (XmlDocument::parse (file));
@@ -190,8 +190,8 @@ void DataHandler::loadData(File file)
         else
         {
             vt = ValueTree::fromXml(*e);
-            DBG("...Loading done!");
-            DBG(vt.toXmlString());
+            //DBG("...Loading done!");
+            //DBG(vt.toXmlString());
         }
     }
     else
@@ -216,9 +216,9 @@ void DataHandler::saveData(File file)
     {
         ScopedPointer<XmlElement> e (vt.createXml());
         e->writeToFile(file, "");
-        DBG("Data saved.");
-        DBG("This is the saved ValueTree:");
-        DBG(vt.toXmlString());
+        //DBG("Data saved.");
+        //DBG("This is the saved ValueTree:");
+        //DBG(vt.toXmlString());
     }
     if (!file.exists()) DBG("Save file doesn't exist. Could't save..");
 }

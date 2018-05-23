@@ -95,9 +95,13 @@ void TransportComponent::resized()
 void TransportComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
 {
     // if there is a selected effect
-    if (property == IDs::EffectToPlay) {
+    if (property == IDs::EffectToPlay && changedTree.hasProperty(IDs::EffectToPlay)) {
         state = BothEnabled;
-        DBG("Control fully enabled");   
+        //DBG("Control fully enabled");   
+    }
+    // if the effect for playback got removed
+    else if (changedTree.hasType(IDs::Transport) && !changedTree.hasProperty(IDs::EffectToPlay)) {
+        state = OriginalEnabled;
     }
     repaint();
 }
