@@ -49,6 +49,8 @@ namespace IDs
     // If its value is null (at startup), the effect Buttons should be disabled.
     const Identifier EffectToPlay   = "Effect_To_Play";
     // needs to be implemented...
+    const Identifier Repeat         = "Repeat";
+    const Identifier Shuffle        = "Shuffle";
     const Identifier LimitPlayback  = "Limit_Playback";
     
     

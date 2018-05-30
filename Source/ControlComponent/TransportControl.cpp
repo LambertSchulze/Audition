@@ -32,13 +32,14 @@ TransportControl::TransportControl (ValueTree& tree)
     ScopedPointer<Drawable> autostopDownImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
     ScopedPointer<Drawable> autostopOnImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
 
+    ColourGradient bg = ColourGradient(Colour(52, 143, 80), 0, 0, Colour(86, 180, 211), this->getWidth(), this->getHeight(), true);
     
-    shuffleDownImage->replaceColour(Colours::black, Colours::white);
-    shuffleOnImage->replaceColour(Colours::black, Colours::red);
-    repeatDownImage->replaceColour(Colours::black, Colours::white);
-    repeatOnImage->replaceColour(Colours::black, Colours::red);
-    autostopDownImage->replaceColour(Colours::black, Colours::white);
-    autostopOnImage->replaceColour(Colours::black, Colours::red);
+    shuffleDownImage->replaceColour(Colours::black, Colour(52, 143, 80).brighter());
+    shuffleOnImage->replaceColour(Colours::black, Colour(52, 143, 80));
+    repeatDownImage->replaceColour(Colours::black, Colour(52, 143, 80).interpolatedWith(Colour(86, 180, 211), 0.5).brighter());
+    repeatOnImage->replaceColour(Colours::black, Colour(52, 143, 80).interpolatedWith(Colour(86, 180, 211), 0.5));
+    autostopDownImage->replaceColour(Colours::black, Colour(86, 180, 211).brighter());
+    autostopOnImage->replaceColour(Colours::black, Colour(86, 180, 211));
     
     addAndMakeVisible(&shuffleButton);
     addAndMakeVisible(&repeatButton);
@@ -80,9 +81,8 @@ void TransportControl::paint (Graphics& g)
 void TransportControl::resized()
 {
     auto r (getLocalBounds());
-    auto leftRowArea (r.removeFromLeft(UI::sidebarWidth).reduced(14, UI::footerHeight / 5));
+    auto leftRowArea (r.removeFromLeft(UI::sidebarWidth).reduced(14, UI::footerHeight / 4));
     
-    //control Buttons
     shuffleButton   .setBounds(leftRowArea.removeFromLeft(leftRowArea.getWidth() / 3).withSizeKeepingCentre(leftRowArea.getHeight(), leftRowArea.getHeight()));
     repeatButton    .setBounds(leftRowArea.removeFromLeft(leftRowArea.getWidth() / 2).withSizeKeepingCentre(leftRowArea.getHeight(), leftRowArea.getHeight()));
     autostopButton  .setBounds(leftRowArea.withSizeKeepingCentre(leftRowArea.getHeight(), leftRowArea.getHeight()));
@@ -100,15 +100,27 @@ void TransportControl::valueTreeRedirected (ValueTree&) {}
 //==============================================================================
 void TransportControl::shuffleButtonclicked()
 {
-    DBG("Shuffle Button clicked.");
+    //DBG("Shuffle Button clicked.");
+    if ((bool) TRANSPORT[IDs::Shuffle] == true)
+        TRANSPORT.setProperty(IDs::Shuffle, false, nullptr);
+    else
+        TRANSPORT.setProperty(IDs::Shuffle, true, nullptr);
 }
 
 void TransportControl::repeatButtonclicked()
 {
-    DBG("Repeat Button clicked.");
+//    DBG("Repeat Button clicked.");
+    if ((bool) TRANSPORT[IDs::Repeat] == true)
+        TRANSPORT.setProperty(IDs::Repeat, false, nullptr);
+    else
+        TRANSPORT.setProperty(IDs::Repeat, true, nullptr);
 }
 
 void TransportControl::autostopButtonclicked()
 {
-    DBG("Debug Button clicked.");
+    //DBG("Debug Button clicked.");
+    if ((bool) TRANSPORT[IDs::LimitPlayback] == true)
+        TRANSPORT.setProperty(IDs::LimitPlayback, false, nullptr);
+    else
+        TRANSPORT.setProperty(IDs::LimitPlayback, true, nullptr);
 }

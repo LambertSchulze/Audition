@@ -148,6 +148,7 @@ void SourceComponent::selectedRowsChanged (int lastRowSelected)
 void SourceComponent::addFile()
 {
     FileChooser chooser ("Select a Wave file to play...", File::nonexistent, "*.wav,*.mp3,*.m4a");
+    //FileChooser chooser {"Test"};
     
     if (chooser.browseForMultipleFilesToOpen())
     {
@@ -168,7 +169,6 @@ void SourceComponent::addFile()
         }
     }
     
-    fileListBox.updateContent();
     updateButtonRow();
 }
 

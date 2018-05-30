@@ -27,12 +27,6 @@ void BeginState::newQuiz()
 QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
 :   nextButton("Next"), vt(tree)
 {
-    playButtons.add(new PlayStopButton("Play Choice 1", vt));
-    playButtons.add(new PlayStopButton("Play Choice 2", vt));
-    playButtons.add(new PlayStopButton("Play Choice 3", vt));
-    addAndMakeVisible(playButtons[0]);
-    addAndMakeVisible(playButtons[1]);
-    addAndMakeVisible(playButtons[2]);
     addAndMakeVisible(&nextButton);
     addAndMakeVisible(&infoLabel);
     nextButton.onClick      = [this] { nextButtonClicked(); };
@@ -81,16 +75,13 @@ void QuickQuizScreen::resized()
     infoLabel.setBounds(r.removeFromTop(30));
     
     Grid grid;
-    grid.templateRows       = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
+    grid.templateRows       = { Grid::TrackInfo (1_fr) };
     grid.templateColumns    = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
     grid.items =
     {
         GridItem(choiceButtons[0]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
         GridItem(choiceButtons[1]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-        GridItem(choiceButtons[2]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-        GridItem(playButtons[0]).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-        GridItem(playButtons[1]).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-        GridItem(playButtons[2]).withWidth(50).withHeight(50).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center)
+        GridItem(choiceButtons[2]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center)
     };
     grid.performLayout(r.removeFromTop(r.getHeight() / 2));
     

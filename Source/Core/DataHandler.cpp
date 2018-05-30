@@ -59,6 +59,8 @@ void DataHandler::setupProperties()
     {
         // setting up a fresh TRANSPORT child.
         ValueTree transport (IDs::Transport);
+        transport.setProperty(IDs::Repeat, false, nullptr);
+        transport.setProperty(IDs::Shuffle, false, nullptr);
         transport.setProperty(IDs::LimitPlayback, false, nullptr);
         vt.addChild(transport, -1, nullptr);
     }
@@ -172,7 +174,7 @@ void DataHandler::setupProperties()
     //    if (mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).isValid()) mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
     
     //DBG ("Property Setup done! Here's the ValueTree:");
-    //DBG ("mainVT.toXmlString()");
+    DBG (vt.toXmlString());
 }
 
 void DataHandler::loadData(File file)

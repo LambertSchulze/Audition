@@ -18,7 +18,13 @@ class TransportLookAndFeel :    public LookAndFeel_V4
 public:
     TransportLookAndFeel ()
     {
-        
+        //setColour(DrawableButton::backgroundColourId, Colours::pink);
+        //setColour(DrawableButton::backgroundOnColourId, Colours::green);
+    };
+    
+    void drawDrawableButton (Graphics& g, DrawableButton&, bool, bool ) override
+    {
+        g.fillAll (laf.lightergrey);
     };
     
     ~TransportLookAndFeel () {};

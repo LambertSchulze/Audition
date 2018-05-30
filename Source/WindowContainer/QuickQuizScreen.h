@@ -28,7 +28,6 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
-#include "../Gui/PlayStopButton.h"
 #include "../Core/RandomEffects.h"
 
 enum State {BEGIN   = 0,
@@ -77,7 +76,6 @@ public:
     Label                       infoLabel;
     TextButton                  nextButton;
     OwnedArray<TextButton>      choiceButtons;
-    OwnedArray<PlayStopButton>  playButtons;
     
 private:
     ValueTree vt;
@@ -109,9 +107,6 @@ public:
         owner->choiceButtons[0]->setVisible(false);
         owner->choiceButtons[1]->setVisible(false);
         owner->choiceButtons[2]->setVisible(false);
-        owner->playButtons[0]->setVisible(false);
-        owner->playButtons[1]->setVisible(false);
-        owner->playButtons[2]->setVisible(false);
     };
     
     void setPlayerChoice (int buttonNumber) override {};
@@ -148,9 +143,6 @@ class ChooseState  : public QuickQuizState {                        // concrete 
         owner->choiceButtons[0]->setVisible(true);
         owner->choiceButtons[1]->setVisible(true);
         owner->choiceButtons[2]->setVisible(true);
-        owner->playButtons[0]->setVisible(false);
-        owner->playButtons[1]->setVisible(false);
-        owner->playButtons[2]->setVisible(false);
     };
     
     void setPlayerChoice (int buttonNumber) override
@@ -227,7 +219,6 @@ public:
         int choiceButtonNum = QUICKQUIZ.getChildWithName(IDs::Player)[IDs::Choice];
         owner->choiceButtons[choiceButtonNum]->setVisible(true);
         owner->choiceButtons[choiceButtonNum]->setEnabled(false);
-        owner->playButtons[choiceButtonNum]->setVisible(true);
     };
     
     void setPlayerChoice (int buttonNumber) override
@@ -260,12 +251,6 @@ public:
         owner->choiceButtons[0]->setEnabled(true);
         owner->choiceButtons[1]->setEnabled(true);
         owner->choiceButtons[2]->setEnabled(true);
-        owner->playButtons[0]->setVisible(false);
-        owner->playButtons[1]->setVisible(false);
-        owner->playButtons[2]->setVisible(false);
-//        owner->playButtons[0]->setStateToOff();
-//        owner->playButtons[1]->setStateToOff();
-//        owner->playButtons[2]->setStateToOff();
     };
     
     void setPlayerChoice (int buttonNumber) override

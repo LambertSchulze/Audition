@@ -102,45 +102,9 @@ void MainContentComponent::resized()
 //==============================================================================
 void MainContentComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
 {
-    // setting the AudioTransportSource after the ID TransportState
-    if (property == IDs::TransportState) {
-        var tS = changedTree.getProperty(property);
-        
-        if (tS == "Stopped") {
-            //
-            //transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChild(<#int index#>).getProperty(IDs::
-        }
-        if (tS == "Starting") {
-            //setting readerSource to the last selected file
-            int selectedFile = FILELIST.getProperty(IDs::SelectedFile);
-            String filePath = FILELIST.getChild(selectedFile).getProperty(IDs::FilePath);
-            setReaderSource(filePath);
-            
-            transportSource.start();
-            changedTree.setProperty(IDs::TransportState, "Playing", nullptr);
-            //DBG("starting transportSource");
-        }
-        if (tS == "Playing") {}
-        if (tS == "Stopping") {
-            changedTree.setProperty(IDs::TransportState, "Stopped", nullptr);
-            transportSource.stop();
-            //DBG("stopping transportSource");
-        }
+    if (changedTree.getType() == IDs::Transport) {
+        transportChanged();
     }
-    
-    // sets the shouldProcessEffect flag
-    if (property == IDs::IsProcessing) { shouldProcessEffect = changedTree.getProperty(property); }
-    
-    // sets the audible Effect
-    if (property == IDs::EffectToPlay) {
-        currentEffect = effectList[(int) changedTree.getProperty(property)];
-        DBG ("Effect to play: " + changedTree.getProperty(property).toString());
-    }
-    
-//    if (property == IDs::FileStart)
-//    {
-//        transportSource.setPosition(mainVT.getChildWithName(IDs::FileList).getChildWithProperty(IDs::Selected, true).getProperty(IDs::Start));
-//    }
 }
 
 void MainContentComponent::valueTreeChildAdded (ValueTree &parentTree, ValueTree &childWhichHasBeenAdded) {}
@@ -170,5 +134,38 @@ void MainContentComponent::setReaderSource (String filePathToSet)
         transportSource.setPosition(startPosition);
         readerSource = newSource.release();
     }
-    //DBG ("Set ReaderSource to " + file.getFileName());
+}
+
+void MainContentComponent::transportChanged()
+// gets called when Properties in the TRANSPORT node change.
+// sets the transportSource and the processed Effect.
+{
+    var tS = TRANSPORT[IDs::TransportState];
+    
+    if (tS == "Stopped") {
+        transportSource.setPosition(0);
+    }
+    
+    if (tS == "Starting") {
+        //setting readerSource to the last selected file
+        int selectedFile = FILELIST.getProperty(IDs::SelectedFile);
+        String filePath = FILELIST.getChild(selectedFile).getProperty(IDs::FilePath);
+        setReaderSource(filePath);
+        
+        transportSource.start();
+        TRANSPORT.setProperty(IDs::TransportState, "Playing", nullptr);
+    }
+    
+    if (tS == "Playing") {
+        //nothing to do while playback...
+    }
+    
+    if (tS == "Stopping") {
+        transportSource.stop();
+        TRANSPORT.setProperty(IDs::TransportState, "Stopped", nullptr);
+    }
+    
+    shouldProcessEffect = TRANSPORT[IDs::IsProcessing];
+    currentEffect = effectList[(int) TRANSPORT[IDs::EffectToPlay]];
+    //DBG ("Effect to play: " + EFFECTLIST.getChild((int) TRANSPORT[IDs::EffectToPlay])[IDs::EffectName].toString());
 }
