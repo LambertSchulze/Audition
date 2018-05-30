@@ -147,6 +147,8 @@ void MainContentComponent::transportChanged()
     }
     
     if (tS == "Starting") {
+        // 
+        
         //setting readerSource to the last selected file
         int selectedFile = FILELIST.getProperty(IDs::SelectedFile);
         String filePath = FILELIST.getChild(selectedFile).getProperty(IDs::FilePath);

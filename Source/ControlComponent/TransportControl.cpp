@@ -61,6 +61,11 @@ TransportControl::TransportControl (ValueTree& tree)
     shuffleButton.onClick   = [this] { shuffleButtonclicked(); };
     repeatButton.onClick    = [this] { repeatButtonclicked(); };
     autostopButton.onClick  = [this] { autostopButtonclicked(); };
+    
+    shuffleButton.setToggleState(FILELIST[IDs::Shuffle], dontSendNotification);
+    repeatButton.setToggleState(FILELIST[IDs::Repeat], dontSendNotification);
+    autostopButton.setToggleState(TRANSPORT[IDs::LimitPlayback], dontSendNotification);
+    
     vt.addListener(this);
 }
 
@@ -101,26 +106,26 @@ void TransportControl::valueTreeRedirected (ValueTree&) {}
 void TransportControl::shuffleButtonclicked()
 {
     //DBG("Shuffle Button clicked.");
-    if ((bool) TRANSPORT[IDs::Shuffle] == true)
-        TRANSPORT.setProperty(IDs::Shuffle, false, nullptr);
+    if ((bool) FILELIST[IDs::Shuffle] == true)
+        FILELIST.setProperty(IDs::Shuffle, false, nullptr);
     else
-        TRANSPORT.setProperty(IDs::Shuffle, true, nullptr);
+        FILELIST.setProperty(IDs::Shuffle, true, nullptr);
 }
 
 void TransportControl::repeatButtonclicked()
 {
 //    DBG("Repeat Button clicked.");
-    if ((bool) TRANSPORT[IDs::Repeat] == true)
-        TRANSPORT.setProperty(IDs::Repeat, false, nullptr);
+    if ((bool) FILELIST[IDs::Repeat] == true)
+        FILELIST.setProperty(IDs::Repeat, false, nullptr);
     else
-        TRANSPORT.setProperty(IDs::Repeat, true, nullptr);
+        FILELIST.setProperty(IDs::Repeat, true, nullptr);
 }
 
 void TransportControl::autostopButtonclicked()
 {
     //DBG("Debug Button clicked.");
-    if ((bool) TRANSPORT[IDs::LimitPlayback] == true)
-        TRANSPORT.setProperty(IDs::LimitPlayback, false, nullptr);
+    if ((bool) FILELIST[IDs::LimitPlayback] == true)
+        FILELIST.setProperty(IDs::LimitPlayback, false, nullptr);
     else
-        TRANSPORT.setProperty(IDs::LimitPlayback, true, nullptr);
+        FILELIST.setProperty(IDs::LimitPlayback, true, nullptr);
 }

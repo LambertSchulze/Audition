@@ -59,8 +59,6 @@ void DataHandler::setupProperties()
     {
         // setting up a fresh TRANSPORT child.
         ValueTree transport (IDs::Transport);
-        transport.setProperty(IDs::Repeat, false, nullptr);
-        transport.setProperty(IDs::Shuffle, false, nullptr);
         transport.setProperty(IDs::LimitPlayback, false, nullptr);
         vt.addChild(transport, -1, nullptr);
     }
@@ -76,6 +74,8 @@ void DataHandler::setupProperties()
         // setting up a fresh FILELIST child
         ValueTree fileList (IDs::FileList);
         fileList.setProperty(IDs::SelectedFile, 0, nullptr);
+        fileList.setProperty(IDs::Repeat, false, nullptr);
+        fileList.setProperty(IDs::Shuffle, false, nullptr);
         vt.addChild(fileList, -1, nullptr);
     }
     vt.getChildWithName(IDs::FileList).setProperty(IDs::SelectedFile, 0, nullptr);

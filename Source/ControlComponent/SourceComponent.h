@@ -18,7 +18,8 @@
 /*
 */
 class SourceComponent :     public Component,
-                            public TableListBoxModel
+                            public TableListBoxModel,
+                            public ValueTree::Listener
 {
 //==============================================================================
 public:
@@ -36,6 +37,14 @@ public:
     Component* refreshComponentForCell (int, int, bool, Component*) override;
     
     void selectedRowsChanged (int) override;
+    
+    //==============================================================================
+    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
+    void valueTreeChildAdded (ValueTree&, ValueTree&) override;
+    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override;
+    void valueTreeChildOrderChanged (ValueTree&, int, int) override;
+    void valueTreeParentChanged (ValueTree&) override;
+    void valueTreeRedirected (ValueTree&) override;
 
     //==============================================================================
     void addFile();

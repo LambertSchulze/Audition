@@ -49,14 +49,15 @@ namespace IDs
     // If its value is null (at startup), the effect Buttons should be disabled.
     const Identifier EffectToPlay   = "Effect_To_Play";
     // needs to be implemented...
-    const Identifier Repeat         = "Repeat";
-    const Identifier Shuffle        = "Shuffle";
     const Identifier LimitPlayback  = "Limit_Playback";
     
     
     const Identifier FileList       = "FILELIST";
     // stores the last selected file, so that at startup it can be selected again.
     const Identifier SelectedFile   = "Selected_File";
+    // set the rules with wich after each quiz the next file is choosen
+    const Identifier Repeat         = "Repeat";
+    const Identifier Shuffle        = "Shuffle";
     
     
     const Identifier File           = "FILE";

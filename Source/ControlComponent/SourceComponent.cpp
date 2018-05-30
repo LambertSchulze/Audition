@@ -35,7 +35,7 @@ SourceComponent::SourceComponent(ValueTree& tree)
     clearButton             .setLookAndFeel(&lookAndFeel);
     
     fileListBox.getHeader().addColumn("Filename", 1, 150, 100, -1, (TableHeaderComponent::visible | TableHeaderComponent::resizable));
-    fileListBox.getHeader().addColumn("Start", 2, 40, 40, 40, TableHeaderComponent::visible);
+    fileListBox.getHeader().addColumn("Start", 2, 48, 48, 48, TableHeaderComponent::visible);
     fileListBox.getHeader().setStretchToFitActive(true);
     fileListBox.setMultipleSelectionEnabled(false);
     
@@ -53,10 +53,14 @@ SourceComponent::SourceComponent(ValueTree& tree)
     removeButton.   onClick = [this] { removeFile(fileListBox.getSelectedRow()); };
     clearButton.    onClick = [this] { clearFileList(); };
     
+    vt.addListener(this);
     updateButtonRow();
 }
 
-SourceComponent::~SourceComponent()         {}
+SourceComponent::~SourceComponent()
+{
+    vt.removeListener(this);
+}
 //==============================================================================
 
 void SourceComponent::paint (Graphics& g)
@@ -145,6 +149,19 @@ void SourceComponent::selectedRowsChanged (int lastRowSelected)
 }
 
 //==============================================================================
+void SourceComponent::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
+{
+    if (property == IDs::SelectedFile)
+        updateSelection();
+};
+void SourceComponent::valueTreeChildAdded (ValueTree&, ValueTree&) {};
+void SourceComponent::valueTreeChildRemoved (ValueTree&, ValueTree&, int) {};
+void SourceComponent::valueTreeChildOrderChanged (ValueTree&, int, int) {};
+void SourceComponent::valueTreeParentChanged (ValueTree&) {};
+void SourceComponent::valueTreeRedirected (ValueTree&) {};
+
+
+//==============================================================================
 void SourceComponent::addFile()
 {
     FileChooser chooser ("Select a Wave file to play...", File::nonexistent, "*.wav,*.mp3,*.m4a");
@@ -221,5 +238,6 @@ void SourceComponent::updateButtonRow()
 void SourceComponent::updateSelection()
 {
     fileListBox.updateContent();
-    fileListBox.selectRow (0, true, true);
+    int rowToSelect = FILELIST[IDs::SelectedFile];
+    fileListBox.selectRow (rowToSelect, true, true);
 }
