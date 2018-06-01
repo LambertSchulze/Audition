@@ -8,8 +8,7 @@
  ==============================================================================
  */
 
-#ifndef __AuditionLookAndFeel__
-#define __AuditionLookAndFeel__
+#pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 
@@ -28,20 +27,6 @@ public:
                             blue,                       // selected Button background
                             red
                         });
-        /*
-         windowBackground       0xffefefef
-         widgetBackground       0xffffffff
-         menuBackground         0xffffffff
-         outline                0xffdddddd
-         defaultText            0xff000000
-         defaultFill            0xffa9a9a9
-         highlightedText        0xffffffff
-         highlightedFill        0xff42a2c8
-         menuText               0xff000000
-         numColours
-         */
-        
-        
     };
     
     Colour  black       {0, 0, 0},
@@ -49,6 +34,7 @@ public:
             lightergrey {205, 205, 208},
             lightgrey   {242, 242, 245},
             white       {255, 255, 255},
+    
             blue        {27, 173, 248},
             brown       {162, 132, 94},
             green       {99, 218, 56},
@@ -57,7 +43,9 @@ public:
             purple      {204, 115, 225},
             red         {255, 59, 48},
             yellow      {255, 204, 0};
+    
+    Colour gradient1A {52, 143, 80}, gradient1B {86, 180, 211};
 
 };
 
-#endif
+

@@ -16,8 +16,12 @@
 
 namespace UI {
     const int headerHeight          = 80;
+    const int headerMargin          = 16;
+    
     const int sidebarWidth          = 300;
+    
     const int footerHeight          = 68;
+    const int footerMargin          = 8;
     
     const int fileListButtonRowHeight   = 33;
     const int fileListButtonWidth       = 30;
@@ -95,7 +99,5 @@ namespace IDs
     const Identifier TotalWon       = "Total_Games_Won";
     const Identifier TotalLost      = "Total_Games_Lost";
 };
-
-
 
 #endif

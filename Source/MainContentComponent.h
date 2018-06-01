@@ -14,21 +14,14 @@
 
 #include "Definitions/Definitions.h"
 #include "Definitions/Effects.h"
-#include "Gui/AuditionLookAndFeel.h"
-#include "Core/DataHandler.h"
-#include "ControlComponent/ControlComponent.h"
-#include "WindowContainer/WindowContainer.h"
+#include "Gui/Gui.h"
+#include "Core/TransportManager.h"
 
-//==============================================================================
-/*
- */
-class MainContentComponent   :  public AudioAppComponent,
-                                public ValueTree::Listener,
-                                public ChangeListener
+class MainContentComponent   :  public AudioAppComponent
 {
 public:
     //==============================================================================
-    MainContentComponent();
+    MainContentComponent(ValueTree& vt);
     ~MainContentComponent();
     
     //==============================================================================
@@ -37,44 +30,17 @@ public:
     void releaseResources() override;
     
     //==============================================================================
-    void paint (Graphics& g) override;
     void resized() override;
-    
-    //==============================================================================
-    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
-    void valueTreeChildAdded (ValueTree&, ValueTree&) override;
-    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override;
-    void valueTreeChildOrderChanged (ValueTree&, int, int) override;
-    void valueTreeParentChanged (ValueTree&) override;
-    void valueTreeRedirected (ValueTree&) override;
-    
-    //==============================================================================
-    void changeListenerCallback (ChangeBroadcaster* source) override;
-    
-    //==============================================================================
-    void setReaderSource(String);
-    void transportChanged();
     
 private:
     //==============================================================================
-    ValueTree           vt;
+    ValueTree tree;
     
-    AudioFormatManager                      formatManager;
-    ScopedPointer<AudioFormatReaderSource>  readerSource;
-    AudioTransportSource                    transportSource;
+    AudioTransportSource transportSource;
+    TransportManager transport;
+    OwnedArray<Effect> effectList;
     
-    OwnedArray<Effect>  effectList;
-    Effect*             currentEffect;
-    bool                shouldProcessEffect;
-    
-    AuditionLookAndFeel lookAndFeel;
-    DataHandler dataHandler;
-    
-    //==============================================================================
-    ScopedPointer<ControlComponent> controlComponent;
-    ScopedPointer<WindowContainer>  windowContainer;
+    Gui gui;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
-
-Component* createMainContentComponent()     { return new MainContentComponent(); }

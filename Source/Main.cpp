@@ -9,22 +9,22 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MainContentComponent.h"
+#include "Core/DataHandler.h"
 #include "Gui/AuditionLookAndFeel.h"
 
-Component* createMainContentComponent();
-
-//==============================================================================
-class NewProjectApplication  : public JUCEApplication
+class AuditionApp  : public JUCEApplication
 {
 public:
-    //==============================================================================
-    NewProjectApplication() {}
+    AuditionApp()
+    {
+        DBG("Starting AuditionApp");
+    }
 
     const String getApplicationName() override       { return ProjectInfo::projectName; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override       { return true; }
 
-    //==============================================================================
     void initialise (const String& commandLine) override
     {
         mainWindow = new MainWindow (getApplicationName());
@@ -35,14 +35,12 @@ public:
         mainWindow = nullptr;
     }
 
-    //==============================================================================
     void systemRequestedQuit() override
     {
         quit();
     }
 
-    void anotherInstanceStarted (const String& commandLine) override
-    {}
+    void anotherInstanceStarted (const String& commandLine) override {}
 
     //==============================================================================
     class MainWindow    : public DocumentWindow
@@ -53,7 +51,7 @@ public:
             AuditionLookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
             
             setUsingNativeTitleBar (true);
-            setContentOwned (createMainContentComponent(), true);
+            setContentOwned (new MainContentComponent(dataHandler.getValueTree()), true);
             setResizable (true, true);
 
             centreWithSize (getWidth(), getHeight());
@@ -67,6 +65,7 @@ public:
 
     private:
         AuditionLookAndFeel lookAndFeel;
+        DataHandler dataHandler;
         
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
     };
@@ -75,5 +74,4 @@ private:
     ScopedPointer<MainWindow> mainWindow;
 };
 
-//==============================================================================
-START_JUCE_APPLICATION (NewProjectApplication)
+START_JUCE_APPLICATION (AuditionApp)

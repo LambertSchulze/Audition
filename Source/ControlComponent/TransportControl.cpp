@@ -31,8 +31,6 @@ TransportControl::TransportControl (ValueTree& tree)
     ScopedPointer<Drawable> autostopImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
     ScopedPointer<Drawable> autostopDownImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
     ScopedPointer<Drawable> autostopOnImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_replay_5_black_48px.svg"));
-
-    ColourGradient bg = ColourGradient(Colour(52, 143, 80), 0, 0, Colour(86, 180, 211), this->getWidth(), this->getHeight(), true);
     
     shuffleDownImage->replaceColour(Colours::black, Colour(52, 143, 80).brighter());
     shuffleOnImage->replaceColour(Colours::black, Colour(52, 143, 80));
