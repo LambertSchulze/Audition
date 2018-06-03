@@ -17,7 +17,6 @@ class MainMenuLookAndFeel :     public LookAndFeel_V4
 {
 public:
     MainMenuLookAndFeel()
-    : bgColour1 (laf.orange), bgColour2 (laf.red)
     {
         setColour(TextButton::ColourIds::buttonColourId, Colours::transparentWhite);
         setColour(TextButton::ColourIds::buttonOnColourId, laf.white);
@@ -35,7 +34,7 @@ public:
     {
         Rectangle<float> buttonArea = button.getLocalBounds().toFloat();
         int cornerSize          = 16;
-        int outlineThickness    = 4;
+        int outlineThickness    = 2;
         
         if (isButtonDown) {
             g.setColour(laf.white.withAlpha(0.8f));
@@ -53,6 +52,4 @@ public:
     };
     
     AuditionLookAndFeel laf;
-    
-    Colour  bgColour1, bgColour2;
 };

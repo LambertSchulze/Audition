@@ -14,9 +14,6 @@
 #include "../Gui/ListboxLookAndFeel.h"
 #include "../ControlComponent/SourceComponent.h"
 
-//==============================================================================
-/*
- */
 class AudioFileListLabelComponent : public Label
 {
 public:

@@ -14,7 +14,8 @@
 #pragma once
 
 
-namespace UI {
+namespace UI
+{
     const int headerHeight          = 80;
     const int headerMargin          = 16;
     
@@ -25,7 +26,7 @@ namespace UI {
     
     const int fileListButtonRowHeight   = 33;
     const int fileListButtonWidth       = 30;
-}
+};
 
 #define TRANSPORT   vt.getChildWithName(IDs::Transport)
 #define FILELIST    vt.getChildWithName(IDs::FileList)

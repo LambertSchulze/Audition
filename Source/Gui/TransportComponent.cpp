@@ -8,6 +8,7 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "TransportComponent.h"
+#include "../Core/Shapes.h"
 
 //==============================================================================
 TransportComponent::TransportComponent(ValueTree& tree)
@@ -47,27 +48,26 @@ void TransportComponent::paint(Graphics& g)
     if (state == Disabled) {
         //draw grey play heads
         g.setColour(lookAndFeel.laf.lightergrey);
-        paintTriangle(g, lBBounds, false);
-        paintTriangle(g, rBBounds, false);
+        DrawShape::playOutline(g, lBBounds);
+        DrawShape::playOutline(g, rBBounds);
     }
     
     if (state == OriginalEnabled) {
         g.setGradientFill(gradient);
         g.drawText("ORIGINAL", 0, 0, width, height, Justification::centred);
-        if (TRANSPORT[IDs::TransportState] == "Playing") paintSquare(g, lBBounds);
-        if (TRANSPORT[IDs::TransportState] == "Stopped") paintTriangle(g, lBBounds, true);
+        if (TRANSPORT[IDs::TransportState] == "Playing") DrawShape::stop(g, lBBounds);
+        if (TRANSPORT[IDs::TransportState] == "Stopped") DrawShape::play(g, lBBounds);
         g.setColour(lookAndFeel.laf.lightergrey);
-        paintTriangle(g, rBBounds, false);
+        DrawShape::playOutline(g, rBBounds);
     }
     
     if (state == BothEnabled) {
         if (labelShowingOriginal) {
             g.setGradientFill(gradient);
             g.drawText("ORIGINAL", 0, 0, width, height, Justification::centred);
-            if (TRANSPORT[IDs::TransportState] == "Playing") paintSquare(g, lBBounds);
-            if (TRANSPORT[IDs::TransportState] == "Stopped") paintTriangle(g, lBBounds, true);
-            //g.setColour(lookAndFeel.laf.grey);
-            paintTriangle(g, rBBounds, true);
+            if (TRANSPORT[IDs::TransportState] == "Playing") DrawShape::stop(g, lBBounds);
+            if (TRANSPORT[IDs::TransportState] == "Stopped") DrawShape::play(g, lBBounds);
+            DrawShape::play(g, rBBounds);
         }
         else {
             g.setGradientFill(gradient);
@@ -77,12 +77,10 @@ void TransportComponent::paint(Graphics& g)
             g.setColour(lookAndFeel.laf.white);
             g.fillEllipse(rBBounds.reduced(3));
             g.drawText("EFFECT", 0, 0, width, height, Justification::centred);
-            paintTriangle(g, lBBounds, true);
+            DrawShape::play(g, lBBounds);
             g.setGradientFill(gradient);
-            if (TRANSPORT[IDs::TransportState] == "Playing") paintSquare(g, rBBounds);
-            if (TRANSPORT[IDs::TransportState] == "Stopped") paintTriangle(g, rBBounds, true);
-            //g.setColour(lookAndFeel.laf.grey);
-            //paintTriangle(g, lBBounds, true);
+            if (TRANSPORT[IDs::TransportState] == "Playing") DrawShape::stop(g, rBBounds);
+            if (TRANSPORT[IDs::TransportState] == "Stopped") DrawShape::play(g, rBBounds);
         }
     }
 }
@@ -97,7 +95,6 @@ void TransportComponent::valueTreePropertyChanged (ValueTree& changedTree, const
     // if there is a selected effect
     if (property == IDs::EffectToPlay && changedTree.hasProperty(IDs::EffectToPlay)) {
         state = BothEnabled;
-        //DBG("Control fully enabled");   
     }
     // if the effect for playback got removed
     else if (changedTree.hasType(IDs::Transport) && !changedTree.hasProperty(IDs::EffectToPlay)) {
@@ -173,40 +170,6 @@ void TransportComponent::effectButtonClicked()
         }
     }
     repaint();
-}
-
-void TransportComponent::paintTriangle(Graphics& g, Rectangle<float>& r, bool isFilled)
-{
-    float rad    = r.getHeight() / 2;
-    float side   = rad * 1.1;
-    float height = (side * 1.73) / 2;
-    auto pos     = r.getPosition();
-    auto pointA  = Point<float>(pos.getX()+(rad - height/3), pos.getY()+(rad + side/2));
-    auto pointB  = Point<float>(pos.getX()+(rad + (2*height/3)), pos.getY()+(rad));
-    auto pointC  = Point<float>(pos.getX()+(rad - height/3), pos.getY()+(rad - side/2));
-    
-    Path p;
-    p.startNewSubPath(pointA);
-    p.lineTo(pointB);
-    p.lineTo(pointC);
-    p.closeSubPath();
-    
-    if (isFilled)   g.fillPath(p);
-    else            g.strokePath(p, PathStrokeType(2));
-}
-
-void TransportComponent::paintSquare(Graphics& g, Rectangle<float>& r)
-{
-    auto square = r.withSizeKeepingCentre(r.getWidth()/2.2, r.getHeight()/2.22);
-    
-    Path p;
-    p.startNewSubPath(square.getTopLeft());
-    p.lineTo(square.getTopRight());
-    p.lineTo(square.getBottomRight());
-    p.lineTo(square.getBottomLeft());
-    p.closeSubPath();
-    
-    g.fillPath(p);
 }
 
 void TransportComponent::switchLabelText (bool toOriginal)

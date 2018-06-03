@@ -9,7 +9,6 @@
  */
 
 #include "../../JuceLibraryCode/JuceHeader.h"
-#include "../Definitions/Definitions.h"
 #include "Gui.h"
 
 Gui::Gui()
@@ -29,11 +28,20 @@ Gui::Gui()
     headerButtons[1]->setButtonText("Practise");
     headerButtons[2]->setButtonText("Statistics");
     headerButtons[3]->setButtonText("About");
+    
+    addAndMakeVisible(&fileList);
+    
+    stretchBarLayout.setItemLayout (0, 200, -0.8, -0.35);
+    stretchBarLayout.setItemLayout (1, 4, 4, 4);
+    stretchBarLayout.setItemLayout (2, 150, -1.0, -0.65);
+    
+    stretchBar = new StretchableLayoutResizerBar (&stretchBarLayout, 1, true);
+    addAndMakeVisible (stretchBar);
 }
 
 Gui::~Gui()
 {
-    
+    setLookAndFeel(nullptr);
 }
 
 void Gui::paint(Graphics& g)
@@ -50,11 +58,8 @@ void Gui::paint(Graphics& g)
     ColourGradient headerGradient = ColourGradient (laf.gradient1A, 0, 0, laf.gradient1B, this->getWidth(), UI::headerHeight, true);
     g.setGradientFill(headerGradient);
     g.fillRect(header);
-    g.setColour(laf.lightergrey);
-    g.fillRect(footer);
-    
-    g.setColour(laf.grey);
-    g.drawVerticalLine(UI::sidebarWidth - 1, height-UI::footerHeight+UI::footerMargin, height-UI::footerMargin);
+//    g.setColour(laf.lightergrey);
+//    g.fillRect(footer);
 }
 
 void Gui::resized()
@@ -69,8 +74,12 @@ void Gui::resized()
     auto page = b;
     
     for (auto button : headerButtons) {
-        button->setBounds(header.removeFromLeft(width/headerButtons.size()).reduced(UI::headerMargin));
+        button->setBounds(header.removeFromLeft(width/headerButtons.size())
+                          .reduced(UI::headerMargin));
     }
+    
+    Component* componentsToStretch[] = {&fileList, stretchBar, nullptr};
+    stretchBarLayout.layOutComponents (componentsToStretch, 3, 0, UI::headerHeight, width, height - UI::headerHeight, false, true);
 }
 
 void Gui::setupAreas()

@@ -12,15 +12,12 @@
 #include "SourceComponent.h"
 #include "../Gui/AudioFileListLabelComponent.h"
 
-//==============================================================================
-SourceComponent::SourceComponent(ValueTree& tree)
-:   vt(tree),
-    fileListBox {{}, this},
+SourceComponent::SourceComponent()
+:   fileListBox {{}, this},
     addButton("Add", DrawableButton::ButtonStyle::ImageOnButtonBackground),
     removeButton("Remove", DrawableButton::ButtonStyle::ImageOnButtonBackground),
     clearButton("Clear", DrawableButton::ButtonStyle::ImageOnButtonBackground)
 {
-    ScopedPointer<Drawable> addImage    = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_add_black_48px.svg"));
     ScopedPointer<Drawable> removeImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_remove_black_48px.svg"));
     ScopedPointer<Drawable> clearImage  = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_clear_black_48px.svg"));
     
@@ -42,10 +39,12 @@ SourceComponent::SourceComponent(ValueTree& tree)
     fileListBox.getHeader().Component::setSize(this->getWidth(), fileListBox.getRowHeight());
 //    fileListBox.getVerticalScrollBar().setAutoHide(false);
     
+    auto addImage = DrawShape::add();
+    
     addButton.      setConnectedEdges(Button::ConnectedOnRight);
     removeButton.   setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
     clearButton.    setConnectedEdges(Button::ConnectedOnLeft);
-    addButton.      setImages(addImage);
+    addButton.      setImages(&addImage);
     removeButton.   setImages(removeImage);
     clearButton.    setImages(clearImage);
     

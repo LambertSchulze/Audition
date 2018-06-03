@@ -47,8 +47,6 @@ private:
     
     bool labelShowingOriginal;
     
-    void paintTriangle  (Graphics&, Rectangle<float>&, bool isFilled);
-    void paintSquare    (Graphics&, Rectangle<float>&);
     void switchLabelText (bool);
     void updateState();
     

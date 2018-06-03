@@ -11,6 +11,8 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Definitions/Definitions.h"
+#include "../ControlComponent/SourceComponent.h"
 #include "AuditionLookAndFeel.h"
 #include "MainMenuLookAndFeel.h"
 
@@ -30,4 +32,7 @@ private:
     MainMenuLookAndFeel mmlaf;
     
     OwnedArray<TextButton> headerButtons;
+    SourceComponent fileList;
+    ScopedPointer<StretchableLayoutResizerBar> stretchBar;
+    StretchableLayoutManager stretchBarLayout;
 };
