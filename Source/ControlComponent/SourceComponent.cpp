@@ -10,6 +10,7 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "SourceComponent.h"
+#include "../Core/Shapes.h"
 #include "../Gui/AudioFileListLabelComponent.h"
 
 SourceComponent::SourceComponent()
@@ -18,9 +19,6 @@ SourceComponent::SourceComponent()
     removeButton("Remove", DrawableButton::ButtonStyle::ImageOnButtonBackground),
     clearButton("Clear", DrawableButton::ButtonStyle::ImageOnButtonBackground)
 {
-    ScopedPointer<Drawable> removeImage = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_remove_black_48px.svg"));
-    ScopedPointer<Drawable> clearImage  = Drawable::createFromSVGFile(File("/Users/lambertschulze/Documents/Develop/Audition/Assets/buttons/ic_clear_black_48px.svg"));
-    
     addAndMakeVisible (&fileListBox);
     addAndMakeVisible (&addButton);
     addAndMakeVisible (&removeButton);
@@ -40,13 +38,12 @@ SourceComponent::SourceComponent()
 //    fileListBox.getVerticalScrollBar().setAutoHide(false);
     
     auto addImage = DrawShape::add();
+    auto removeImage = DrawShape::remove();
+    auto clearImage = DrawShape::clear();
     
     addButton.      setConnectedEdges(Button::ConnectedOnRight);
     removeButton.   setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
     clearButton.    setConnectedEdges(Button::ConnectedOnLeft);
-    addButton.      setImages(&addImage);
-    removeButton.   setImages(removeImage);
-    clearButton.    setImages(clearImage);
     
     addButton.      onClick = [this] { addFile(); };
     removeButton.   onClick = [this] { removeFile(fileListBox.getSelectedRow()); };

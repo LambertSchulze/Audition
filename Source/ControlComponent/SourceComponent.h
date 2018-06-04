@@ -12,7 +12,6 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
-#include "../Core/Shapes.h"
 #include "../Gui/ListboxLookAndFeel.h"
 
 class SourceComponent :     public Component,

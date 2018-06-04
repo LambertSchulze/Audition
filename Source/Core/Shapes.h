@@ -36,93 +36,15 @@ namespace
 
 namespace DrawShape
 {
-    const DrawablePath add ()
-    {
-        Path p;
-        p.startNewSubPath(0, 5);
-        p.lineTo(10, 5);
-        p.startNewSubPath(5, 0);
-        p.lineTo(5, 10);
-        
-        DrawablePath addPath;
-        addPath.setPath(p);
-        addPath.setFill(Colours::black);
-        
-        return addPath;
-    }
+    const DrawablePath add ();
+    const DrawablePath remove ();
+    const DrawablePath clear ();
     
-    const DrawablePath remove ()
-    {
-        Path p;
-        p.startNewSubPath(0, 5);
-        p.lineTo(10, 0);
-        
-        DrawablePath deletePath;
-        deletePath.setPath(p);
-        deletePath.setFill(Colours::black);
-        
-        return deletePath;
-    }
+    void stop (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn);
+    void play (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn);
+    void playOutline (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn);
     
-    const DrawablePath clear ()
-    {
-        Path p;
-        p.startNewSubPath(0, 5);
-        p.lineTo(10, 5);
-        p.startNewSubPath(5, 0);
-        p.lineTo(5, 10);
-        auto rotation = AffineTransform().rotated(45);
-        p.applyTransform(rotation);
-        
-        DrawablePath clearPath;
-        clearPath.setPath(p);
-        clearPath.setFill(Colours::black);
-        
-        return clearPath;
-    }
-    
-    void stop (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn)
-    {
-        auto square = areaToDrawIn.withSizeKeepingCentre(
-                        areaToDrawIn.getWidth() / 2.2,
-                        areaToDrawIn.getHeight() / 2.2);
-        
-        Path p;
-        p.startNewSubPath(square.getTopLeft());
-        p.lineTo(square.getTopRight());
-        p.lineTo(square.getBottomRight());
-        p.lineTo(square.getBottomLeft());
-        p.closeSubPath();
-        
-        graphicsThatDraws.fillPath(p);
-    }
-    
-    void play (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn)
-    {
-        const Path triangle = trianglePath(areaToDrawIn);
-        
-        graphicsThatDraws.fillPath(triangle);
-    }
-    
-    void playOutline (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn)
-    {
-        const Path triangle = trianglePath(areaToDrawIn);
-        auto pathStroke = PathStrokeType(2);
-        
-        graphicsThatDraws.strokePath(triangle, pathStroke);
-    }
-    
-    void shuffle (Graphics& graphicsThatDraws, Rectangle<float>& areaToDrawIn)
-    {
-        auto topLeft = areaToDrawIn.getTopLeft();
-        auto topRight = areaToDrawIn.getTopRight();
-        auto bottomLeft = areaToDrawIn.getBottomLeft();
-        auto bottomRight = areaToDrawIn.getBottomRight();
-        
-        Path p;
-        p.startNewSubPath(topLeft);
-        p.cubicTo(topRight, bottomLeft, bottomRight);
-        p.startNewSubPath(bottomLeft);
-        p.cubicTo(bottomRight, topLeft, topRight);
-    }
+    const DrawablePath shuffle ();
+    const DrawablePath repeat ();
+    const DrawablePath autostop ();
 };

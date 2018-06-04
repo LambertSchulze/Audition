@@ -10,6 +10,7 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "Gui.h"
+#include "../Core/Shapes.h"
 
 Gui::Gui()
 {
@@ -30,13 +31,42 @@ Gui::Gui()
     headerButtons[3]->setButtonText("About");
     
     addAndMakeVisible(&fileList);
+    fileList.setLookAndFeel(&fllaf);
+    fileList.setMultipleSelectionEnabled(false);
     
-    stretchBarLayout.setItemLayout (0, 200, -0.8, -0.35);
+    fileList.getHeader().setLookAndFeel(&fllaf);
+    fileList.getHeader().addColumn("Filename", 1, 150, 100, -1, (TableHeaderComponent::visible | TableHeaderComponent::resizable));
+    fileList.getHeader().addColumn("Start", 2, 48, 48, 48, TableHeaderComponent::visible);
+    fileList.getHeader().setStretchToFitActive(true);
+    fileList.getHeader().setSize(UI::sidebarWidth, fileList.getRowHeight());
+    
+    fileSettingButtons.add(new DrawableButton{"Add Button", DrawableButton::ImageOnButtonBackground});
+    fileSettingButtons.add(new DrawableButton{"Remove Button", DrawableButton::ImageOnButtonBackground});
+    fileSettingButtons.add(new DrawableButton{"Clear Button", DrawableButton::ImageOnButtonBackground});
+    fileSettingButtons.add(new DrawableButton{"Shuffle Button", DrawableButton::ImageOnButtonBackground});
+    fileSettingButtons.add(new DrawableButton{"Repeat Button", DrawableButton::ImageOnButtonBackground});
+    fileSettingButtons.add(new DrawableButton{"Autostop Button", DrawableButton::ImageOnButtonBackground});
+    
+    buttonImages.add(new DrawablePath(DrawShape::add()));
+    buttonImages.add(new DrawablePath(DrawShape::remove()));
+    buttonImages.add(new DrawablePath(DrawShape::clear()));
+    buttonImages.add(new DrawablePath(DrawShape::shuffle()));
+    buttonImages.add(new DrawablePath(DrawShape::repeat()));
+    buttonImages.add(new DrawablePath(DrawShape::autostop()));
+    
+    for (int i = 0; i < fileSettingButtons.size(); i++) {
+        addAndMakeVisible(fileSettingButtons[i]);
+        fileSettingButtons[i]->setLookAndFeel(&fllaf);
+        fileSettingButtons[i]->setImages(buttonImages[i]);
+    }
+    
+    stretchBarLayout.setItemLayout (0, 210, -0.8, 210);
     stretchBarLayout.setItemLayout (1, 4, 4, 4);
     stretchBarLayout.setItemLayout (2, 150, -1.0, -0.65);
     
     stretchBar = new StretchableLayoutResizerBar (&stretchBarLayout, 1, true);
     addAndMakeVisible (stretchBar);
+    stretchBar->setLookAndFeel(&fllaf);
 }
 
 Gui::~Gui()
@@ -51,15 +81,34 @@ void Gui::paint(Graphics& g)
     
     auto b = getLocalBounds();
     auto header = b.removeFromTop(UI::headerHeight);
-    auto footer = b.removeFromBottom(UI::footerHeight);
-    auto sidebar = b.removeFromLeft(UI::sidebarWidth);
+    auto sidebar = b.removeFromLeft(stretchBar->getRight() - stretchBar->getWidth());
     auto page = b;
     
     ColourGradient headerGradient = ColourGradient (laf.gradient1A, 0, 0, laf.gradient1B, this->getWidth(), UI::headerHeight, true);
     g.setGradientFill(headerGradient);
     g.fillRect(header);
-//    g.setColour(laf.lightergrey);
-//    g.fillRect(footer);
+    
+    const int rowHeight (fileList.getRowHeight());
+
+    auto buttonrowArea (sidebar.removeFromBottom(UI::fileListButtonRowHeight * 2));
+    auto emptyArea (sidebar.withTrimmedTop(rowHeight * (fileList.getNumRows() + 1)));
+    
+    g.setColour(AuditionColours::lightergrey);
+    g.fillRect(buttonrowArea.removeFromTop(1));
+    g.fillRect(buttonrowArea.removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
+    g.fillRect (sidebar.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
+    
+    g.setColour(AuditionColours::lightgrey);
+    if (!(fileList.getNumRows() % 2)) g.fillRect(emptyArea.removeFromTop(rowHeight));
+    while (!emptyArea.isEmpty()) {
+        g.fillRect(emptyArea.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
+        g.fillRect(emptyArea.removeFromTop(rowHeight));
+    }
+    
+    if (fileList.getNumRows() < 1) {
+        g.setColour(AuditionColours::lightergrey);
+        g.drawText("Add an audio file to start listening.", 0, (getHeight() / (2*rowHeight))*rowHeight + (3 * rowHeight / 4 ), sidebar.getWidth(), rowHeight, Justification::horizontallyCentred);
+    }
 }
 
 void Gui::resized()
@@ -69,17 +118,29 @@ void Gui::resized()
     
     auto b = getLocalBounds();
     auto header = b.removeFromTop(UI::headerHeight);
-    auto footer = b.removeFromBottom(UI::footerHeight);
-    auto sidebar = b.removeFromLeft(UI::sidebarWidth);
-    auto page = b;
     
     for (auto button : headerButtons) {
         button->setBounds(header.removeFromLeft(width/headerButtons.size())
                           .reduced(UI::headerMargin));
     }
     
-    Component* componentsToStretch[] = {&fileList, stretchBar, nullptr};
+    Component* componentsToStretch[] = {nullptr, stretchBar, nullptr};
     stretchBarLayout.layOutComponents (componentsToStretch, 3, 0, UI::headerHeight, width, height - UI::headerHeight, false, true);
+    
+    auto sidebar = b.removeFromLeft(stretchBar->getRight() - stretchBar->getWidth());
+    auto bottomButtonRow = sidebar.removeFromBottom(UI::fileListButtonRowHeight).reduced(14, 5);
+    auto upperButtonRow = sidebar.removeFromBottom(UI::fileListButtonRowHeight).reduced(14, 5);
+    
+    fileSettingButtons[0]->setBounds(upperButtonRow.removeFromLeft(UI::fileListButtonWidth));
+    fileSettingButtons[1]->setBounds(upperButtonRow.removeFromLeft(UI::fileListButtonWidth));
+    fileSettingButtons[2]->setBounds(upperButtonRow.removeFromRight(UI::fileListButtonWidth));
+    fileSettingButtons[3]->setBounds(bottomButtonRow.removeFromLeft(bottomButtonRow.getWidth() / 3).withSizeKeepingCentre(UI::fileListButtonWidth, bottomButtonRow.getHeight()));
+    fileSettingButtons[4]->setBounds(bottomButtonRow.removeFromLeft(bottomButtonRow.getWidth() / 2).withSizeKeepingCentre(UI::fileListButtonWidth, bottomButtonRow.getHeight()));
+    fileSettingButtons[5]->setBounds(bottomButtonRow.removeFromLeft(bottomButtonRow.getWidth()).withSizeKeepingCentre(UI::fileListButtonWidth, bottomButtonRow.getHeight()));
+    
+    fileList.setBounds(sidebar);
+    
+    repaint();
 }
 
 void Gui::setupAreas()

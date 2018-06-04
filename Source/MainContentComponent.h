@@ -15,6 +15,7 @@
 #include "Definitions/Definitions.h"
 #include "Definitions/Effects.h"
 #include "Gui/Gui.h"
+#include "Core/GuiManager.h"
 #include "Core/TransportManager.h"
 
 class MainContentComponent   :  public AudioAppComponent
@@ -41,6 +42,7 @@ private:
     OwnedArray<Effect> effectList;
     
     Gui gui;
+    GuiManager guiManager;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

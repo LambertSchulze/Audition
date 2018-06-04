@@ -12,7 +12,7 @@
 
 //==============================================================================
 MainContentComponent::MainContentComponent(ValueTree& vt)
-:   tree(vt), transport(transportSource)
+:   tree(vt), transport(transportSource), guiManager(transport)
 {
     setAudioChannels (2, 2);
     

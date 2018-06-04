@@ -13,6 +13,7 @@
 #include "../Definitions/Definitions.h"
 
 class TransportComponent :  public  Component,
+                                    ChangeBroadcaster,
                                     ValueTree::Listener
 {
 public:

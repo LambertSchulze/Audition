@@ -25,8 +25,28 @@ namespace UI
     const int footerMargin          = 8;
     
     const int fileListButtonRowHeight   = 33;
-    const int fileListButtonWidth       = 30;
+    const int fileListButtonWidth       = 28;
+    
+    const float shapeStrokeThickness     = 0.35;
 };
+
+namespace AuditionColours {
+    const Colour
+            black       {0, 0, 0},
+            grey        {142, 142, 145},
+            lightergrey {205, 205, 208},
+            lightgrey   {242, 242, 245},
+            white       {255, 255, 255},
+    
+            blue        {27, 173, 248},
+            brown       {162, 132, 94},
+            green       {99, 218, 56},
+            orange      {255, 149, 0},
+            pink        {255, 41, 104},
+            purple      {204, 115, 225},
+            red         {255, 59, 48},
+            yellow      {255, 204, 0};
+}
 
 #define TRANSPORT   vt.getChildWithName(IDs::Transport)
 #define FILELIST    vt.getChildWithName(IDs::FileList)

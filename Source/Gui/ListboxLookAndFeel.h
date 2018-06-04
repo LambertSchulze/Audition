@@ -20,7 +20,6 @@ public:
     : highlightedRowColour(laf.blue), altRowColour(laf.lightgrey), bgTextColour(laf.lightergrey)
     {
         setColour(ListBox::ColourIds::backgroundColourId, Colours::transparentWhite);
-//        setColour(ListBox::ColourIds::outlineColourId, Colours::green);
         setColour(ListBox::ColourIds::textColourId, laf.black);
         
         setColour(TableHeaderComponent::ColourIds::textColourId, laf.black);
@@ -28,7 +27,6 @@ public:
         setColour(TableHeaderComponent::ColourIds::outlineColourId, laf.lightergrey);
         setColour(TableHeaderComponent::ColourIds::highlightColourId, laf.white);
         
-//        setColour(Label::ColourIds::backgroundColourId, Colours::pink);
         setColour(Label::ColourIds::textColourId, laf.black);
         setColour(Label::ColourIds::outlineColourId, Colours::transparentWhite);
         setColour(Label::ColourIds::backgroundWhenEditingColourId, laf.white);
@@ -38,12 +36,6 @@ public:
         setColour(TextEditor::ColourIds::highlightColourId, laf.blue.brighter());
         
         setColour(ScrollBar::ColourIds::thumbColourId, laf.grey);
-//        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::red);
-//        setColour(ScrollBar::ColourIds::trackColourId, Colours::red);
-        
-//        setColour(TextButton::ColourIds::buttonColourId, Colours::transparentWhite);
-//        setColour(TextButton::ColourIds::buttonOnColourId, laf.lightgrey);
-//        setColour(TextButton::ColourIds::textColourOffId, laf.black);
     };
     
     ~ListboxLookAndFeel()

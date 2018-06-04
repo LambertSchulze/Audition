@@ -12,9 +12,10 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
-#include "../ControlComponent/SourceComponent.h"
+
 #include "AuditionLookAndFeel.h"
 #include "MainMenuLookAndFeel.h"
+#include "ListboxLookAndFeel.h"
 
 class Gui  : public Component
 {
@@ -30,9 +31,13 @@ public:
 private:
     AuditionLookAndFeel laf;
     MainMenuLookAndFeel mmlaf;
+    ListboxLookAndFeel fllaf;
     
     OwnedArray<TextButton> headerButtons;
-    SourceComponent fileList;
+    TableListBox fileList;
+    OwnedArray<DrawableButton> fileSettingButtons;
+    OwnedArray<Drawable> buttonImages;
+    
     ScopedPointer<StretchableLayoutResizerBar> stretchBar;
     StretchableLayoutManager stretchBarLayout;
 };
