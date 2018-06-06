@@ -12,19 +12,19 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Gui/ListboxLookAndFeel.h"
-#include "../ControlComponent/SourceComponent.h"
+#include "../Core/FileManager.h"
 
 class AudioFileListLabelComponent : public Label
 {
 public:
-    AudioFileListLabelComponent(SourceComponent&);
+    AudioFileListLabelComponent(FileManager&);
     ~AudioFileListLabelComponent();
     
     void textWasEdited() override;
     void setRow (const int);
     
 private:
-    SourceComponent& owner;
+    FileManager& owner;
     int row;
     
     ListboxLookAndFeel lookAndFeel;

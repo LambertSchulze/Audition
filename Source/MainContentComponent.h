@@ -15,8 +15,8 @@
 #include "Definitions/Definitions.h"
 #include "Definitions/Effects.h"
 #include "Gui/Gui.h"
-#include "Core/GuiManager.h"
 #include "Core/TransportManager.h"
+#include "Core/FileManager.h"
 
 class MainContentComponent   :  public AudioAppComponent
 {
@@ -36,13 +36,14 @@ public:
 private:
     //==============================================================================
     ValueTree tree;
+    Gui gui;
     
     AudioTransportSource transportSource;
     TransportManager transport;
     OwnedArray<Effect> effectList;
+    FileManager fileManager;
     
-    Gui gui;
-    GuiManager guiManager;
+    friend Gui;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

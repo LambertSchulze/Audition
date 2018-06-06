@@ -129,11 +129,11 @@ Component* SourceComponent::refreshComponentForCell (int rowNumber, int columnId
     {
         auto* timeLabel = static_cast<AudioFileListLabelComponent*>(existingComponentToUpdate);
         
-        if (timeLabel == nullptr) timeLabel = new AudioFileListLabelComponent(*this);
-        timeLabel->setRow(rowNumber);
-        if (isRowSelected) timeLabel->setColour(Label::ColourIds::textColourId, lookAndFeel.laf.white);
-        else timeLabel->setColour(Label::ColourIds::textColourId, lookAndFeel.laf.black);
-        return timeLabel;
+//        if (timeLabel == nullptr) timeLabel = new AudioFileListLabelComponent(*this);
+//        timeLabel->setRow(rowNumber);
+//        if (isRowSelected) timeLabel->setColour(Label::ColourIds::textColourId, lookAndFeel.laf.white);
+//        else timeLabel->setColour(Label::ColourIds::textColourId, lookAndFeel.laf.black);
+//        return timeLabel;
     }
     //jassert (existingComponentToUpdate == nullptr);
     return nullptr;

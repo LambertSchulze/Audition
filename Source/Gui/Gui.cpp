@@ -11,8 +11,13 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "Gui.h"
 #include "../Core/Shapes.h"
+#include "../MainContentComponent.h"
+#include "../WindowContainer/TitleScreen.h"
+#include "../WindowContainer/OverviewScreen.h"
+#include "../WindowContainer/QuickQuizScreen.h"
 
-Gui::Gui()
+Gui::Gui (ValueTree& tree)
+: fileList("File List", nullptr)
 {
     headerButtons.add(new TextButton{"Overview Screen"});
     headerButtons.add(new TextButton{"QuickQuiz Screen"});
@@ -29,6 +34,10 @@ Gui::Gui()
     headerButtons[1]->setButtonText("Practise");
     headerButtons[2]->setButtonText("Statistics");
     headerButtons[3]->setButtonText("About");
+    headerButtons[0]->onClick = [this] {setPage(1);};
+    headerButtons[1]->onClick = [this] {setPage(2);};
+    headerButtons[2]->onClick = [this] {setPage(3);};
+    headerButtons[3]->onClick = [this] {setPage(3);};
     
     addAndMakeVisible(&fileList);
     fileList.setLookAndFeel(&fllaf);
@@ -67,6 +76,19 @@ Gui::Gui()
     stretchBar = new StretchableLayoutResizerBar (&stretchBarLayout, 1, true);
     addAndMakeVisible (stretchBar);
     stretchBar->setLookAndFeel(&fllaf);
+    
+    if (pages.isEmpty()) {
+        pages.add(new TitleScreen());
+        pages.add(new OverviewScreen(tree));
+        pages.add(new QuickQuizScreen(tree));
+        pages.add(new Component());
+    }
+    
+    for (auto page : pages) {
+        addAndMakeVisible(page);
+        page->setVisible(false);
+    }
+    pages[0]->setVisible(true);
 }
 
 Gui::~Gui()
@@ -90,13 +112,13 @@ void Gui::paint(Graphics& g)
     
     const int rowHeight (fileList.getRowHeight());
 
-    auto buttonrowArea (sidebar.removeFromBottom(UI::fileListButtonRowHeight * 2));
-    auto emptyArea (sidebar.withTrimmedTop(rowHeight * (fileList.getNumRows() + 1)));
+    auto buttonrowArea (sidebar.removeFromBottom(UI::fileListButtonRowHeight));
+    auto emptyArea (sidebar.withTrimmedTop(rowHeight * (fileList.getNumRows())));
     
     g.setColour(AuditionColours::lightergrey);
     g.fillRect(buttonrowArea.removeFromTop(1));
     g.fillRect(buttonrowArea.removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
-    g.fillRect (sidebar.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
+    g.fillRect(sidebar.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
     
     g.setColour(AuditionColours::lightgrey);
     if (!(fileList.getNumRows() % 2)) g.fillRect(emptyArea.removeFromTop(rowHeight));
@@ -128,22 +150,37 @@ void Gui::resized()
     stretchBarLayout.layOutComponents (componentsToStretch, 3, 0, UI::headerHeight, width, height - UI::headerHeight, false, true);
     
     auto sidebar = b.removeFromLeft(stretchBar->getRight() - stretchBar->getWidth());
-    auto bottomButtonRow = sidebar.removeFromBottom(UI::fileListButtonRowHeight).reduced(14, 5);
-    auto upperButtonRow = sidebar.removeFromBottom(UI::fileListButtonRowHeight).reduced(14, 5);
+    auto fileListButtonRow = sidebar.removeFromBottom(UI::fileListButtonRowHeight).reduced(14, 5);
     
-    fileSettingButtons[0]->setBounds(upperButtonRow.removeFromLeft(UI::fileListButtonWidth));
-    fileSettingButtons[1]->setBounds(upperButtonRow.removeFromLeft(UI::fileListButtonWidth));
-    fileSettingButtons[2]->setBounds(upperButtonRow.removeFromRight(UI::fileListButtonWidth));
-    fileSettingButtons[3]->setBounds(bottomButtonRow.removeFromLeft(bottomButtonRow.getWidth() / 3).withSizeKeepingCentre(UI::fileListButtonWidth, bottomButtonRow.getHeight()));
-    fileSettingButtons[4]->setBounds(bottomButtonRow.removeFromLeft(bottomButtonRow.getWidth() / 2).withSizeKeepingCentre(UI::fileListButtonWidth, bottomButtonRow.getHeight()));
-    fileSettingButtons[5]->setBounds(bottomButtonRow.removeFromLeft(bottomButtonRow.getWidth()).withSizeKeepingCentre(UI::fileListButtonWidth, bottomButtonRow.getHeight()));
+    fileSettingButtons[0]->setBounds(fileListButtonRow.removeFromLeft(UI::fileListButtonWidth));
+    fileSettingButtons[1]->setBounds(fileListButtonRow.removeFromLeft(UI::fileListButtonWidth));
+    fileSettingButtons[2]->setBounds(fileListButtonRow.removeFromRight(UI::fileListButtonWidth));
     
     fileList.setBounds(sidebar);
+    
+    b.removeFromLeft(stretchBar->getWidth());
+    for (auto page : pages) {
+        page->setBounds(b);
+    }
     
     repaint();
 }
 
-void Gui::setupAreas()
+void Gui::setPage(int page)
 {
+    for (auto page : pages) {
+        page->setVisible(false);
+    }
+    pages[page]->setVisible(true);
+}
 
+void Gui::hoockToParentObjects()
+// adding Button::Listeners and the TableListBoxModel
+{
+    auto* ptr = this->getParentComponent();
+    auto* owner = dynamic_cast<MainContentComponent*>(ptr);
+    fileList.setModel(&(owner->fileManager));
+    fileSettingButtons[0]->addListener(&(owner->fileManager));
+    fileSettingButtons[1]->addListener(&(owner->fileManager));
+    fileSettingButtons[2]->addListener(&(owner->fileManager));
 }

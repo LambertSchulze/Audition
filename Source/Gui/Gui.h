@@ -17,18 +17,18 @@
 #include "MainMenuLookAndFeel.h"
 #include "ListboxLookAndFeel.h"
 
-class Gui  : public Component
+struct Gui  : public Component
 {
 public:
-    Gui();
-    ~Gui();
+    Gui (ValueTree& tree);
+    ~Gui ();
     
     void paint (Graphics& g) override;
     void resized() override;
     
-    void setupAreas();
+    void setPage(int page);
+    void hoockToParentObjects();
     
-private:
     AuditionLookAndFeel laf;
     MainMenuLookAndFeel mmlaf;
     ListboxLookAndFeel fllaf;
@@ -37,7 +37,7 @@ private:
     TableListBox fileList;
     OwnedArray<DrawableButton> fileSettingButtons;
     OwnedArray<Drawable> buttonImages;
-    
     ScopedPointer<StretchableLayoutResizerBar> stretchBar;
     StretchableLayoutManager stretchBarLayout;
+    OwnedArray<Component> pages;
 };

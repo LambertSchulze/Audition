@@ -30,6 +30,25 @@ void TransportManager::changeListenerCallback(ChangeBroadcaster *thingThatChange
     }
 }
 
+void TransportManager::buttonClicked (Button *button)
+{
+    
+}
+
+void TransportManager::setTransportSource ()
+{
+    auto file = File(playbackFile);
+    auto* audioReader = formatManager.createReaderFor(file);
+    
+    if (audioReader != nullptr) {
+        std::unique_ptr<AudioFormatReaderSource> newAudioSource (new AudioFormatReaderSource(audioReader, true));
+        transportSource.setSource(newAudioSource.get(), 0, nullptr, audioReader->sampleRate);
+        transportSource.setPosition(startTime);
+        readerSource.reset (newAudioSource.release());
+    }
+    DBG("set the sauce");
+}
+
 void TransportManager::setTransportTo(const TransportState& transportState)
 {
     if (this->transportState != transportState) {
@@ -37,6 +56,7 @@ void TransportManager::setTransportTo(const TransportState& transportState)
         
         switch (this->transportState) {
             case STARTING:
+                setTransportSource();
                 transportSource.start();
                 break;
                 
@@ -54,52 +74,51 @@ void TransportManager::setTransportTo(const TransportState& transportState)
     }
 }
 
-void TransportManager::setEffectPlayback(bool shouldPlayEffect)
+void TransportManager::setEffectPlayback (bool shouldPlayEffect)
 {
     isPlayingEffect = shouldPlayEffect;
 }
 
-void TransportManager::setEffectToPlay(Effect *effectToPlay)
+void TransportManager::setEffectToPlay (Effect *newEffectToPlay)
 {
-    this->effectToPlay = effectToPlay;
+    effectToPlay = newEffectToPlay;
 }
 
-void TransportManager::setFileForPlayback(String &filePath)
+void TransportManager::setPlaybackFile (const String &newfilePath)
 {
-    auto file = File(filePath);
-    AudioFormatReader* audioReader = formatManager.createReaderFor(file);
-    
-    if (audioReader != nullptr) {
-        ScopedPointer<AudioFormatReaderSource> newAudioSource = new AudioFormatReaderSource(audioReader, true);
-        transportSource.setSource(newAudioSource, 0, nullptr, audioReader->sampleRate);
-        transportSource.setPosition(startTime);
-    }
+    playbackFile = newfilePath;
 }
 
-void TransportManager::setStartPosition(int newStartTime)
+void TransportManager::setStartTime (int newStartTime)
 {
     startTime = newStartTime;
 }
 
-Effect* TransportManager::getEffectToPlay()
+Effect* TransportManager::getEffectToPlay () const
 {
     return effectToPlay;
 }
 
-bool TransportManager::shouldPlayEffect()
+bool TransportManager::shouldPlayEffect() const
 {
     return isPlayingEffect;
 }
 
-void TransportManager::startPlayingOriginal()
+void TransportManager::startPlayingOriginal(const String& filePath, const int& startTime)
 {
-    if (!(transportState == PLAYING && isPlayingEffect == false)) {
-        isPlayingEffect = false;
-        setTransportTo(STARTING);
+    if (filePath != playbackFile) {
+        this->playbackFile = filePath;
     }
+    if (startTime != this->startTime) {
+        this->startTime = startTime;
+    }
+    isPlayingEffect = false;
+    
+    setTransportTo(STOPPED);
+    setTransportTo(STARTING);
 }
 
-void TransportManager::startPlayingWithEffect(Effect *effectToPlay)
+void TransportManager::startPlayingWithEffect(const String& filePath, const int& startTime, Effect* effectToPlay)
 {
     if (!(transportState == PLAYING && isPlayingEffect == true && this->effectToPlay == effectToPlay)) {
         this->effectToPlay = effectToPlay;

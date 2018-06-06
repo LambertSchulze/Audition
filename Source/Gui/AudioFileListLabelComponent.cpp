@@ -13,7 +13,7 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-AudioFileListLabelComponent::AudioFileListLabelComponent(SourceComponent& sc)
+AudioFileListLabelComponent::AudioFileListLabelComponent(FileManager& sc)
 : owner(sc)
 {
     setEditable(true, true, false);
