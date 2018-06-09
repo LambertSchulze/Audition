@@ -12,7 +12,7 @@
 
 //==============================================================================
 MainContentComponent::MainContentComponent(ValueTree& vt)
-:   tree(vt), gui(vt), transport(transportSource), fileManager(vt, gui, transport)
+:   tree(vt), gui(vt), transport(transportSource, gui), fileManager(vt, gui, transport)
 {
     setAudioChannels (0, 2);
     
@@ -33,9 +33,11 @@ MainContentComponent::MainContentComponent(ValueTree& vt)
     addAndMakeVisible(gui);
     setSize(tree.getProperty(IDs::WindowWidth), tree.getProperty(IDs::WindowHeight));
     
-    gui.hoockToParentObjects(); // This function adds Button::Listeners and the TableListBoxModel to the Gui.
-                                // It gets called now because it uses getParentComponent() wich only returns
-                                // true if the Component is already added.
+    gui.Register(); // This function adds Button::Listeners and the TableListBoxModel to the Gui.
+                    // It gets called now because it uses getParentComponent() wich only returns
+                    // true if the Component is already added.
+    
+    gui.fileList.selectRow(0); // now we can default select a row in fileList
 }
 
 MainContentComponent::~MainContentComponent()

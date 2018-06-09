@@ -174,7 +174,7 @@ void DataHandler::setupProperties()
     //    if (mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).isValid()) mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
     
     //DBG ("Property Setup done! Here's the ValueTree:");
-    DBG (vt.toXmlString());
+    //DBG (vt.toXmlString());
 }
 
 void DataHandler::loadData(File file)

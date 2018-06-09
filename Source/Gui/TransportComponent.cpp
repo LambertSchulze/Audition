@@ -11,18 +11,14 @@
 #include "../Core/Shapes.h"
 
 //==============================================================================
-TransportComponent::TransportComponent(ValueTree& tree)
-:   vt(tree)
+TransportComponent::TransportComponent (String name)
 {
-    vt.addListener(this);
-    labelShowingOriginal = true;
-    
-    updateState();
+    Component::setName(name);
 }
 
 TransportComponent::~TransportComponent()
 {
-    vt.removeListener(this);
+    
 }
 
 void TransportComponent::paint(Graphics& g)
@@ -35,38 +31,36 @@ void TransportComponent::paint(Graphics& g)
     g.setFont(g.getCurrentFont().withStyle(1));
 
     //drawing plain background colour
-    g.setColour(lookAndFeel.laf.lightergrey);
+    g.setColour(Colours::transparentWhite);
     g.fillAll();
-    g.setColour(lookAndFeel.laf.lightgrey);
+    g.setColour(AuditionColours::lightgrey);
     g.fillEllipse(lBBounds);
     g.fillEllipse(rBBounds);
     g.fillRect(height/2, 0, width-height, height);
-    g.setColour(lookAndFeel.laf.white);
+    g.setColour(AuditionColours::white);
     g.fillEllipse(lBBounds.reduced(3));
     
-    // draw disabled state
-    if (state == Disabled) {
-        //draw grey play heads
-        g.setColour(lookAndFeel.laf.lightergrey);
+    if (componentState == Disabled) {
+        g.setColour(AuditionColours::lightergrey);
         DrawShape::playOutline(g, lBBounds);
         DrawShape::playOutline(g, rBBounds);
     }
     
-    if (state == OriginalEnabled) {
+    if (componentState == OriginalEnabled) {
         g.setGradientFill(gradient);
         g.drawText("ORIGINAL", 0, 0, width, height, Justification::centred);
-        if (TRANSPORT[IDs::TransportState] == "Playing") DrawShape::stop(g, lBBounds);
-        if (TRANSPORT[IDs::TransportState] == "Stopped") DrawShape::play(g, lBBounds);
-        g.setColour(lookAndFeel.laf.lightergrey);
+            if (originalHeadPressed) DrawShape::stop(g, lBBounds);
+            else                     DrawShape::play(g, lBBounds);
+        g.setColour(AuditionColours::lightergrey);
         DrawShape::playOutline(g, rBBounds);
     }
     
-    if (state == BothEnabled) {
+    if (componentState == BothEnabled) {
         if (labelShowingOriginal) {
             g.setGradientFill(gradient);
             g.drawText("ORIGINAL", 0, 0, width, height, Justification::centred);
-            if (TRANSPORT[IDs::TransportState] == "Playing") DrawShape::stop(g, lBBounds);
-            if (TRANSPORT[IDs::TransportState] == "Stopped") DrawShape::play(g, lBBounds);
+                if (originalHeadPressed) DrawShape::stop(g, lBBounds);
+                else                     DrawShape::play(g, lBBounds);
             DrawShape::play(g, rBBounds);
         }
         else {
@@ -74,13 +68,13 @@ void TransportComponent::paint(Graphics& g)
             g.fillEllipse(lBBounds);
             g.fillEllipse(rBBounds);
             g.fillRect(height/2, 0, width-height, height);
-            g.setColour(lookAndFeel.laf.white);
+            g.setColour(AuditionColours::white);
             g.fillEllipse(rBBounds.reduced(3));
             g.drawText("EFFECT", 0, 0, width, height, Justification::centred);
             DrawShape::play(g, lBBounds);
             g.setGradientFill(gradient);
-            if (TRANSPORT[IDs::TransportState] == "Playing") DrawShape::stop(g, rBBounds);
-            if (TRANSPORT[IDs::TransportState] == "Stopped") DrawShape::play(g, rBBounds);
+                if (effectHeadPressed) DrawShape::stop(g, rBBounds);
+                else                   DrawShape::play(g, rBBounds);
         }
     }
 }
@@ -90,97 +84,70 @@ void TransportComponent::resized()
     auto r (getLocalBounds());
 }
 
-void TransportComponent::valueTreePropertyChanged (ValueTree& changedTree, const Identifier& property)
-{
-    // if there is a selected effect
-    if (property == IDs::EffectToPlay && changedTree.hasProperty(IDs::EffectToPlay)) {
-        state = BothEnabled;
-    }
-    // if the effect for playback got removed
-    else if (changedTree.hasType(IDs::Transport) && !changedTree.hasProperty(IDs::EffectToPlay)) {
-        state = OriginalEnabled;
-    }
-    repaint();
-}
-
-void TransportComponent::valueTreeChildAdded (ValueTree& parentTree, ValueTree& childTree)              { updateState(); }
-void TransportComponent::valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childTree, int index) { updateState(); }
-void TransportComponent::valueTreeChildOrderChanged (ValueTree& parentTree, int oldIndex, int newIndex) {}
-void TransportComponent::valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged) {}
-void TransportComponent::valueTreeRedirected (ValueTree& treeWhichHasBeenChanged) {}
-
 void TransportComponent::mouseDown (const MouseEvent& event)
 {
-    if (state != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition())) originalButtonClicked();
+    if (componentState != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition())) originalButtonClicked();
 
-    if (state == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition())) effectButtonClicked();
+    if (componentState == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition())) effectButtonClicked();
 }
 
-void TransportComponent::originalButtonClicked()
+void TransportComponent::originalButtonClicked (bool dontSendNotification)
 {
     // if Button is enabled
-    if (state != Disabled) {
-        // if original is playing
-        if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == false) {
-            // stop playback
-            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
-        }
-        // if effect is playing
-        else if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == true) {
-            // start original playback
-            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
-            switchLabelText(true);
-            TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
-            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
-        }
-        // if nothing is playing
-        else if (TRANSPORT[IDs::TransportState] == "Stopped") {
-            // start original playback
-            switchLabelText(true);
-            TRANSPORT.setProperty(IDs::IsProcessing, false, nullptr);
-            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
-        }
+    if (componentState != Disabled) {
+        originalHeadPressed =  (originalHeadPressed) ? false : true;
     }
     repaint();
+    
+    if (!dontSendNotification) sendChangeMessage();
 }
 
 void TransportComponent::effectButtonClicked()
 {
     // if Button is enabled
-    if (state == BothEnabled) {
-        // if effect is playing
-        if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == true) {
-            // stop playback
-            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
-        }
-        // if original is playing
-        else if (TRANSPORT[IDs::TransportState] == "Playing" && (bool) TRANSPORT[IDs::IsProcessing] == false) {
-            // start effect playback
-            TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
-            switchLabelText(false);
-            TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
-            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
-        }
-        // if nothing is playing
-        else if (TRANSPORT[IDs::TransportState] == "Stopped") {
-            // start effect playback
-            switchLabelText(false);
-            TRANSPORT.setProperty(IDs::IsProcessing, true, nullptr);
-            TRANSPORT.setProperty(IDs::TransportState, "Starting", nullptr);
-        }
+    if (componentState == BothEnabled) {
+        effectHeadPressed = (effectHeadPressed) ? false : true;
     }
+    repaint();
+    sendChangeMessage();
+}
+
+void TransportComponent::setComponentState (ComponentState& newState)
+{
+    componentState = newState;
+    repaint();
+}
+
+void TransportComponent::setComponentState (int newState)
+{
+    componentState = (ComponentState) newState;
+    repaint();
+}
+
+bool TransportComponent::inOriginalMode() const
+{
+    return labelShowingOriginal;
+}
+
+bool TransportComponent::inEffectMode() const
+{
+    return !labelShowingOriginal;
+}
+
+bool TransportComponent::noButtonPressed() const
+{
+    return !(originalHeadPressed || effectHeadPressed);
+}
+
+void TransportComponent::turnBothPlayButtonsOff()
+{
+    originalHeadPressed = false;
+    effectHeadPressed = false;
     repaint();
 }
 
 void TransportComponent::switchLabelText (bool toOriginal)
 {
     labelShowingOriginal = toOriginal;
-    repaint();
-}
-
-void TransportComponent::updateState()
-{
-    if (FILELIST.getNumChildren() > 0) state = State::OriginalEnabled;
-    else state = State::Disabled;
     repaint();
 }

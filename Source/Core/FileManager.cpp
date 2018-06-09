@@ -13,14 +13,15 @@
 #include "../Gui/AudioFileListLabelComponent.h"
 #include "../Definitions/Definitions.h"
 
-FileManager::FileManager (ValueTree& vt, Gui& g, TransportManager& t)
-: fileTree(vt), gui(g), transport(t)
+FileManager::FileManager (ValueTree& vt, GuiUI& gui, TransportManager& t)
+: fileTree(vt), ui(gui), transport(t)
 {
     fileTree = fileTree.getChildWithName(IDs::FileList);
     
     if (fileTree.getNumChildren() == 0) {
         disableButtons();
     }
+    else enableButtons();
 }
 
 FileManager::~FileManager()
@@ -80,6 +81,8 @@ void FileManager::cellDoubleClicked (int rowNumber, int columnId, const MouseEve
     const int startTime = fileTree.getChild(rowNumber)[IDs::FileStart];
     
     transport.startPlayingOriginal(filePath, startTime);
+    
+    //ui.turnOriginalButtonOff();
 }
 
 void FileManager::selectedRowsChanged (int lastRowSelected)
@@ -134,8 +137,8 @@ void FileManager::addFile()
             }
         }
     }
-    gui.fileList.updateContent();
-    gui.repaint();
+    ui.updateFileList();
+    ui.repaintGui();
     
     if (getNumRows() > 0) {
         enableButtons();
@@ -151,9 +154,9 @@ void FileManager::removeFile (int position)
     }
     
     fileTree.removeChild(position, nullptr);
-    gui.fileList.selectRow(jmax(position - 1, 0));
+    ui.selectRowInFileList(jmax(position - 1, 0));
     
-    gui.fileList.updateContent();
+    ui.updateFileList();
     if (getNumRows() == 0) {
         disableButtons();
     }
@@ -165,19 +168,23 @@ void FileManager::clearFileList()
         // stop playback
     
     fileTree.removeAllChildren(nullptr);
-    gui.fileList.updateContent();
+    ui.updateFileList();
     
     disableButtons();
 }
 
 void FileManager::enableButtons()
 {
-    gui.fileSettingButtons[1]->setEnabled(true);
-    gui.fileSettingButtons[2]->setEnabled(true);
+    ui.enableFileSettingButtons();
+    
+    ui.enableTransportButtons();
+    DBG("enabled TC");
 }
 
 void FileManager::disableButtons()
 {
-    gui.fileSettingButtons[1]->setEnabled(false);
-    gui.fileSettingButtons[2]->setEnabled(false);
+    ui.disableFileSettingButtons();
+    
+    ui.disableTransportButtons();
+    DBG("disable TC");
 }

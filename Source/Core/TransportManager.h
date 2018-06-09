@@ -12,6 +12,7 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Effects.h"
+#include "GuiUI.h"
 
 enum TransportState {STARTING, PLAYING, STOPPING, STOPPED};
 
@@ -20,13 +21,13 @@ class TransportManager  : public ChangeListener,
 {
 public:
     //==============================================================================
-    TransportManager (AudioTransportSource& transportSource);
+    TransportManager (AudioTransportSource& transportSource, GuiUI& gui);
     ~TransportManager ();
     
     //==============================================================================
     void changeListenerCallback (ChangeBroadcaster* thingThatChanged) override;
     void buttonClicked (Button* button) override;
-    
+
     void setTransportSource ();
     void setTransportTo (const TransportState& transportState);
     void setEffectPlayback (bool shouldPlayEffect);
@@ -40,10 +41,11 @@ public:
     void startPlayingOriginal (const String& filePath, const int& startTime);
     void startPlayingWithEffect (const String& filePath, const int& startTime, Effect* effectToPlay);
     void stopPlayback();
-    
+
 private:
     //==============================================================================
     AudioTransportSource& transportSource;
+    GuiUI& ui;
     AudioFormatManager formatManager;
     std::unique_ptr<AudioFormatReaderSource> readerSource;
     
@@ -52,6 +54,8 @@ private:
     Effect* effectToPlay = nullptr;
     String playbackFile = "";
     int startTime = 0;
+    
+    void transportComponentClicked();
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportManager)
 };

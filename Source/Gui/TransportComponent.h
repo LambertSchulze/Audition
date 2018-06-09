@@ -12,44 +12,48 @@
 #include "TransportComponentLookAndFeel.h"
 #include "../Definitions/Definitions.h"
 
-class TransportComponent :  public  Component,
-                                    ChangeBroadcaster,
-                                    ValueTree::Listener
+class TransportComponent  : public Component,
+                            public ChangeBroadcaster
 {
 public:
-    TransportComponent (ValueTree&);
+    TransportComponent (String name);
     
     ~TransportComponent();
     
     //==============================================================================
-    enum State {Disabled, OriginalEnabled, BothEnabled} state;
+    enum ComponentState {Disabled = 0, OriginalEnabled = 1, BothEnabled = 2} componentState = Disabled;
+    enum ButtonState {NoButtonPressed = 0, OriginalButtonPressed = 1, EffectButtonPressed = 2} buttonState = NoButtonPressed;
     
     //==============================================================================
     void paint (Graphics&) override;
     void resized () override;
     
-    //==============================================================================
-    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
-    void valueTreeChildAdded (ValueTree&, ValueTree&) override;
-    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override;
-    void valueTreeChildOrderChanged (ValueTree&, int, int) override;
-    void valueTreeParentChanged (ValueTree&) override;
-    void valueTreeRedirected (ValueTree&) override;
-    
+    //==============================================================================    
     void mouseDown (const MouseEvent&) override;
-    void originalButtonClicked();
+    void originalButtonClicked(bool dontSendNotification = false);
     void effectButtonClicked();
     
-    void setState (State&);
+    void setComponentState (ComponentState& newState);
+    void setComponentState (int newState);
+    
+    void setButtonState (ButtonState& newState);
+    void setButtonState (int newState);
+    ButtonState getButtonState() const;
+    int getButtonStateAsInt() const;
+    bool noButtonPressed() const;
+    
+    bool inOriginalMode() const;
+    bool inEffectMode() const;
+    
+    void turnBothPlayButtonsOff();
     
 private:
-    ValueTree vt;
     TransportComponentLookAndFeel lookAndFeel;
     
-    bool labelShowingOriginal;
+    bool originalHeadPressed = false, effectHeadPressed = false;
+    bool labelShowingOriginal = true;
     
     void switchLabelText (bool);
-    void updateState();
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportComponent)
 };

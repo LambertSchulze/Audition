@@ -11,13 +11,16 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Core/GuiUI.h"
 #include "../Definitions/Definitions.h"
 
+#include "TransportComponent.h"
 #include "AuditionLookAndFeel.h"
 #include "MainMenuLookAndFeel.h"
 #include "ListboxLookAndFeel.h"
 
-struct Gui  : public Component
+struct Gui  : public Component,
+              public GuiUI
 {
 public:
     Gui (ValueTree& tree);
@@ -26,8 +29,20 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     
+    void repaintGui() override;
+    void updateFileList() override;
+    void selectRowInFileList (int number) override;
+    void enableTransportButtons() override;
+    void disableTransportButtons() override;
+    void enableFileSettingButtons() override;
+    void disableFileSettingButtons() override;
+    void turnOriginalButtonOff() override;
+    bool shouldPlayOriginal() override;
+    bool allPlayButtonsOff() override;
+    void turnAllPlayButtonsOff() override;
+    
     void setPage(int page);
-    void hoockToParentObjects();
+    void Register();
     
     AuditionLookAndFeel laf;
     MainMenuLookAndFeel mmlaf;
@@ -39,5 +54,6 @@ public:
     OwnedArray<Drawable> buttonImages;
     ScopedPointer<StretchableLayoutResizerBar> stretchBar;
     StretchableLayoutManager stretchBarLayout;
+    TransportComponent transportComponent;
     OwnedArray<Component> pages;
 };

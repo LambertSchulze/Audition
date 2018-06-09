@@ -17,7 +17,7 @@
 #include "../WindowContainer/QuickQuizScreen.h"
 
 Gui::Gui (ValueTree& tree)
-: fileList("File List", nullptr)
+: fileList("File List", nullptr), transportComponent("Transport Component")
 {
     headerButtons.add(new TextButton{"Overview Screen"});
     headerButtons.add(new TextButton{"QuickQuiz Screen"});
@@ -77,6 +77,10 @@ Gui::Gui (ValueTree& tree)
     addAndMakeVisible (stretchBar);
     stretchBar->setLookAndFeel(&fllaf);
     
+    addAndMakeVisible(&transportComponent);
+    transportComponent.setAlwaysOnTop(true);
+    
+    
     if (pages.isEmpty()) {
         pages.add(new TitleScreen());
         pages.add(new OverviewScreen(tree));
@@ -89,6 +93,8 @@ Gui::Gui (ValueTree& tree)
         page->setVisible(false);
     }
     pages[0]->setVisible(true);
+    
+    //Timer::callAfterDelay(1, [this] {fileList.selectRow(0);});
 }
 
 Gui::~Gui()
@@ -106,7 +112,7 @@ void Gui::paint(Graphics& g)
     auto sidebar = b.removeFromLeft(stretchBar->getRight() - stretchBar->getWidth());
     auto page = b;
     
-    ColourGradient headerGradient = ColourGradient (laf.gradient1A, 0, 0, laf.gradient1B, this->getWidth(), UI::headerHeight, true);
+    ColourGradient headerGradient = ColourGradient (laf.gradient1B, 0, 0, laf.gradient1A, 0, UI::headerHeight, false);
     g.setGradientFill(headerGradient);
     g.fillRect(header);
     
@@ -163,8 +169,67 @@ void Gui::resized()
         page->setBounds(b);
     }
     
+    transportComponent.setBounds(b.removeFromBottom(UI::footerHeight + 26).withSizeKeepingCentre(300, UI::footerHeight));
+    
     repaint();
 }
+
+void Gui::repaintGui()
+{
+    repaint();
+};
+
+void Gui::updateFileList()
+{
+    fileList.updateContent();
+};
+
+void Gui::selectRowInFileList (int number)
+{
+    fileList.selectRow(number);
+};
+
+void Gui::enableTransportButtons()
+{
+    transportComponent.setState(1);
+};
+
+void Gui::disableTransportButtons()
+{
+    transportComponent.setState(0);
+};
+
+void Gui::enableFileSettingButtons()
+{
+    fileSettingButtons[1]->setEnabled(true);
+    fileSettingButtons[2]->setEnabled(true);
+};
+
+void Gui::disableFileSettingButtons()
+{
+    fileSettingButtons[1]->setEnabled(false);
+    fileSettingButtons[2]->setEnabled(false);
+};
+
+void Gui::turnOriginalButtonOff()
+{
+    transportComponent.originalButtonClicked(true);
+};
+
+bool Gui::shouldPlayOriginal()
+{
+    return transportComponent.inOriginalMode();
+};
+
+bool Gui::allPlayButtonsOff()
+{
+    return transportComponent.noButtonPressed();
+};
+
+void Gui::turnAllPlayButtonsOff()
+{
+    transportComponent.turnBothPlayButtonsOff();
+};
 
 void Gui::setPage(int page)
 {
@@ -174,13 +239,16 @@ void Gui::setPage(int page)
     pages[page]->setVisible(true);
 }
 
-void Gui::hoockToParentObjects()
+void Gui::Register()
 // adding Button::Listeners and the TableListBoxModel
 {
     auto* ptr = this->getParentComponent();
     auto* owner = dynamic_cast<MainContentComponent*>(ptr);
     fileList.setModel(&(owner->fileManager));
+    
     fileSettingButtons[0]->addListener(&(owner->fileManager));
     fileSettingButtons[1]->addListener(&(owner->fileManager));
     fileSettingButtons[2]->addListener(&(owner->fileManager));
+    
+    transportComponent.addChangeListener(&(owner->transport));
 }

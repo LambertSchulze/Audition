@@ -12,14 +12,14 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Gui/ListboxLookAndFeel.h"
-#include "../Gui/Gui.h"
+#include "GuiUI.h"
 #include "TransportManager.h"
 
 class FileManager  : public TableListBoxModel,
                      public Button::Listener
 {
 public:
-    FileManager (ValueTree& vt, Gui& gui, TransportManager& transport);
+    FileManager (ValueTree& vt, GuiUI& gui, TransportManager& transport);
     ~FileManager();
 //==============================================================================
     
@@ -48,7 +48,7 @@ public:
     
 private:
     ValueTree fileTree;
-    Gui& gui;
+    GuiUI& ui;
     TransportManager& transport;
     
     ListboxLookAndFeel fllaf;
