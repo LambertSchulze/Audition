@@ -9,6 +9,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "TransportComponent.h"
 #include "../Core/Shapes.h"
+#include "../Definitions/Definitions.h"
 
 //==============================================================================
 TransportComponent::TransportComponent (String name)

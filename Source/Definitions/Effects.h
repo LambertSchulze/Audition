@@ -23,13 +23,13 @@ public:
 
     void process (const AudioSourceChannelInfo& bufferToFill);
     
-    virtual void processEffect  (const AudioSourceChannelInfo& bufferToFill);
+    virtual void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
-    String getName              () const;
-    String getType              () const;
+    String getName () const;
+    String getType () const;
     
-    void setLevel               (float level);
-    float getLevel              () const;
+    void setLevel (float level);
+    float getLevel () const;
     
 protected:
     const String name;
@@ -47,10 +47,6 @@ public:
 	~NoEffect ();
 
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
-
-private:
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoEffect)
 };
 
 //==============================================================================
@@ -61,11 +57,6 @@ public:
 	~LeftSolo ();
 	
 	void processEffect (const AudioSourceChannelInfo& bufferToFill);
-
-private:
-	String type {"Solo"};
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LeftSolo)
 };
 
 //==============================================================================
@@ -76,11 +67,6 @@ public:
 	~RightSolo ();
 	
 	void processEffect (const AudioSourceChannelInfo& bufferToFill);
-
-private:
-	String type {"Solo"};
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RightSolo)
 };
 
 //==============================================================================
@@ -93,11 +79,7 @@ public:
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
 
 private:
-	String type {"StereoImage"};
-    
     float reduction;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Mono)
 };
 
 //==============================================================================
@@ -108,11 +90,6 @@ public:
     ~LRSwitched();
     
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
-    
-private:
-    String type {"StereoImage"};
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LRSwitched)
 };
 
 //==============================================================================
@@ -125,11 +102,7 @@ public:
 	void processEffect (const AudioSourceChannelInfo& bufferToFill);
 
 private:
-    String type {"Volume"};
-    
     float gain;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolumeUp)
 };
 
 //==============================================================================
@@ -142,11 +115,7 @@ public:
 	void processEffect (const AudioSourceChannelInfo& bufferToFill);
 
 private:
-    String type {"Volume"};
-    
     float gain;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SumVolumeDown)
 };
 
 //==============================================================================
@@ -159,11 +128,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
 private:
-    String type {"Volume"};
-    
     float gain;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidVolumeUp)
 };
 
 //==============================================================================
@@ -176,11 +141,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
 private:
-    String type {"Volume"};
-    
     float gain;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidVolumeDown)
 };
 
 //==============================================================================
@@ -193,11 +154,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
 private:
-    String type {"Volume"};
-    
     float gain;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SideVolumeUp)
 };
 
 //==============================================================================
@@ -210,11 +167,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
 private:
-    String type {"Volume"};
-    
     float gain;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SideVolumeDown)
 };
 
 //==============================================================================
@@ -227,11 +180,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
 private:
-    String type {"Filter"};
-    
     AudioSource* parentSource;
     IIRFilterAudioSource iirFilter;
     IIRCoefficients ic;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Filter)
 };

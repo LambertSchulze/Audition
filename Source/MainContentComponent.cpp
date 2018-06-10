@@ -12,7 +12,7 @@
 
 //==============================================================================
 MainContentComponent::MainContentComponent(ValueTree& vt)
-:   tree(vt), gui(vt), transport(transportSource, gui), fileManager(vt, gui, transport)
+:   tree(vt), gui(vt), transport(transportSource, gui), fileManager(vt, gui)
 {
     setAudioChannels (0, 2);
         
@@ -43,9 +43,7 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
     
     transportSource.setGain(Decibels::decibelsToGain(-3));
 
-    if (transport.shouldPlayEffect()) {
-        transport.getEffectToPlay();
-    }
+    transport.getEffectToPlay()->processEffect(bufferToFill);
 }
 
 void MainContentComponent::releaseResources()

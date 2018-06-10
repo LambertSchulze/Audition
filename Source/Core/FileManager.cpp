@@ -13,8 +13,8 @@
 #include "../Gui/AudioFileListLabelComponent.h"
 #include "../Definitions/Definitions.h"
 
-FileManager::FileManager (ValueTree& vt, GuiUI& gui, TransportManager& t)
-: fileTree(vt), ui(gui), transport(t)
+FileManager::FileManager (ValueTree& vt, GuiUI& gui)
+: fileTree(vt), ui(gui)
 {
     fileTree = fileTree.getChildWithName(IDs::FileList);
     
@@ -84,27 +84,30 @@ void FileManager::cellDoubleClicked (int rowNumber, int columnId, const MouseEve
     const String filePath = fileTree.getChild(rowNumber)[IDs::FilePath];
     const int startTime = fileTree.getChild(rowNumber)[IDs::FileStart];
     
-    transport.startPlayingOriginal(filePath, startTime);
+    transport.setState(TransportState::STOPPING);
+    transport.setFile(filePath);
+    transport.setStart(startTime);
+    transport.setState(TransportState::STARTING_ORIGINAL);
 }
 
 void FileManager::selectedRowsChanged (int lastRowSelected)
 {
     if (fileTree.getNumChildren()) {
-        fileTree.setProperty(IDs::SelectedFile, lastRowSelected, nullptr);
+        selectedFile = lastRowSelected;
         
         const String filePath = fileTree.getChild(lastRowSelected)[IDs::FilePath];
-        transport.setPlaybackFile(filePath);
+        transport.setFile(filePath);
         
         const int startTime = fileTree.getChild(lastRowSelected)[IDs::FileStart];
-        transport.setStartTime(startTime);
+        transport.setStart(startTime);
     }
 }
 
 void FileManager::buttonClicked (Button* button)
 {
-    if (button->getName() == "Add Button") {addFile();};
-    if (button->getName() == "Remove Button") {removeFile(fileTree[IDs::SelectedFile]);};
-    if (button->getName() == "Clear Button") {clearFileList();};
+    if (button->getName() == "Add Button")      {addFile();};
+    if (button->getName() == "Remove Button")   {removeFile(selectedFile);};
+    if (button->getName() == "Clear Button")    {clearFileList();};
 }
 
 void FileManager::setStartTime (int row, String startTime)
@@ -119,6 +122,8 @@ String FileManager::getStartTime (int row) const
 
 void FileManager::addFile()
 {
+    bool empty = (getNumRows() == 0) ? true : false;
+    
     FileChooser chooser ("Select a Wave file to play...", File::getSpecialLocation(File::userMusicDirectory), "*.wav,*.mp3,*.m4a");
     
     if (chooser.browseForMultipleFilesToOpen())
@@ -144,9 +149,9 @@ void FileManager::addFile()
         ui.enableFileSettingButtons();
         ui.enableOriginalButton();
     }
-    
-    if (getNumRows() == 1) {
-        transport.setPlaybackFile(fileTree.getChild(0)[IDs::FilePath]);
+
+    if (empty || (getNumRows() == 1)) {
+        transport.setFile(fileTree.getChild(0)[IDs::FilePath]);
         Timer::callAfterDelay(0.1, [this] { ui.selectRowInFileList(0); });
     }
     
@@ -156,8 +161,8 @@ void FileManager::addFile()
 
 void FileManager::removeFile (int position)
 {
-    if (fileTree.getChild(position)[IDs::FilePath] == transport.getPlaybackFile()) {
-        transport.setTransportTo(STOPPING);
+    if (fileTree.getChild(position)[IDs::FilePath] == transport.getFilePath()) {
+        transport.setState(TransportState::STOPPING);
     }
     
     fileTree.removeChild(position, nullptr);
@@ -174,12 +179,12 @@ void FileManager::removeFile (int position)
 }
 
 void FileManager::clearFileList()
-{    
-    if (transport.getTransportState() == TransportState::PLAYING)
-        transport.setTransportTo(STOPPING);
+{
+    if (transport.getState() == TransportState::PLAYING)
+        transport.setState(TransportState::STOPPING);
     
     fileTree.removeAllChildren(nullptr);
-    transport.setPlaybackFile("");
+    transport.setFile("");
     
     ui.disableFileSettingButtons();
     ui.disableTransportButtons();

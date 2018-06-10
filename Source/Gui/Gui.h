@@ -13,7 +13,6 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Core/GuiUI.h"
 #include "../Definitions/Definitions.h"
-
 #include "TransportComponent.h"
 #include "AuditionLookAndFeel.h"
 #include "MainMenuLookAndFeel.h"

@@ -13,7 +13,6 @@
 
 #pragma once
 
-
 namespace UI
 {
     const int headerHeight          = 80;
@@ -65,15 +64,10 @@ namespace IDs
     
     const Identifier Transport      = "TRANSPORT";
     // is set to Starting/Stopping by Play/Stop Buttons.
-    // MainContentComponent manages playback if this is changed.
-    const Identifier EffectToPlay   = "Effect_To_Play";
-    // needs to be implemented...
     const Identifier LimitPlayback  = "Limit_Playback";
     
     
     const Identifier FileList       = "FILELIST";
-    // stores the last selected file, so that at startup it can be selected again.
-    const Identifier SelectedFile   = "Selected_File";
     // set the rules with wich after each quiz the next file is choosen
     const Identifier Repeat         = "Repeat";
     const Identifier Shuffle        = "Shuffle";

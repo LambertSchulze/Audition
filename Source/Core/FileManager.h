@@ -13,13 +13,13 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Gui/ListboxLookAndFeel.h"
 #include "GuiUI.h"
-#include "TransportManager.h"
+#include "TransportSetter.h"
 
 class FileManager  : public TableListBoxModel,
                      public Button::Listener
 {
 public:
-    FileManager (ValueTree& vt, GuiUI& gui, TransportManager& transport);
+    FileManager (ValueTree& vt, GuiUI& gui);
     ~FileManager();
 //==============================================================================
     
@@ -45,7 +45,9 @@ public:
 private:
     ValueTree fileTree;
     GuiUI& ui;
-    TransportManager& transport;
+    TransportSetter transport;
+    
+    int selectedFile;
     
     ListboxLookAndFeel fllaf;
     

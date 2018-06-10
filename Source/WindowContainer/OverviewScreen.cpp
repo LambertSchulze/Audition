@@ -13,12 +13,14 @@
 #include "../Definitions/Definitions.h"
 
 //==============================================================================
-OverviewScreen::OverviewScreen(ValueTree& tree)
-:   vt(tree)
+OverviewScreen::OverviewScreen(ValueTree& vt)
+:   tree(vt)
 {
-    for (int child = 0; child < EFFECTLIST.getNumChildren(); child++)
+    tree = tree.getChildWithName(IDs::EffectList);
+    
+    for (int child = 0; child < tree.getNumChildren(); child++)
     {
-        TextButton* button = new TextButton("Overview Screen Button " + String(child));
+        TextButton* button = new TextButton("Overview Screen Button " + String(child + 1));
         addAndMakeVisible(button);
         button->setButtonText(EFFECTLIST.getChild(child)[IDs::EffectName]);
         button->setClickingTogglesState(true);

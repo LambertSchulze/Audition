@@ -12,13 +12,6 @@ Author:  Lambert Schulze
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 
-//==============================================================================
-/*A class for setting up the ValueTree Object and some lobal functions to access
-the different nodes.*/
-
-const ValueTree& getNode(const Identifier);
-
-
 class DataHandler
 {
 public:

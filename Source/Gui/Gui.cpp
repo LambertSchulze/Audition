@@ -80,7 +80,6 @@ Gui::Gui (ValueTree& tree)
     addAndMakeVisible(&transportComponent);
     transportComponent.setAlwaysOnTop(true);
     
-    
     if (pages.isEmpty()) {
         pages.add(new TitleScreen());
         pages.add(new OverviewScreen(tree));
@@ -93,8 +92,6 @@ Gui::Gui (ValueTree& tree)
         page->setVisible(false);
     }
     pages[0]->setVisible(true);
-    
-    //Timer::callAfterDelay(1, [this] {fileList.selectRow(0);});
 }
 
 Gui::~Gui()
@@ -169,7 +166,7 @@ void Gui::resized()
         page->setBounds(b);
     }
     
-    transportComponent.setBounds(b.removeFromBottom(UI::footerHeight + 26).withSizeKeepingCentre(300, UI::footerHeight));
+    transportComponent.setBounds(b.removeFromBottom(UI::footerHeight *1.5).withSizeKeepingCentre(300, UI::footerHeight));
     
     repaint();
 }

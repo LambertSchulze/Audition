@@ -95,7 +95,7 @@ public:
     void nextButtonClicked() override
     {
         newQuiz();
-        TRANSPORT.setProperty(IDs::EffectToPlay, QUICKQUIZ[IDs::RightEffect], nullptr);
+        //TRANSPORT.setProperty(IDs::EffectToPlay, QUICKQUIZ[IDs::RightEffect], nullptr);
         switchState(State::CHOOSE);
     };
     

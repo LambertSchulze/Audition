@@ -36,7 +36,6 @@ private:
     //==============================================================================
     ValueTree tree;
     Gui gui;
-    
     AudioTransportSource transportSource;
     TransportManager transport;
     FileManager fileManager;

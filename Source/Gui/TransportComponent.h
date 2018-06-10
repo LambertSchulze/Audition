@@ -10,7 +10,6 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "TransportComponentLookAndFeel.h"
-#include "../Definitions/Definitions.h"
 
 class TransportComponent  : public Component,
                             public ChangeBroadcaster

@@ -24,6 +24,6 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 
-    ValueTree vt;
+    ValueTree tree;
     OwnedArray<TextButton> buttonList;
 };

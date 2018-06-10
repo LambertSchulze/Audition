@@ -12,11 +12,11 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Effects.h"
+#include "TransportState.h"
 #include "GuiUI.h"
 
-enum TransportState {STARTING, PLAYING, STOPPING, STOPPED};
-
-class TransportManager  : public ChangeListener,
+class TransportManager  : public TransportState,
+                          public ChangeListener,
                           public Button::Listener
 {
 public:
@@ -27,25 +27,12 @@ public:
     //==============================================================================
     void changeListenerCallback (ChangeBroadcaster* thingThatChanged) override;
     void buttonClicked (Button* button) override;
-
+    void stateChanged () override;
+    void effectChanged () override;
+    
     void setTransportSource ();
     
-    void setTransportTo (const TransportState& transportState);
-    TransportState getTransportState();
-    
-    void setEffectPlayback (bool shouldPlayEffect);
-    bool shouldPlayEffect() const;
-    
-    void setPlaybackFile (const String& filePath);
-    String getPlaybackFile();
-    void setStartTime (int newStartTime);
-    
-    void setEffectToPlay (int effectNumberToPlay);
     Effect* getEffectToPlay() const;
-    
-    void startPlayingOriginal (const String& filePath, const int& startTime);
-    void startPlayingWithEffect (const String& filePath, const int& startTime, Effect* effectToPlay);
-    void stopPlayback();
 
 private:
     //==============================================================================
@@ -56,11 +43,6 @@ private:
     
     OwnedArray<Effect> effectList;
     Effect* effectToPlay = nullptr;
-    
-    TransportState transportState {STOPPED};
-    bool isPlayingEffect = false;
-    String playbackFile = "";
-    int startTime = 0;
     
     void transportComponentClicked();
     
