@@ -30,9 +30,8 @@ public:
     
     //==============================================================================    
     void mouseDown (const MouseEvent&) override;
-    void originalButtonClicked(bool dontSendNotification = false);
-    void effectButtonClicked();
     
+    //==============================================================================
     void setComponentState (ComponentState& newState);
     void setComponentState (int newState);
     
@@ -40,20 +39,24 @@ public:
     void setButtonState (int newState);
     ButtonState getButtonState() const;
     int getButtonStateAsInt() const;
-    bool noButtonPressed() const;
     
+    bool noButtonPressed() const;
     bool inOriginalMode() const;
     bool inEffectMode() const;
     
+    //==============================================================================
     void turnBothPlayButtonsOff();
+    void turnOriginalPlayButtonOn();
+    void turnEffectPlayButtonOn();
     
 private:
     TransportComponentLookAndFeel lookAndFeel;
     
-    bool originalHeadPressed = false, effectHeadPressed = false;
+    bool originalHeadPressed = false;
+    bool effectHeadPressed = false;
     bool labelShowingOriginal = true;
     
-    void switchLabelText (bool);
+    void switchLabelText (bool toOriginal);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TransportComponent)
 };

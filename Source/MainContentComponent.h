@@ -13,7 +13,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "Definitions/Definitions.h"
-#include "Definitions/Effects.h"
 #include "Gui/Gui.h"
 #include "Core/TransportManager.h"
 #include "Core/FileManager.h"
@@ -40,7 +39,6 @@ private:
     
     AudioTransportSource transportSource;
     TransportManager transport;
-    OwnedArray<Effect> effectList;
     FileManager fileManager;
     
     friend Gui;

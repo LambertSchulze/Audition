@@ -86,32 +86,14 @@ void TransportComponent::resized()
 
 void TransportComponent::mouseDown (const MouseEvent& event)
 {
-    if (componentState != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition())) originalButtonClicked();
+    if (componentState != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition()))
+        sendChangeMessage();
 
-    if (componentState == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition())) effectButtonClicked();
+    else if (componentState == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition()))
+        sendChangeMessage();
 }
 
-void TransportComponent::originalButtonClicked (bool dontSendNotification)
-{
-    // if Button is enabled
-    if (componentState != Disabled) {
-        originalHeadPressed =  (originalHeadPressed) ? false : true;
-    }
-    repaint();
-    
-    if (!dontSendNotification) sendChangeMessage();
-}
-
-void TransportComponent::effectButtonClicked()
-{
-    // if Button is enabled
-    if (componentState == BothEnabled) {
-        effectHeadPressed = (effectHeadPressed) ? false : true;
-    }
-    repaint();
-    sendChangeMessage();
-}
-
+//==============================================================================
 void TransportComponent::setComponentState (ComponentState& newState)
 {
     componentState = newState;
@@ -124,6 +106,35 @@ void TransportComponent::setComponentState (int newState)
     repaint();
 }
 
+void TransportComponent::setButtonState(ButtonState& newState)
+{
+    buttonState = newState;
+    DBG("set TransportComponent buttonState");
+    repaint();
+}
+
+void TransportComponent::setButtonState(int newState)
+{
+    buttonState = (ButtonState) newState;
+    DBG("set TransportComponent buttonState");
+    repaint();
+}
+
+TransportComponent::ButtonState TransportComponent::getButtonState() const
+{
+    return buttonState;
+}
+
+int TransportComponent::getButtonStateAsInt() const
+{
+    return (int) buttonState;
+}
+
+bool TransportComponent::noButtonPressed() const
+{
+    return !(originalHeadPressed || effectHeadPressed);
+}
+
 bool TransportComponent::inOriginalMode() const
 {
     return labelShowingOriginal;
@@ -134,15 +145,27 @@ bool TransportComponent::inEffectMode() const
     return !labelShowingOriginal;
 }
 
-bool TransportComponent::noButtonPressed() const
-{
-    return !(originalHeadPressed || effectHeadPressed);
-}
-
+//==============================================================================
 void TransportComponent::turnBothPlayButtonsOff()
 {
     originalHeadPressed = false;
     effectHeadPressed = false;
+    repaint();
+}
+
+void TransportComponent::turnOriginalPlayButtonOn()
+{
+    originalHeadPressed = true;
+    effectHeadPressed = false;
+    switchLabelText(true);
+    repaint();
+}
+
+void TransportComponent::turnEffectPlayButtonOn()
+{
+    originalHeadPressed = false;
+    effectHeadPressed = true;
+    switchLabelText(false);
     repaint();
 }
 

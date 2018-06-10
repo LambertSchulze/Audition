@@ -16,31 +16,11 @@
 //==============================================================================
 /*
  */
-class PlayStopButton :  public ImageButton,
-                        public ValueTree::Listener
+class PlayStopButton :  public ImageButton
 {
 public:
-    PlayStopButton(String, ValueTree&);
+    PlayStopButton(String name);
     ~PlayStopButton();
     
-    void clicked() override;
-    
-    //==============================================================================
-    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
-    void valueTreeChildAdded (ValueTree&, ValueTree&) override;
-    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override;
-    void valueTreeChildOrderChanged (ValueTree&, int, int) override;
-    void valueTreeParentChanged (ValueTree&) override;
-    void valueTreeRedirected (ValueTree&) override;
-
-    //==============================================================================
-    void setStateToOff();
-    
-private:
-    ValueTree vt;
-    
-    void drawPlayImageOnButton();
-    void drawStopImageOnButton();
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayStopButton)
+    void paint (Graphics& g) override;
 };

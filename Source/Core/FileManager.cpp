@@ -19,9 +19,13 @@ FileManager::FileManager (ValueTree& vt, GuiUI& gui, TransportManager& t)
     fileTree = fileTree.getChildWithName(IDs::FileList);
     
     if (fileTree.getNumChildren() == 0) {
-        disableButtons();
+        ui.disableFileSettingButtons();
+        ui.disableTransportButtons();
     }
-    else enableButtons();
+    else {
+        ui.enableFileSettingButtons();
+        ui.enableOriginalButton();
+    }
 }
 
 FileManager::~FileManager()
@@ -81,8 +85,6 @@ void FileManager::cellDoubleClicked (int rowNumber, int columnId, const MouseEve
     const int startTime = fileTree.getChild(rowNumber)[IDs::FileStart];
     
     transport.startPlayingOriginal(filePath, startTime);
-    
-    //ui.turnOriginalButtonOff();
 }
 
 void FileManager::selectedRowsChanged (int lastRowSelected)
@@ -137,20 +139,25 @@ void FileManager::addFile()
             }
         }
     }
-    ui.updateFileList();
-    ui.repaintGui();
     
     if (getNumRows() > 0) {
-        enableButtons();
+        ui.enableFileSettingButtons();
+        ui.enableOriginalButton();
     }
+    
+    if (getNumRows() == 1) {
+        transport.setPlaybackFile(fileTree.getChild(0)[IDs::FilePath]);
+        Timer::callAfterDelay(0.1, [this] { ui.selectRowInFileList(0); });
+    }
+    
+    ui.updateFileList();
+    ui.repaintGui();
 }
 
 void FileManager::removeFile (int position)
 {
-    // check if removed file is playing
-    if (position == (int) fileTree[IDs::SelectedFile]) {
-        // stop playback
-        // ...
+    if (fileTree.getChild(position)[IDs::FilePath] == transport.getPlaybackFile()) {
+        transport.setTransportTo(STOPPING);
     }
     
     fileTree.removeChild(position, nullptr);
@@ -158,33 +165,25 @@ void FileManager::removeFile (int position)
     
     ui.updateFileList();
     if (getNumRows() == 0) {
-        disableButtons();
+        ui.disableFileSettingButtons();
+        ui.disableTransportButtons();
     }
+    
+    ui.updateFileList();
+    ui.repaintGui();
 }
 
 void FileManager::clearFileList()
-{
-    // check if playback is running
-        // stop playback
+{    
+    if (transport.getTransportState() == TransportState::PLAYING)
+        transport.setTransportTo(STOPPING);
     
     fileTree.removeAllChildren(nullptr);
-    ui.updateFileList();
+    transport.setPlaybackFile("");
     
-    disableButtons();
-}
-
-void FileManager::enableButtons()
-{
-    ui.enableFileSettingButtons();
-    
-    ui.enableTransportButtons();
-    DBG("enabled TC");
-}
-
-void FileManager::disableButtons()
-{
     ui.disableFileSettingButtons();
-    
     ui.disableTransportButtons();
-    DBG("disable TC");
+    
+    ui.updateFileList();
+    ui.repaintGui();
 }

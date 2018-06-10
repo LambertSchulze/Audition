@@ -15,21 +15,7 @@ MainContentComponent::MainContentComponent(ValueTree& vt)
 :   tree(vt), gui(vt), transport(transportSource, gui), fileManager(vt, gui, transport)
 {
     setAudioChannels (0, 2);
-    
-    if (effectList.isEmpty()) {
-        effectList.add(new NoEffect());
-        effectList.add(new SumVolumeUp());
-        effectList.add(new SumVolumeDown());
-        effectList.add(new LeftSolo());
-        effectList.add(new RightSolo());
-        effectList.add(new Mono());
-        effectList.add(new LRSwitched());
-        effectList.add(new MidVolumeUp());
-        effectList.add(new MidVolumeDown());
-        effectList.add(new SideVolumeUp());
-        effectList.add(new SideVolumeDown());
-    }
-    
+        
     addAndMakeVisible(gui);
     setSize(tree.getProperty(IDs::WindowWidth), tree.getProperty(IDs::WindowHeight));
     

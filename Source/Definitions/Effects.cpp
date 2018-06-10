@@ -12,26 +12,25 @@
 #include "Effects.h"
 
 //==============================================================================
-Effect::Effect () {}
+Effect::Effect (String n, String t) : name(n), type(t) {}
 Effect::~Effect() {}
 
 void Effect::process        (const AudioSourceChannelInfo& bufferToFill) {Effect::processEffect   (bufferToFill);}
 void Effect::processEffect  (const AudioSourceChannelInfo& bufferToFill) {}
 
-void Effect::setName        (String name)   { this->name = name; }
-String Effect::getName      ()              { return this->name; }
-String Effect::getType      ()              { return type; }
+String Effect::getName      () const        { return this->name; }
+String Effect::getType      () const        { return type; }
 void Effect::setLevel       (float level)   { this->level = level; }
-float Effect::getLevel      ()              { return level; }
+float Effect::getLevel      () const        { return level; }
 
 //==============================================================================
-NoEffect::NoEffect ()  {}
+NoEffect::NoEffect () : Effect("No Effect", "Special") {}
 NoEffect::~NoEffect () {}
 
 void NoEffect::processEffect (const AudioSourceChannelInfo& bufferToFill) {}
 
 //==============================================================================
-LeftSolo::LeftSolo () {}
+LeftSolo::LeftSolo () : Effect("Left Solo", "Stereo Image") {}
 LeftSolo::~LeftSolo () {}
 
 void LeftSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -45,7 +44,7 @@ void LeftSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-RightSolo::RightSolo () {}
+RightSolo::RightSolo () : Effect("Right Solo", "Stereo Image") {}
 RightSolo::~RightSolo () {}
 
 void RightSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -59,7 +58,7 @@ void RightSolo::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-Mono::Mono ()	{reduction = 0.5;}
+Mono::Mono () : Effect("Mono", "Stereo Image")	{reduction = 0.5;}
 Mono::~Mono () 	{}
 
 void Mono::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -79,7 +78,7 @@ void Mono::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-LRSwitched::LRSwitched () {}
+LRSwitched::LRSwitched () : Effect("LR Switched", "Stereo Image") {}
 LRSwitched::~LRSwitched() {}
 
 void LRSwitched::processEffect(const AudioSourceChannelInfo& bufferToFill)
@@ -96,7 +95,7 @@ void LRSwitched::processEffect(const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SumVolumeUp::SumVolumeUp  () {gain = 2;}
+SumVolumeUp::SumVolumeUp  () : Effect("Sum Volume Up", "Loudness") {gain = 2;}
 SumVolumeUp::~SumVolumeUp () {}
 
 void SumVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -113,7 +112,7 @@ void SumVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SumVolumeDown::SumVolumeDown  () {gain = 0.5;}
+SumVolumeDown::SumVolumeDown  () : Effect("Sum Volume Down", "Loudness") {gain = 0.5;}
 SumVolumeDown::~SumVolumeDown () {}
 
 void SumVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -130,7 +129,7 @@ void SumVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-MidVolumeUp::MidVolumeUp  () {gain = 2;}
+MidVolumeUp::MidVolumeUp  () : Effect("Mid Volume Up", "Stereo Image") {gain = 2;}
 MidVolumeUp::~MidVolumeUp () {}
 
 void MidVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -153,7 +152,7 @@ void MidVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-MidVolumeDown::MidVolumeDown  () {gain = 0.5;}
+MidVolumeDown::MidVolumeDown  () : Effect("Mid Volume Down", "Stereo Image") {gain = 0.5;}
 MidVolumeDown::~MidVolumeDown () {}
 
 void MidVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -176,7 +175,7 @@ void MidVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SideVolumeUp::SideVolumeUp  () {gain = 2;}
+SideVolumeUp::SideVolumeUp  () : Effect("Side Volume Up", "Stereo Image") {gain = 2;}
 SideVolumeUp::~SideVolumeUp () {}
 
 void SideVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -199,7 +198,7 @@ void SideVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-SideVolumeDown::SideVolumeDown  () {gain = 0.5;}
+SideVolumeDown::SideVolumeDown  () : Effect("Side Volume Down", "Stereo Image") {gain = 0.5;}
 SideVolumeDown::~SideVolumeDown () {}
 
 void SideVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
@@ -222,8 +221,7 @@ void SideVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
 }
 
 //==============================================================================
-Filter::Filter  (AudioSource* as)
-:   parentSource(as),
+Filter::Filter  (AudioSource* as) : Effect("Filter", "Colour"), parentSource(as),
     iirFilter(parentSource, false)
 {}
 Filter::~Filter () {}

@@ -18,24 +18,22 @@
 class Effect
 {
 public:
-    Effect ();
-//    Effect (String, String);
-//    Effect (String, String, float);
+    Effect (String name, String type);
     virtual ~Effect();
+
     void process (const AudioSourceChannelInfo& bufferToFill);
     
     virtual void processEffect  (const AudioSourceChannelInfo& bufferToFill);
     
-    void setName                (String name);
-    String getName              ();
-    String getType              ();
+    String getName              () const;
+    String getType              () const;
     
     void setLevel               (float level);
-    float getLevel              ();
+    float getLevel              () const;
     
 protected:
-    String name;
-    String type;
+    const String name;
+    const String type;
     float level;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Effect)
@@ -45,14 +43,12 @@ protected:
 class NoEffect : public Effect
 {
 public:
-	NoEffect ();
+    NoEffect ();
 	~NoEffect ();
 
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
 
-//private:
-	String type {"Other"};
-    String name {"NoEffect"};
+private:
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NoEffect)
 };
@@ -68,7 +64,6 @@ public:
 
 private:
 	String type {"Solo"};
-    String name {"LeftSolo"};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LeftSolo)
 };
@@ -84,7 +79,6 @@ public:
 
 private:
 	String type {"Solo"};
-    String name {"RightSolo"};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RightSolo)
 };
@@ -100,7 +94,6 @@ public:
 
 private:
 	String type {"StereoImage"};
-    String name {"Mono"};
     
     float reduction;
     
@@ -118,7 +111,6 @@ public:
     
 private:
     String type {"StereoImage"};
-    String name {"LRSwitched"};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LRSwitched)
 };
@@ -134,7 +126,6 @@ public:
 
 private:
     String type {"Volume"};
-    String name {"SumVolumeUp"};
     
     float gain;
     
@@ -152,7 +143,6 @@ public:
 
 private:
     String type {"Volume"};
-    String name {"SumVolumeDown"};
     
     float gain;
     
@@ -170,7 +160,6 @@ public:
     
 private:
     String type {"Volume"};
-    String name {"MidVolumeUp"};
     
     float gain;
     
@@ -188,7 +177,6 @@ public:
     
 private:
     String type {"Volume"};
-    String name {"MidVolumeDown"};
     
     float gain;
     
@@ -206,7 +194,6 @@ public:
     
 private:
     String type {"Volume"};
-    String name {"SideVolumeUp"};
     
     float gain;
     
@@ -224,7 +211,6 @@ public:
     
 private:
     String type {"Volume"};
-    String name {"SideVolumeDown"};
     
     float gain;
     
@@ -242,7 +228,6 @@ public:
     
 private:
     String type {"Filter"};
-    String name {"Filter"};
     
     AudioSource* parentSource;
     IIRFilterAudioSource iirFilter;

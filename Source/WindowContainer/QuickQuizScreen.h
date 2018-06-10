@@ -239,8 +239,8 @@ public:
     
     void updateUI() override
     {
-        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
-        TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
+//        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
+//        TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
         
         owner->infoLabel.setText("End State", dontSendNotification);
         owner->nextButton.setButtonText("new quiz");

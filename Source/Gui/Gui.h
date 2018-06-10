@@ -29,18 +29,28 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     
+    // Gui UI
     void repaintGui() override;
+    
     void updateFileList() override;
     void selectRowInFileList (int number) override;
-    void enableTransportButtons() override;
-    void disableTransportButtons() override;
     void enableFileSettingButtons() override;
     void disableFileSettingButtons() override;
-    void turnOriginalButtonOff() override;
-    bool shouldPlayOriginal() override;
-    bool allPlayButtonsOff() override;
-    void turnAllPlayButtonsOff() override;
     
+    void enableOriginalButton() override;
+    void enableEffectButton() override;
+    void disableEffectButton() override;
+    void disableTransportButtons() override;
+    
+    void turnAllPlayButtonsOff() override;
+    void turnOriginalButtonOff() override;
+    void turnEffectButtonOff() override;
+    void turnOriginalButtonOn() override;
+    void turnEffectButtonOn() override;
+    
+    bool shouldPlayOriginal() override;
+
+    // ==============================================
     void setPage(int page);
     void Register();
     

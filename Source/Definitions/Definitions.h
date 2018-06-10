@@ -66,12 +66,6 @@ namespace IDs
     const Identifier Transport      = "TRANSPORT";
     // is set to Starting/Stopping by Play/Stop Buttons.
     // MainContentComponent manages playback if this is changed.
-    const Identifier TransportState = "Transport_State";
-    // Is set by effect Play/Stop Buttons.
-    // MainContentComponents shouldProcessEffect flag is set after this to be checked by getNextAudioBlock.
-    const Identifier IsProcessing   = "Effect_Is_Audible";
-    // Is set at different places. MainContentComponent sets its currentEffect after this.
-    // If its value is null (at startup), the effect Buttons should be disabled.
     const Identifier EffectToPlay   = "Effect_To_Play";
     // needs to be implemented...
     const Identifier LimitPlayback  = "Limit_Playback";

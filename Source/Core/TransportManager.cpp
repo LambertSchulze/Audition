@@ -16,6 +16,20 @@ TransportManager::TransportManager (AudioTransportSource& ts, GuiUI& gui)
 {
     formatManager.registerBasicFormats();
     transportSource.addChangeListener(this);
+    
+    if (effectList.isEmpty()) {
+        effectList.add(new NoEffect());
+        effectList.add(new SumVolumeUp());
+        effectList.add(new SumVolumeDown());
+        effectList.add(new LeftSolo());
+        effectList.add(new RightSolo());
+        effectList.add(new Mono());
+        effectList.add(new LRSwitched());
+        effectList.add(new MidVolumeUp());
+        effectList.add(new MidVolumeDown());
+        effectList.add(new SideVolumeUp());
+        effectList.add(new SideVolumeDown());
+    }
 }
 
 TransportManager::~TransportManager()
@@ -36,13 +50,20 @@ void TransportManager::changeListenerCallback(ChangeBroadcaster* source)
     }
 }
 
-void TransportManager::buttonClicked (Button *button)
+void TransportManager::buttonClicked (Button* button)
 {
-    
+    if (button->getName().startsWith("Overview Screen Button")) {
+        setEffectToPlay(button->getName().getTrailingIntValue());
+    }
 }
 
 void TransportManager::setTransportSource ()
 {
+    if (playbackFile.isEmpty()) {
+        transportSource.setSource(nullptr);
+        return;
+    }
+    
     auto file = File(playbackFile);
     auto* audioReader = formatManager.createReaderFor(file);
     
@@ -71,8 +92,7 @@ void TransportManager::setTransportTo(const TransportState& transportState)
                 
             case STOPPING:
                 transportSource.stop();
-                if (!ui.allPlayButtonsOff()) ui.turnAllPlayButtonsOff();
-                
+                ui.turnAllPlayButtonsOff();
                 setTransportTo(STOPPED);
                 break;
                 
@@ -81,31 +101,43 @@ void TransportManager::setTransportTo(const TransportState& transportState)
                 break;
         }
     }
+    else jassert("setting Transport to the same transprotState shouldn't happen.");
 }
+
+TransportState TransportManager::getTransportState()
+{
+    return transportState;
+};
 
 void TransportManager::setEffectPlayback (bool shouldPlayEffect)
 {
     isPlayingEffect = shouldPlayEffect;
 }
 
-void TransportManager::setEffectToPlay (Effect *newEffectToPlay)
+void TransportManager::setEffectToPlay (int effectNumberToPlay)
 {
-    effectToPlay = newEffectToPlay;
+    effectToPlay = effectList[effectNumberToPlay];
 }
+
+Effect* TransportManager::getEffectToPlay () const
+{
+    return effectToPlay;
+}
+
 
 void TransportManager::setPlaybackFile (const String &newfilePath)
 {
     playbackFile = newfilePath;
 }
 
+String TransportManager::getPlaybackFile()
+{
+    return playbackFile;
+}
+
 void TransportManager::setStartTime (int newStartTime)
 {
     startTime = newStartTime;
-}
-
-Effect* TransportManager::getEffectToPlay () const
-{
-    return effectToPlay;
 }
 
 bool TransportManager::shouldPlayEffect() const
@@ -115,6 +147,8 @@ bool TransportManager::shouldPlayEffect() const
 
 void TransportManager::startPlayingOriginal(const String& filePath, const int& startTime)
 {
+    setTransportTo(STOPPING);
+    
     if (filePath != playbackFile) {
         this->playbackFile = filePath;
     }
@@ -123,17 +157,27 @@ void TransportManager::startPlayingOriginal(const String& filePath, const int& s
     }
     isPlayingEffect = false;
     
-    setTransportTo(STOPPING);
+    ui.turnOriginalButtonOn();
     setTransportTo(STARTING);
 }
 
 void TransportManager::startPlayingWithEffect(const String& filePath, const int& startTime, Effect* effectToPlay)
 {
-    if (!(transportState == PLAYING && isPlayingEffect == true && this->effectToPlay == effectToPlay)) {
-        this->effectToPlay = effectToPlay;
-        isPlayingEffect = true;
-        setTransportTo(STARTING);
+    setTransportTo(STOPPING);
+    
+    if (filePath != playbackFile) {
+        this->playbackFile = filePath;
     }
+    if (startTime != this->startTime) {
+        this->startTime = startTime;
+    }
+    if (effectToPlay != this->effectToPlay) {
+        this->effectToPlay = effectToPlay;
+    }
+    isPlayingEffect = true;
+    
+    ui.turnEffectButtonOn();
+    setTransportTo(STARTING);
 }
 
 void TransportManager::stopPlayback()
@@ -147,9 +191,11 @@ void TransportManager::transportComponentClicked()
 {
     if (ui.shouldPlayOriginal()) {
         if (transportState == STOPPED) {
+            ui.turnOriginalButtonOn();
             setTransportTo(STARTING);
         }
         else {
+            ui.turnOriginalButtonOff();
             setTransportTo(STOPPING);
         }
     }

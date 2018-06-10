@@ -29,14 +29,19 @@ public:
     void buttonClicked (Button* button) override;
 
     void setTransportSource ();
+    
     void setTransportTo (const TransportState& transportState);
+    TransportState getTransportState();
+    
     void setEffectPlayback (bool shouldPlayEffect);
-    void setEffectToPlay (Effect* effectToPlay);
+    bool shouldPlayEffect() const;
+    
     void setPlaybackFile (const String& filePath);
+    String getPlaybackFile();
     void setStartTime (int newStartTime);
     
+    void setEffectToPlay (int effectNumberToPlay);
     Effect* getEffectToPlay() const;
-    bool shouldPlayEffect() const;
     
     void startPlayingOriginal (const String& filePath, const int& startTime);
     void startPlayingWithEffect (const String& filePath, const int& startTime, Effect* effectToPlay);
@@ -49,9 +54,11 @@ private:
     AudioFormatManager formatManager;
     std::unique_ptr<AudioFormatReaderSource> readerSource;
     
+    OwnedArray<Effect> effectList;
+    Effect* effectToPlay = nullptr;
+    
     TransportState transportState {STOPPED};
     bool isPlayingEffect = false;
-    Effect* effectToPlay = nullptr;
     String playbackFile = "";
     int startTime = 0;
     

@@ -42,10 +42,6 @@ public:
     void removeFile (int position);
     void clearFileList ();
     
-//==============================================================================
-    void enableButtons ();
-    void disableButtons ();
-    
 private:
     ValueTree fileTree;
     GuiUI& ui;

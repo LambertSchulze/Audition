@@ -48,25 +48,9 @@ void DataHandler::setupProperties()
         vt = ValueTree(IDs::Main);
     }
     
-    
     // checking for MAIN
     if (!vt.hasProperty(IDs::WindowHeight)) vt.setProperty(IDs::WindowHeight, 600, nullptr);
     if (!vt.hasProperty(IDs::WindowWidth))  vt.setProperty(IDs::WindowWidth, 1000, nullptr);
-    
-    
-    // checking for TRANSPORT
-    if (!vt.getChildWithName(IDs::Transport).isValid())
-    {
-        // setting up a fresh TRANSPORT child.
-        ValueTree transport (IDs::Transport);
-        transport.setProperty(IDs::LimitPlayback, false, nullptr);
-        vt.addChild(transport, -1, nullptr);
-    }
-    // nulling TRANSPORT
-    vt.getChildWithName(IDs::Transport).setProperty(IDs::TransportState,    "Stopped",  nullptr);
-    vt.getChildWithName(IDs::Transport).setProperty(IDs::IsProcessing,      false,      nullptr);
-    vt.getChildWithName(IDs::Transport).setProperty(IDs::EffectToPlay,      -1,         nullptr);
-    
     
     // checking for FILELIST
     if (!vt.getChildWithName(IDs::FileList).isValid())
@@ -157,22 +141,6 @@ void DataHandler::setupProperties()
         vt.addChild(effectList, -1, nullptr);
     }
     
-    //    if (!mainVT.getChildWithName(IDs::Quiz).isValid())
-    //    {
-    //        ValueTree quizTree (IDs::Quiz);
-    //        quizTree.setProperty(IDs::QuizState, 3, nullptr);
-    //
-    //        for (int i=0; i<3; ++i)
-    //        {
-    //            ValueTree choiceTree (IDs::Choice);
-    //            choiceTree.setProperty(IDs::Name, "", nullptr);
-    //            choiceTree.setProperty(IDs::isRight, "", nullptr);
-    //            quizTree.addChild(choiceTree, -1, nullptr);
-    //        }
-    //        mainVT.addChild(quizTree, -1, nullptr);
-    //    }
-    //    if (mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).isValid()) mainVT.getChildWithName(IDs::Quiz).getChildWithProperty(IDs::isRight, true).setProperty(IDs::isRight, false, nullptr);
-    
     //DBG ("Property Setup done! Here's the ValueTree:");
     //DBG (vt.toXmlString());
 }
@@ -207,13 +175,7 @@ void DataHandler::loadData(File file)
 }
 
 void DataHandler::saveData(File file)
-{
-    // removing some properties that shouldn't be saved
-    TRANSPORT.removeProperty(IDs::TransportState, nullptr);
-    TRANSPORT.removeProperty(IDs::IsProcessing, nullptr);
-    TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
-    vt.removeChild(vt.getChildWithName(IDs::QuickQuiz), nullptr);
-    
+{    
     if (file.exists())
     {
         ScopedPointer<XmlElement> e (vt.createXml());

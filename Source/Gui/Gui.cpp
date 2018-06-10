@@ -174,6 +174,7 @@ void Gui::resized()
     repaint();
 }
 
+// ====================================================================
 void Gui::repaintGui()
 {
     repaint();
@@ -189,16 +190,6 @@ void Gui::selectRowInFileList (int number)
     fileList.selectRow(number);
 };
 
-void Gui::enableTransportButtons()
-{
-    transportComponent.setState(1);
-};
-
-void Gui::disableTransportButtons()
-{
-    transportComponent.setState(0);
-};
-
 void Gui::enableFileSettingButtons()
 {
     fileSettingButtons[1]->setEnabled(true);
@@ -211,19 +202,24 @@ void Gui::disableFileSettingButtons()
     fileSettingButtons[2]->setEnabled(false);
 };
 
-void Gui::turnOriginalButtonOff()
+void Gui::enableOriginalButton()
 {
-    transportComponent.originalButtonClicked(true);
+    transportComponent.setComponentState(TransportComponent::OriginalEnabled);
 };
 
-bool Gui::shouldPlayOriginal()
+void Gui::enableEffectButton()
 {
-    return transportComponent.inOriginalMode();
+    transportComponent.setComponentState(TransportComponent::BothEnabled);
 };
 
-bool Gui::allPlayButtonsOff()
+void Gui::disableEffectButton()
 {
-    return transportComponent.noButtonPressed();
+    transportComponent.setComponentState(TransportComponent::OriginalEnabled);
+};
+
+void Gui::disableTransportButtons()
+{
+    transportComponent.setComponentState(TransportComponent::Disabled);
 };
 
 void Gui::turnAllPlayButtonsOff()
@@ -231,6 +227,32 @@ void Gui::turnAllPlayButtonsOff()
     transportComponent.turnBothPlayButtonsOff();
 };
 
+void Gui::turnOriginalButtonOff()
+{
+    transportComponent.turnBothPlayButtonsOff();
+};
+
+void Gui::turnEffectButtonOff()
+{
+    transportComponent.turnBothPlayButtonsOff();
+};
+
+void Gui::turnOriginalButtonOn()
+{
+    transportComponent.turnOriginalPlayButtonOn();
+}
+
+void Gui::turnEffectButtonOn()
+{
+    transportComponent.turnEffectPlayButtonOn();
+}
+
+bool Gui::shouldPlayOriginal()
+{
+    return transportComponent.inOriginalMode();
+};
+
+// ==========================================================
 void Gui::setPage(int page)
 {
     for (auto page : pages) {
@@ -251,4 +273,8 @@ void Gui::Register()
     fileSettingButtons[2]->addListener(&(owner->fileManager));
     
     transportComponent.addChangeListener(&(owner->transport));
+    
+    for (auto button : dynamic_cast<OverviewScreen*>(pages[1])->buttonList) {
+        button->addListener(&(owner->transport));
+    }
 }

@@ -18,11 +18,12 @@ OverviewScreen::OverviewScreen(ValueTree& tree)
 {
     for (int child = 0; child < EFFECTLIST.getNumChildren(); child++)
     {
-        buttonList.add(new TextButton(EFFECTLIST.getChild(child).getProperty(IDs::EffectName)));
-        addAndMakeVisible(buttonList[child]);
-        buttonList[child]->setClickingTogglesState(true);
-        buttonList[child]->setRadioGroupId(555);
-        buttonList[child]->addListener(this);
+        TextButton* button = new TextButton("Overview Screen Button " + String(child));
+        addAndMakeVisible(button);
+        button->setButtonText(EFFECTLIST.getChild(child)[IDs::EffectName]);
+        button->setClickingTogglesState(true);
+        button->setRadioGroupId(555);
+        buttonList.add(button);
     }
 }
 
@@ -36,15 +37,6 @@ void OverviewScreen::resized()
     
     for (int button = 0; button < buttonList.size(); button++)
     {
-        buttonList[button]->setBounds(bounds.removeFromTop(20));
+        buttonList[button]->setBounds(bounds.removeFromTop(20).withSizeKeepingCentre(300, 20));
     }
-}
-
-void OverviewScreen::buttonClicked (Button* button)
-{
-    // get the Number of the child with the same EffectName as the button
-    int selectedEffectNumber = EFFECTLIST.getChildWithProperty(IDs::EffectName, button->getName()).getProperty(IDs::Number);
-    
-    //set Transports Effect_To_Play to that number
-    TRANSPORT.setProperty(IDs::EffectToPlay, selectedEffectNumber, nullptr);
 }
