@@ -29,6 +29,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
 #include "../Core/RandomEffects.h"
+#include "QuickQuizLookAndFeel.h"
 
 enum State {BEGIN   = 0,
             CHOOSE  = 1,
@@ -79,8 +80,9 @@ public:
     
 private:
     ValueTree vt;
-    OwnedArray<QuickQuizState>       stateList;
-    QuickQuizState*                  currentState;
+    OwnedArray<QuickQuizState> stateList;
+    QuickQuizState* currentState;
+    QuickQuizLookAndFeel laf;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QuickQuizScreen)
 };
@@ -149,8 +151,6 @@ class ChooseState  : public QuickQuizState {                        // concrete 
     {
         QUICKQUIZ.getChildWithName(IDs::Player).setProperty(IDs::Choice, buttonNumber, nullptr);
         owner->nextButton.setEnabled(true);
-        
-        //DBG("Player Choice: " << QUICKQUIZ.getChildWithName(IDs::Player)[IDs::Choice].toString());
     };
 };
 
@@ -161,7 +161,7 @@ public:
     
     void nextButtonClicked() override
     {
-        switchState(State::END);
+        switchState(State::CHOOSE);
     };
     
     void updateUI() override
@@ -195,7 +195,7 @@ public:
     
     void nextButtonClicked() override
     {
-        switchState(State::END);
+        switchState(State::CHOOSE);
     };
     
     void updateUI() override

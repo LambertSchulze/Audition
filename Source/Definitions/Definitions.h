@@ -27,6 +27,9 @@ namespace UI
     const int fileListButtonWidth       = 28;
     
     const float shapeStrokeThickness     = 0.35;
+    
+    const float choiceButtonHeight  = 80;
+    const float choiceButtonWidth   = 160;
 };
 
 namespace AuditionColours {

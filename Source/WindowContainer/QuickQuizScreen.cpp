@@ -48,7 +48,7 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
 :   nextButton("Next"), vt(tree)
 {
     addAndMakeVisible(&nextButton);
-    nextButton.onClick      = [this] { nextButtonClicked(); };
+    nextButton.onClick = [this] { nextButtonClicked(); };
     
     addAndMakeVisible(&infoLabel);
     infoLabel.setJustificationType(Justification::centred);
@@ -60,11 +60,12 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
         addAndMakeVisible(choiceButtons[i]);
         choiceButtons[i]->setClickingTogglesState(true);
         choiceButtons[i]->setRadioGroupId(8426);
-    }
-    choiceButtons[0]->onClick   = [this] { setPlayerChoice(0); };
-    choiceButtons[1]->onClick   = [this] { setPlayerChoice(1); };
-    choiceButtons[2]->onClick   = [this] { setPlayerChoice(2); };
-    
+        choiceButtons[i]->setLookAndFeel(&laf);
+    }    
+    choiceButtons[0]->onClick = [this] { setPlayerChoice(0); };
+    choiceButtons[1]->onClick = [this] { setPlayerChoice(1); };
+    choiceButtons[2]->onClick = [this] { setPlayerChoice(2); };
+        
     if (!vt.getChildWithName(IDs::QuickQuiz).isValid()) {
         ValueTree qq(IDs::QuickQuiz);
         vt.addChild(qq, -1, nullptr);
@@ -79,12 +80,14 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
         stateList.addIfNotAlreadyThere(new LooseState(this, vt));
         stateList.addIfNotAlreadyThere(new EndState(this, vt));
     }
-    currentState = stateList[0];
+    currentState = stateList[1];
     currentState->updateUI();
 }
 
 QuickQuizScreen::~QuickQuizScreen()
 {
+    for (auto button : choiceButtons)
+        button->setLookAndFeel(nullptr);
     QUICKQUIZ.removeAllProperties(nullptr);
     stateList.clear(true);
     currentState = nullptr;
@@ -92,19 +95,17 @@ QuickQuizScreen::~QuickQuizScreen()
 
 void QuickQuizScreen::resized()
 {
-    auto r (getLocalBounds());
+    auto r (getLocalBounds().withTrimmedBottom(UI::footerHeight * 1.5));
+    auto middle = r.withSizeKeepingCentre(r.getWidth(), UI::choiceButtonHeight);
     
-    infoLabel.setBounds(r.removeFromTop(80));
+    infoLabel.setBounds(r.removeFromTop(middle.getY()));
     
-    Grid grid;
-    grid.templateRows       = { Grid::TrackInfo (1_fr) };
-    grid.templateColumns    = { Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr), Grid::TrackInfo (1_fr) };
-    grid.items = {
-        GridItem(choiceButtons[0]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-        GridItem(choiceButtons[1]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center),
-        GridItem(choiceButtons[2]).withWidth(180).withHeight(80).withAlignSelf(GridItem::AlignSelf::center).withJustifySelf(GridItem::JustifySelf::center)
-    };
-    grid.performLayout(r.removeFromTop(r.getHeight() / 2));
+    choiceButtons[0]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight).translated(- (UI::choiceButtonWidth + 8), 0));
+    choiceButtons[1]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight));
     
-    nextButton.setBounds(r.withTrimmedBottom(UI::footerHeight * 1.5).removeFromRight(120).removeFromBottom(120).reduced(8));
+    //choiceButtons[1]->setBounds(r.reduced(100));
+    
+    choiceButtons[2]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight).translated(+ UI::choiceButtonWidth + 8, 0));
+    
+    nextButton.setBounds(r.removeFromRight(120).removeFromBottom(120).reduced(8));
 }
