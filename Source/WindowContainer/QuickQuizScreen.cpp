@@ -48,6 +48,7 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
 :   nextButton("Next"), vt(tree)
 {
     addAndMakeVisible(&nextButton);
+    nextButton.setLookAndFeel(&nblaf);
     nextButton.onClick = [this] { nextButtonClicked(); };
     
     addAndMakeVisible(&infoLabel);
@@ -60,7 +61,7 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
         addAndMakeVisible(choiceButtons[i]);
         choiceButtons[i]->setClickingTogglesState(true);
         choiceButtons[i]->setRadioGroupId(8426);
-        choiceButtons[i]->setLookAndFeel(&laf);
+        choiceButtons[i]->setLookAndFeel(&sblaf);
     }    
     choiceButtons[0]->onClick = [this] { setPlayerChoice(0); };
     choiceButtons[1]->onClick = [this] { setPlayerChoice(1); };
@@ -80,7 +81,7 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
         stateList.addIfNotAlreadyThere(new LooseState(this, vt));
         stateList.addIfNotAlreadyThere(new EndState(this, vt));
     }
-    currentState = stateList[1];
+    currentState = stateList[0];
     currentState->updateUI();
 }
 
@@ -88,6 +89,7 @@ QuickQuizScreen::~QuickQuizScreen()
 {
     for (auto button : choiceButtons)
         button->setLookAndFeel(nullptr);
+    nextButton.setLookAndFeel(nullptr);
     QUICKQUIZ.removeAllProperties(nullptr);
     stateList.clear(true);
     currentState = nullptr;
@@ -102,10 +104,7 @@ void QuickQuizScreen::resized()
     
     choiceButtons[0]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight).translated(- (UI::choiceButtonWidth + 8), 0));
     choiceButtons[1]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight));
-    
-    //choiceButtons[1]->setBounds(r.reduced(100));
-    
     choiceButtons[2]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight).translated(+ UI::choiceButtonWidth + 8, 0));
     
-    nextButton.setBounds(r.removeFromRight(120).removeFromBottom(120).reduced(8));
+    nextButton.setBounds(r.removeFromRight(UI::choiceButtonWidth).removeFromBottom(UI::choiceButtonHeight).reduced(8));
 }

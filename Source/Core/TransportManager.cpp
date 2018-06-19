@@ -132,22 +132,22 @@ void TransportManager::transportComponentClicked()
 {
     if (ui.shouldPlayOriginal()) {
         if (getState() == TransportState::STOPPED) {
-            ui.turnOriginalButtonOn();
+            //ui.turnOriginalButtonOn();
             setState(STARTING_ORIGINAL);
         }
         else {
-            ui.turnOriginalButtonOff();
+            //ui.turnOriginalButtonOff();
             setState(STOPPING);
         }
     }
     
     else if (!ui.shouldPlayOriginal()) {
         if (getState() == TransportState::STOPPED) {
-            ui.turnEffectButtonOn();
+            //ui.turnEffectButtonOn();
             setState(STARTING_EFFECT);
         }
         else {
-            ui.turnEffectButtonOff();
+            //ui.turnEffectButtonOff();
             setState(TransportState::STOPPING);
         }
     }

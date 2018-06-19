@@ -9,7 +9,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
-#include "TransportComponentLookAndFeel.h"
+#include "../Core/TransportState.h"
 
 class TransportComponent  : public Component,
                             public ChangeBroadcaster
@@ -49,7 +49,7 @@ public:
     void turnEffectPlayButtonOn();
     
 private:
-    TransportComponentLookAndFeel lookAndFeel;
+    ScopedPointer<TransportState> transport;
     
     bool originalHeadPressed = false;
     bool effectHeadPressed = false;

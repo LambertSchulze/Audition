@@ -29,7 +29,9 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
 #include "../Core/RandomEffects.h"
-#include "QuickQuizLookAndFeel.h"
+#include "../Core/TransportState.h"
+#include "SelectButtonLookAndFeel.h"
+#include "NextButtonLookAndFeel.h"
 
 enum State {BEGIN   = 0,
             CHOOSE  = 1,
@@ -82,7 +84,8 @@ private:
     ValueTree vt;
     OwnedArray<QuickQuizState> stateList;
     QuickQuizState* currentState;
-    QuickQuizLookAndFeel laf;
+    SelectButtonLookAndFeel sblaf;
+    NextButtonLookAndFeel nblaf;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QuickQuizScreen)
 };
@@ -98,6 +101,7 @@ public:
     {
         newQuiz();
         //TRANSPORT.setProperty(IDs::EffectToPlay, QUICKQUIZ[IDs::RightEffect], nullptr);
+        TransportState::playbackEffect = QUICKQUIZ[IDs::RightEffect];
         switchState(State::CHOOSE);
     };
     
@@ -133,7 +137,7 @@ class ChooseState  : public QuickQuizState {                        // concrete 
     
     void updateUI() override
     {
-        owner->infoLabel.setText("Choose State", dontSendNotification);
+        owner->infoLabel.setText("What effect is applied?", dontSendNotification);
         owner->nextButton.setButtonText("solve");
         owner->nextButton.setEnabled(false);
         
@@ -145,6 +149,12 @@ class ChooseState  : public QuickQuizState {                        // concrete 
         owner->choiceButtons[0]->setVisible(true);
         owner->choiceButtons[1]->setVisible(true);
         owner->choiceButtons[2]->setVisible(true);
+        owner->choiceButtons[0]->setEnabled(true);
+        owner->choiceButtons[1]->setEnabled(true);
+        owner->choiceButtons[2]->setEnabled(true);
+        owner->choiceButtons[0]->setColour(TextButton::buttonColourId, AuditionColours::white);
+        owner->choiceButtons[1]->setColour(TextButton::buttonColourId, AuditionColours::white);
+        owner->choiceButtons[2]->setColour(TextButton::buttonColourId, AuditionColours::white);
     };
     
     void setPlayerChoice (int buttonNumber) override
@@ -166,7 +176,7 @@ public:
     
     void updateUI() override
     {
-        owner->infoLabel.setText("Win State: The correct Effect is shown.", dontSendNotification);
+        owner->infoLabel.setText("You are right!", dontSendNotification);
         owner->nextButton.setButtonText("next");
         
         owner->choiceButtons[0]->setToggleState(false, dontSendNotification);
@@ -180,6 +190,7 @@ public:
         int rightButtonNum = QUICKQUIZ.getProperty(IDs::RightButton);
         owner->choiceButtons[rightButtonNum]->setVisible(true);
         owner->choiceButtons[rightButtonNum]->setEnabled(false);
+        owner->choiceButtons[rightButtonNum]->setColour(TextButton::buttonColourId, AuditionColours::green);
     }
     
     void setPlayerChoice (int buttonNumber) override
@@ -200,7 +211,7 @@ public:
     
     void updateUI() override
     {
-        owner->infoLabel.setText("Loose State: This was the correct one and you chose this.", dontSendNotification);
+        owner->infoLabel.setText("That was wrong. This was the correct one:", dontSendNotification);
         owner->nextButton.setButtonText("next");
         
         owner->choiceButtons[0]->setToggleState(false, dontSendNotification);
@@ -214,11 +225,13 @@ public:
         int rightButtonNum = QUICKQUIZ.getProperty(IDs::RightButton);
         owner->choiceButtons[rightButtonNum]->setVisible(true);
         owner->choiceButtons[rightButtonNum]->setEnabled(false);
+        owner->choiceButtons[rightButtonNum]->setColour(TextButton::buttonColourId, AuditionColours::green);
         
         //make the Choice and PlayButton of the players choice visible
         int choiceButtonNum = QUICKQUIZ.getChildWithName(IDs::Player)[IDs::Choice];
         owner->choiceButtons[choiceButtonNum]->setVisible(true);
         owner->choiceButtons[choiceButtonNum]->setEnabled(false);
+        owner->choiceButtons[choiceButtonNum]->setColour(TextButton::buttonColourId, AuditionColours::blue);
     };
     
     void setPlayerChoice (int buttonNumber) override

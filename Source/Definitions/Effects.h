@@ -9,32 +9,31 @@
 */
 
 #pragma once
-
 #include "../JuceLibraryCode/JuceHeader.h"
 
 //==============================================================================
-/*
- */
 class Effect
 {
 public:
-    Effect (String name, String type);
+    Effect (String name, String type, int level, int velocity);
     virtual ~Effect();
 
     void process (const AudioSourceChannelInfo& bufferToFill);
-    
     virtual void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
     String getName () const;
     String getType () const;
     
-    void setLevel (float level);
-    float getLevel () const;
+    void levelUp ();
+    void levelDown ();
+    
+    virtual String getDetailedName () =0;
     
 protected:
-    const String name;
-    const String type;
-    float level;
+    const String name; // Name of the effect
+    const String type; // Category
+    int level; // from 0 to 100
+    int velocity; // from 1 to 4
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Effect)
 };
@@ -47,6 +46,8 @@ public:
 	~NoEffect ();
 
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
 };
 
 //==============================================================================
@@ -56,7 +57,9 @@ public:
 	LeftSolo ();
 	~LeftSolo ();
 	
-	void processEffect (const AudioSourceChannelInfo& bufferToFill);
+	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
 };
 
 //==============================================================================
@@ -66,7 +69,9 @@ public:
 	RightSolo ();
 	~RightSolo ();
 	
-	void processEffect (const AudioSourceChannelInfo& bufferToFill);
+	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
 };
 
 //==============================================================================
@@ -77,9 +82,8 @@ public:
 	~Mono ();
 	
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
-
-private:
-    float reduction;
+    
+    String getDetailedName () override;
 };
 
 //==============================================================================
@@ -90,6 +94,8 @@ public:
     ~LRSwitched();
     
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
 };
 
 //==============================================================================
@@ -99,10 +105,10 @@ public:
 	SumVolumeUp  ();
 	~SumVolumeUp ();
 	
-	void processEffect (const AudioSourceChannelInfo& bufferToFill);
-
-private:
-    float gain;
+	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
+    float levelToDB();
 };
 
 //==============================================================================
@@ -112,7 +118,10 @@ public:
 	SumVolumeDown  ();
 	~SumVolumeDown ();
 	
-	void processEffect (const AudioSourceChannelInfo& bufferToFill);
+	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
+    float levelToDB();
 
 private:
     float gain;
@@ -125,7 +134,10 @@ public:
     MidVolumeUp  ();
     ~MidVolumeUp ();
     
-    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
+    float levelToDB();
     
 private:
     float gain;
@@ -138,7 +150,9 @@ public:
     MidVolumeDown  ();
     ~MidVolumeDown ();
     
-    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
     
 private:
     float gain;
@@ -151,7 +165,9 @@ public:
     SideVolumeUp  ();
     ~SideVolumeUp ();
     
-    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
     
 private:
     float gain;
@@ -164,7 +180,9 @@ public:
     SideVolumeDown  ();
     ~SideVolumeDown ();
     
-    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
     
 private:
     float gain;
@@ -177,7 +195,9 @@ public:
     Filter  (AudioSource*);
     ~Filter ();
     
-    void processEffect (const AudioSourceChannelInfo& bufferToFill);
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
     
 private:
     AudioSource* parentSource;

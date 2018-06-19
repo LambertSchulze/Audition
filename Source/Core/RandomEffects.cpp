@@ -29,21 +29,21 @@ void RandomEffects::newQuickQuiz()
      */
     int numEffects (EFFECTLIST.getNumChildren());
     int right = r.nextInt(numEffects);
-    //DBG("Right EffectNumber: " << right);
+    DBG("Right EffectNumber: " << right);
     QUICKQUIZ.setProperty(IDs::RightEffect, right, nullptr);
     
     int wrong1 = r.nextInt(numEffects);
     while (wrong1 == right) {
         wrong1 = r.nextInt(numEffects);
     }
-    //DBG("WrongA EffectNumber: " << wrong1);
+    DBG("WrongA EffectNumber: " << wrong1);
     QUICKQUIZ.setProperty(IDs::WrongEffectA, wrong1, nullptr);
     
     int wrong2 = r.nextInt(numEffects);
     while (wrong2 == right || wrong2 == wrong1) {
         wrong2 = r.nextInt(numEffects);
     }
-    //DBG("WrongB EffectNumber: " << wrong2);
+    DBG("WrongB EffectNumber: " << wrong2);
     QUICKQUIZ.setProperty(IDs::WrongEffectB, wrong2, nullptr);
     
     /* set the 3 possibilities at random positions so that the right answer isn't always on the same button
@@ -60,6 +60,6 @@ void RandomEffects::newQuickQuiz()
     QUICKQUIZ.setProperty(IDs::WrongButtonA, order[1], nullptr);
     QUICKQUIZ.setProperty(IDs::WrongButtonB, order[2], nullptr);
     DBG("Right Button at position: " << QUICKQUIZ[IDs::RightButton].toString());
-    //DBG("WrongA Button at position: " << QUICKQUIZ[IDs::WrongButtonA].toString());
-    //DBG("WrongB Button at position: " << QUICKQUIZ[IDs::WrongButtonB].toString());
+    DBG("WrongA Button at position: " << QUICKQUIZ[IDs::WrongButtonA].toString());
+    DBG("WrongB Button at position: " << QUICKQUIZ[IDs::WrongButtonB].toString());
 }

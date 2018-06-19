@@ -10,6 +10,7 @@
 #include "TransportComponent.h"
 #include "../Core/Shapes.h"
 #include "../Definitions/Definitions.h"
+#include "../Core/TransportSetter.h"
 
 //==============================================================================
 TransportComponent::TransportComponent (String name)
@@ -87,11 +88,15 @@ void TransportComponent::resized()
 
 void TransportComponent::mouseDown (const MouseEvent& event)
 {
-    if (componentState != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition()))
-        sendChangeMessage();
+    if (componentState != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition())) {
+        setButtonState(OriginalButtonPressed);
+    }
 
-    else if (componentState == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition()))
-        sendChangeMessage();
+    else if (componentState == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition())) {
+        setButtonState(EffectButtonPressed);
+    }
+    
+    sendChangeMessage();
 }
 
 //==============================================================================
@@ -110,14 +115,22 @@ void TransportComponent::setComponentState (int newState)
 void TransportComponent::setButtonState(ButtonState& newState)
 {
     buttonState = newState;
-    DBG("set TransportComponent buttonState");
+    
+    if (buttonState == ButtonState::OriginalButtonPressed) turnOriginalPlayButtonOn();
+    else if (buttonState == ButtonState::EffectButtonPressed) turnEffectPlayButtonOn();
+    else if (buttonState == ButtonState::NoButtonPressed) turnBothPlayButtonsOff();
+    
     repaint();
 }
 
 void TransportComponent::setButtonState(int newState)
 {
     buttonState = (ButtonState) newState;
-    DBG("set TransportComponent buttonState");
+    
+    if (buttonState == ButtonState::OriginalButtonPressed) turnOriginalPlayButtonOn();
+    else if (buttonState == ButtonState::EffectButtonPressed) turnEffectPlayButtonOn();
+    else if (buttonState == ButtonState::NoButtonPressed) turnBothPlayButtonsOff();
+    
     repaint();
 }
 
