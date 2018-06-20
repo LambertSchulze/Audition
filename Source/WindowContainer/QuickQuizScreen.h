@@ -29,7 +29,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Definitions/Definitions.h"
 #include "../Core/RandomEffects.h"
-#include "../Core/TransportState.h"
+#include "../Core/TransportManager.h"
 #include "SelectButtonLookAndFeel.h"
 #include "NextButtonLookAndFeel.h"
 
@@ -44,7 +44,8 @@ class QuickQuizScreen;
 
 //==============================================================================
 
-class QuickQuizState {                                              // interface
+class QuickQuizState
+{
 public:
     QuickQuizState (QuickQuizScreen* qqs, ValueTree& tree)
     : vt(tree), owner(qqs)      {};
@@ -63,8 +64,10 @@ protected:
     
 //==============================================================================
 
-class QuickQuizScreen  : public Component {                         // context
+class QuickQuizScreen : public Component
+{
     friend class QuickQuizState;
+    
 public:
     QuickQuizScreen (ValueTree&);
     ~QuickQuizScreen();
@@ -92,7 +95,8 @@ private:
 
 //==============================================================================
 
-class BeginState  : public QuickQuizState {                         // concrete State
+class BeginState : public QuickQuizState
+{
 public:
     BeginState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree), game(tree) {};
     ~BeginState()   {};
@@ -100,8 +104,8 @@ public:
     void nextButtonClicked() override
     {
         newQuiz();
-        //TRANSPORT.setProperty(IDs::EffectToPlay, QUICKQUIZ[IDs::RightEffect], nullptr);
-        TransportState::playbackEffect = QUICKQUIZ[IDs::RightEffect];
+        
+        TransportManager::instance->setEffect(QUICKQUIZ[IDs::RightEffect]);
         switchState(State::CHOOSE);
     };
     
@@ -118,10 +122,13 @@ public:
     void setPlayerChoice (int buttonNumber) override {};
     
     void newQuiz();
+    
+private:
     RandomEffects game;
 };
 
-class ChooseState  : public QuickQuizState {                        // concrete State
+class ChooseState : public QuickQuizState
+{
     public :
     ChooseState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree)   {};
     ~ChooseState() {};
@@ -142,9 +149,9 @@ class ChooseState  : public QuickQuizState {                        // concrete 
         owner->nextButton.setEnabled(false);
         
         // write the Effect names on the buttons
-        owner->choiceButtons[QUICKQUIZ[IDs::RightButton]]->setButtonText(EFFECTLIST.getChild(QUICKQUIZ[IDs::RightEffect])[IDs::EffectName].toString());
-        owner->choiceButtons[QUICKQUIZ[IDs::WrongButtonA]]->setButtonText(EFFECTLIST.getChild(QUICKQUIZ[IDs::WrongEffectA])[IDs::EffectName].toString());
-        owner->choiceButtons[QUICKQUIZ[IDs::WrongButtonB]]->setButtonText(EFFECTLIST.getChild(QUICKQUIZ[IDs::WrongEffectB])[IDs::EffectName].toString());
+        owner->choiceButtons[QUICKQUIZ[IDs::RightButton]]->setButtonText(TransportManager::instance->effectList[QUICKQUIZ[IDs::RightEffect]]->getDetailedName());
+        owner->choiceButtons[QUICKQUIZ[IDs::WrongButtonA]]->setButtonText(TransportManager::instance->effectList[QUICKQUIZ[IDs::WrongEffectA]]->getDetailedName());
+        owner->choiceButtons[QUICKQUIZ[IDs::WrongButtonB]]->setButtonText(TransportManager::instance->effectList[QUICKQUIZ[IDs::WrongEffectB]]->getDetailedName());
         
         owner->choiceButtons[0]->setVisible(true);
         owner->choiceButtons[1]->setVisible(true);
@@ -164,14 +171,15 @@ class ChooseState  : public QuickQuizState {                        // concrete 
     };
 };
 
-class WinState  : public QuickQuizState {                           // concrete State
+class WinState : public QuickQuizState
+{
 public:
     WinState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree)   {};
     ~WinState() {};
     
     void nextButtonClicked() override
     {
-        switchState(State::CHOOSE);
+        switchState(State::BEGIN);
     };
     
     void updateUI() override
@@ -199,14 +207,15 @@ public:
     };
 };
 
-class LooseState  : public QuickQuizState {                         // concrete State
+class LooseState : public QuickQuizState
+{
 public:
     LooseState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
     ~LooseState()   {};
     
     void nextButtonClicked() override
     {
-        switchState(State::CHOOSE);
+        switchState(State::BEGIN);
     };
     
     void updateUI() override
@@ -240,7 +249,8 @@ public:
     };
 };
 
-class EndState  : public QuickQuizState {                           // concrete State
+class EndState : public QuickQuizState
+{
 public:
     EndState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
     ~EndState()   {};

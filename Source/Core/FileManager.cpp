@@ -12,6 +12,7 @@
 #include "FileManager.h"
 #include "../Gui/AudioFileListLabelComponent.h"
 #include "../Definitions/Definitions.h"
+#include "TransportManager.h"
 
 FileManager::FileManager (ValueTree& vt, GuiUI& gui)
 : fileTree(vt), ui(gui)
@@ -84,10 +85,11 @@ void FileManager::cellDoubleClicked (int rowNumber, int columnId, const MouseEve
     const String filePath = fileTree.getChild(rowNumber)[IDs::FilePath];
     const int startTime = fileTree.getChild(rowNumber)[IDs::FileStart];
     
-    transport.setState(TransportState::STOPPING);
-    transport.setFile(filePath);
-    transport.setStart(startTime);
-    transport.setState(TransportState::STARTING_ORIGINAL);
+    TransportManager::instance->setState(TransportState::STOPPING);
+    TransportManager::instance->setFile(filePath);
+    TransportManager::instance->setStart(startTime);
+    TransportManager::instance->setState(TransportState::STARTING_ORIGINAL);
+    ui.turnOriginalButtonOn();
 }
 
 void FileManager::selectedRowsChanged (int lastRowSelected)
@@ -96,10 +98,10 @@ void FileManager::selectedRowsChanged (int lastRowSelected)
         selectedFile = lastRowSelected;
         
         const String filePath = fileTree.getChild(lastRowSelected)[IDs::FilePath];
-        transport.setFile(filePath);
+        TransportManager::instance->setFile(filePath);
         
         const int startTime = fileTree.getChild(lastRowSelected)[IDs::FileStart];
-        transport.setStart(startTime);
+        TransportManager::instance->setStart(startTime);
     }
 }
 
@@ -151,7 +153,7 @@ void FileManager::addFile()
     }
 
     if (empty || (getNumRows() == 1)) {
-        transport.setFile(fileTree.getChild(0)[IDs::FilePath]);
+        TransportManager::instance->setFile(fileTree.getChild(0)[IDs::FilePath]);
         Timer::callAfterDelay(0.1, [this] { ui.selectRowInFileList(0); });
     }
     
@@ -161,8 +163,8 @@ void FileManager::addFile()
 
 void FileManager::removeFile (int position)
 {
-    if (fileTree.getChild(position)[IDs::FilePath] == transport.getFilePath()) {
-        transport.setState(TransportState::STOPPING);
+    if (fileTree.getChild(position)[IDs::FilePath] == TransportManager::instance->getFilePath()) {
+        TransportManager::instance->setState(TransportState::STOPPING);
     }
     
     fileTree.removeChild(position, nullptr);
@@ -180,11 +182,11 @@ void FileManager::removeFile (int position)
 
 void FileManager::clearFileList()
 {
-    if (transport.getState() == TransportState::PLAYING)
-        transport.setState(TransportState::STOPPING);
+    if (TransportManager::instance->getState() == TransportState::PLAYING)
+        TransportManager::instance->setState(TransportState::STOPPING);
     
     fileTree.removeAllChildren(nullptr);
-    transport.setFile("");
+    TransportManager::instance->setFile("");
     
     ui.disableFileSettingButtons();
     ui.disableTransportButtons();

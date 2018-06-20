@@ -21,7 +21,7 @@ class TransportManager  : public TransportState,
 {
 public:
     //==============================================================================
-    TransportManager (AudioTransportSource& transportSource, GuiUI& gui);
+    TransportManager (ValueTree& tree, AudioTransportSource& transportSource, GuiUI& gui);
     ~TransportManager ();
     
     //==============================================================================
@@ -32,16 +32,20 @@ public:
     
     void setTransportSource ();
     
+    OwnedArray<Effect> effectList;
     Effect* getEffectToPlay() const;
+    
+    static TransportManager* instance;
 
 private:
     //==============================================================================
+    ValueTree vt;
+    
     AudioTransportSource& transportSource;
     GuiUI& ui;
     AudioFormatManager formatManager;
     std::unique_ptr<AudioFormatReaderSource> readerSource;
     
-    OwnedArray<Effect> effectList;
     Effect* effectToPlay = nullptr;
     
     void transportComponentClicked();

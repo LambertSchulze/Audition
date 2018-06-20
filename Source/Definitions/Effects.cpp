@@ -10,11 +10,18 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Effects.h"
+#include "../Definitions/Definitions.h"
 
 //==============================================================================
-Effect::Effect (String n, String t, int l=1, int v=0)
-    : name(n), type(t), level(l), velocity(v)
-{}
+Effect::Effect (ValueTree& v)
+    : state(v)
+{
+    jassert(state.hasType(IDs::Effect));
+    name.referTo(state, IDs::EffectName, nullptr);
+    type.referTo(state, IDs::EffectType, nullptr);
+    level.referTo(state, IDs::Level, nullptr);
+    velocity.referTo(state, IDs::Velocity, nullptr);
+}
 
 Effect::~Effect()
 {}
@@ -27,37 +34,9 @@ void Effect::process (const AudioSourceChannelInfo& bufferToFill)
 void Effect::processEffect (const AudioSourceChannelInfo& bufferToFill)
 {}
 
-String Effect::getName () const
-{
-    return this->name;
-}
-
-String Effect::getType () const
-{
-    return type;
-}
-
-void Effect::levelUp()
-{
-    level += (1  * velocity);
-    if (level > 100)
-        level = 100;
-    
-    if (velocity < 4)
-        velocity += 1;
-}
-
-void Effect::levelDown()
-{
-    if (level > 1)
-        level -= 1;
-    
-    velocity = 1;
-}
-
 //==============================================================================
-NoEffect::NoEffect ()
-    : Effect("No Effect", "Special")
+NoEffect::NoEffect (ValueTree& v)
+    : Effect(v)
 {}
 
 NoEffect::~NoEffect ()
@@ -72,8 +51,8 @@ String NoEffect::getDetailedName()
 }
 
 //==============================================================================
-LeftSolo::LeftSolo ()
-    : Effect("Left Solo", "Stereo Image")
+LeftSolo::LeftSolo (ValueTree& v)
+    : Effect(v)
 {}
 
 LeftSolo::~LeftSolo ()
@@ -95,8 +74,8 @@ String LeftSolo::getDetailedName()
 }
 
 //==============================================================================
-RightSolo::RightSolo ()
-    : Effect("Right Solo", "Stereo Image")
+RightSolo::RightSolo (ValueTree& v)
+    : Effect(v)
 {}
 
 RightSolo::~RightSolo ()
@@ -118,8 +97,8 @@ String RightSolo::getDetailedName()
 }
 
 //==============================================================================
-Mono::Mono ()
-    : Effect("Mono", "Stereo Image")
+Mono::Mono (ValueTree& v)
+    : Effect(v)
 {}
 
 Mono::~Mono ()
@@ -147,8 +126,8 @@ String Mono::getDetailedName()
 }
 
 //==============================================================================
-LRSwitched::LRSwitched ()
-    : Effect("LR Switched", "Stereo Image")
+LRSwitched::LRSwitched (ValueTree& v)
+    : Effect(v)
 {}
 
 LRSwitched::~LRSwitched()
@@ -173,8 +152,8 @@ String LRSwitched::getDetailedName()
 }
 
 //==============================================================================
-SumVolumeUp::SumVolumeUp  ()
-    : Effect("Sum Volume Up", "Loudness")
+SumVolumeUp::SumVolumeUp  (ValueTree& v)
+    : Effect(v)
 {}
 
 SumVolumeUp::~SumVolumeUp ()
@@ -226,8 +205,8 @@ String SumVolumeUp::getDetailedName()
 }
 
 //==============================================================================
-SumVolumeDown::SumVolumeDown ()
-    : Effect("Sum Volume Down", "Loudness")
+SumVolumeDown::SumVolumeDown (ValueTree& v)
+    : Effect(v)
 {}
 
 SumVolumeDown::~SumVolumeDown ()
@@ -274,13 +253,13 @@ float SumVolumeDown::levelToDB()
 
 String SumVolumeDown::getDetailedName()
 {
-    String output = "Sum -" + String(levelToDB()) + " dB";
+    String output = "Sum " + String(levelToDB()) + " dB";
     return output;
 }
 
 //==============================================================================
-MidVolumeUp::MidVolumeUp ()
-    : Effect("Mid Volume Up", "Stereo Image")
+MidVolumeUp::MidVolumeUp (ValueTree& v)
+    : Effect(v)
 {}
 
 MidVolumeUp::~MidVolumeUp ()
@@ -309,6 +288,179 @@ void MidVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
 float MidVolumeUp::levelToDB()
 {
     if (1 <= level && level < 10) // 3dB
+        return 3.0;
+    else if (10 <= level && level < 20) // 2dB
+        return 2.0;
+    else if (20 <= level && level < 50) // 1,5 dB
+        return 1.5;
+    else if (50 <= level && level < 80) // 1 dB
+        return 1.0;
+    else if (80 <= level && level < 85) // 0,5 dB
+        return 0.5;
+    else if (85 <= level && level < 90) // 0,4 dB
+        return 0.4;
+    else if (90 <= level && level < 95) // 0,3 dB
+        return 0.3;
+    else if (95 <= level && level < 100) // 0,2 dB
+        return 0.2;
+    else if (level == 100) // 0,1 dB
+        return 0.1;
+    else // incorrect level
+        return 0;
+}
+
+String MidVolumeUp::getDetailedName()
+{
+    String output = "Mid Channel +" + String(levelToDB()) + " dB";
+    return output;
+}
+
+//==============================================================================
+MidVolumeDown::MidVolumeDown (ValueTree& v)
+    : Effect(v)
+{}
+
+MidVolumeDown::~MidVolumeDown () {}
+
+void MidVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+    float gain = Decibels::decibelsToGain(levelToDB());
+    const float sqrt2           = 1.4142135623730950488;
+    
+    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
+    
+    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+    {
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
+        
+        midChannel              = midChannel * gain;
+        
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
+    }
+}
+
+float MidVolumeDown::levelToDB()
+{
+    if (1 <= level && level < 10) // -3dB
+        return -3.0;
+    else if (10 <= level && level < 20) // -2dB
+        return -2.0;
+    else if (20 <= level && level < 50) // -1,5 dB
+        return -1.5;
+    else if (50 <= level && level < 80) // -1 dB
+        return -1.0;
+    else if (80 <= level && level < 85) // -0,5 dB
+        return -0.5;
+    else if (85 <= level && level < 90) // -0,4 dB
+        return -0.4;
+    else if (90 <= level && level < 95) // -0,3 dB
+        return -0.3;
+    else if (95 <= level && level < 100) // -0,2 dB
+        return -0.2;
+    else if (level == 100) // -0,1 dB
+        return -0.1;
+    else // incorrect level
+        return 0;
+}
+
+String MidVolumeDown::getDetailedName()
+{
+    String output = "Mid Channel " + String(levelToDB()) + " dB";
+    return output;
+}
+
+//==============================================================================
+SideVolumeUp::SideVolumeUp (ValueTree& v)
+    : Effect(v)
+{}
+
+SideVolumeUp::~SideVolumeUp ()
+{}
+
+void SideVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+    float gain = levelToDB();
+    const float sqrt2 = MathConstants<float>::sqrt2;
+    
+    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
+    
+    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+    {
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
+        
+        sideChannel              = sideChannel * gain;
+        
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
+    }
+}
+
+float SideVolumeUp::levelToDB()
+{
+    if (1 <= level && level < 10) // 3dB
+        return 3.0;
+    else if (10 <= level && level < 20) // 2dB
+        return 2.0;
+    else if (20 <= level && level < 50) // 1,5 dB
+        return 1.5;
+    else if (50 <= level && level < 80) // 1 dB
+        return 1.0;
+    else if (80 <= level && level < 85) // 0,5 dB
+        return 0.5;
+    else if (85 <= level && level < 90) // 0,4 dB
+        return 0.4;
+    else if (90 <= level && level < 95) // 0,3 dB
+        return 0.3;
+    else if (95 <= level && level < 100) // 0,2 dB
+        return 0.2;
+    else if (level == 100) // 0,1 dB
+        return 0.1;
+    else // incorrect level
+        return 0;
+}
+
+String SideVolumeUp::getDetailedName()
+{
+    String output = "Side Channel +" + String(levelToDB()) + " dB";
+    return output;
+}
+
+//==============================================================================
+SideVolumeDown::SideVolumeDown (ValueTree& v)
+    : Effect(v)
+{}
+
+SideVolumeDown::~SideVolumeDown ()
+{}
+
+void SideVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+    float gain = levelToDB();
+    const float sqrt2 = MathConstants<float>::sqrt2;
+    
+    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
+    
+    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+    {
+        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
+        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
+        
+        sideChannel              = sideChannel * gain;
+        
+        leftChannel[sample]     = midChannel + sideChannel;
+        rightChannel[sample]    = midChannel - sideChannel;
+    }
+}
+
+float SideVolumeDown::levelToDB()
+{
+    if (1 <= level && level < 10) // 3dB
         return -3.0;
     else if (10 <= level && level < 20) // 2dB
         return -2.0;
@@ -330,108 +482,11 @@ float MidVolumeUp::levelToDB()
         return 0;
 }
 
-String MidVolumeUp::getDetailedName()
+String SideVolumeDown::getDetailedName()
 {
-    String output = "Side Channel +" + String(levelToDB()) + " dB";
+    String output = "Side Channel " + String(levelToDB()) + " dB";
     return output;
 }
 
 //==============================================================================
-MidVolumeDown::MidVolumeDown  () : Effect("Mid Volume Down", "Stereo Image") {gain = 0.5;}
-MidVolumeDown::~MidVolumeDown () {}
 
-void MidVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
-{
-    const float sqrt2           = 1.4142135623730950488;
-    
-    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
-    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
-    
-    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
-    {
-        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
-        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
-        
-        midChannel              = midChannel * gain;
-        
-        leftChannel[sample]     = midChannel + sideChannel;
-        rightChannel[sample]    = midChannel - sideChannel;
-    }
-}
-
-String MidVolumeDown::getDetailedName()
-{
-    return "";
-}
-
-//==============================================================================
-SideVolumeUp::SideVolumeUp  () : Effect("Side Volume Up", "Stereo Image") {gain = 2;}
-SideVolumeUp::~SideVolumeUp () {}
-
-void SideVolumeUp::processEffect (const AudioSourceChannelInfo& bufferToFill)
-{
-    const float sqrt2           = 1.4142135623730950488;
-    
-    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
-    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
-    
-    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
-    {
-        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
-        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
-        
-        sideChannel              = sideChannel * gain;
-        
-        leftChannel[sample]     = midChannel + sideChannel;
-        rightChannel[sample]    = midChannel - sideChannel;
-    }
-}
-
-String SideVolumeUp::getDetailedName()
-{
-    return "";
-}
-
-//==============================================================================
-SideVolumeDown::SideVolumeDown  () : Effect("Side Volume Down", "Stereo Image") {gain = 0.5;}
-SideVolumeDown::~SideVolumeDown () {}
-
-void SideVolumeDown::processEffect (const AudioSourceChannelInfo& bufferToFill)
-{
-    const float sqrt2           = 1.4142135623730950488;
-    
-    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
-    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
-    
-    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
-    {
-        float midChannel        = (leftChannel[sample] + rightChannel[sample]) / sqrt2;
-        float sideChannel       = (leftChannel[sample] - rightChannel[sample]) / sqrt2;
-        
-        sideChannel              = sideChannel * gain;
-        
-        leftChannel[sample]     = midChannel + sideChannel;
-        rightChannel[sample]    = midChannel - sideChannel;
-    }
-}
-
-String SideVolumeDown::getDetailedName()
-{
-    return "";
-}
-
-//==============================================================================
-Filter::Filter  (AudioSource* as) : Effect("Filter", "Colour"), parentSource(as),
-    iirFilter(parentSource, false)
-{}
-Filter::~Filter () {}
-
-void Filter::processEffect (const AudioSourceChannelInfo& bufferToFill)
-{
-    
-}
-
-String Filter::getDetailedName()
-{
-    return "";
-}

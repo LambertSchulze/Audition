@@ -59,9 +59,9 @@ namespace AuditionColours {
 namespace IDs
 {    
     const Identifier Main           = "MAIN";
-    // saves the window height for next startup
+    
+    const Identifier Version        = "Version_Number";
     const Identifier WindowHeight   = "Window_Height";
-    // saves the window width for next startup
     const Identifier WindowWidth    = "Window_Width";
     
     
@@ -90,6 +90,7 @@ namespace IDs
     const Identifier EffectType     = "Effect_Type";
     const Identifier EffectName     = "Effect_Name";
     const Identifier Level          = "Level";
+    const Identifier Velocity       = "Velocity";
 
     
     const Identifier QuickQuiz      = "QUICKQUIZ";

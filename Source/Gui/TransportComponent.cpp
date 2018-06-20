@@ -10,7 +10,6 @@
 #include "TransportComponent.h"
 #include "../Core/Shapes.h"
 #include "../Definitions/Definitions.h"
-#include "../Core/TransportSetter.h"
 
 //==============================================================================
 TransportComponent::TransportComponent (String name)
