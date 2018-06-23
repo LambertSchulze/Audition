@@ -11,6 +11,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "OverviewScreen.h"
 #include "../Definitions/Definitions.h"
+#include "../Core/TransportManager.h"
 
 //==============================================================================
 OverviewScreen::OverviewScreen(ValueTree& vt)
@@ -18,13 +19,15 @@ OverviewScreen::OverviewScreen(ValueTree& vt)
 {
     tree = tree.getChildWithName(IDs::EffectList);
     
-    for (int child = 0; child < tree.getNumChildren(); child++)
+    for (int child = 1; child < tree.getNumChildren(); child++)
     {
-        TextButton* button = new TextButton("Overview Screen Button " + String(child + 1));
+        TextButton* button = new TextButton(tree.getChild(child)[IDs::EffectName].toString());
         addAndMakeVisible(button);
         button->setButtonText(EFFECTLIST.getChild(child)[IDs::EffectName]);
         button->setClickingTogglesState(true);
         button->setRadioGroupId(555);
+        button->onClick = [this, child] { TransportManager::instance->setEffect(child); };
+        
         buttonList.add(button);
     }
 }

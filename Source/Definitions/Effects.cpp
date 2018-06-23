@@ -489,4 +489,40 @@ String SideVolumeDown::getDetailedName()
 }
 
 //==============================================================================
+HpFilter::HpFilter(ValueTree& v)
+    : Effect(v)
+{
+    filterLeft = new IIRFilter();
+    filterRight = new IIRFilter();
+}
 
+HpFilter::~HpFilter()
+{}
+
+void HpFilter::processEffect(const AudioSourceChannelInfo& bufferToFill)
+{
+    if (level != oldLevel) {
+        oldLevel = level;
+        
+        auto c = IIRCoefficients::makeHighPass(44100, levelToHz());
+        filterLeft->setCoefficients(c);
+        filterRight->setCoefficients(c);
+    }
+    
+    float* const leftChannel    = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+    float* const rightChannel   = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
+    
+    filterLeft->processSamples (leftChannel, bufferToFill.numSamples);
+    filterRight->processSamples (rightChannel, bufferToFill.numSamples);
+}
+
+float HpFilter::levelToHz()
+{
+    return 1000;
+}
+
+String HpFilter::getDetailedName()
+{
+    String output = "Highpass Filter at " + String(levelToHz()) + " Hz";
+    return output;
+}

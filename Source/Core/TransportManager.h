@@ -16,8 +16,7 @@
 #include "GuiUI.h"
 
 class TransportManager  : public TransportState,
-                          public ChangeListener,
-                          public Button::Listener
+                          public ChangeListener
 {
 public:
     //==============================================================================
@@ -26,7 +25,6 @@ public:
     
     //==============================================================================
     void changeListenerCallback (ChangeBroadcaster* thingThatChanged) override;
-    void buttonClicked (Button* button) override;
     void stateChanged() override;
     void effectChanged() override;
     

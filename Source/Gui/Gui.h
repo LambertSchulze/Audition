@@ -36,6 +36,7 @@ public:
     void enableFileSettingButtons() override;
     void disableFileSettingButtons() override;
     
+    TransportComponent* getTransportComponent() override;
     void enableOriginalButton() override;
     void enableEffectButton() override;
     void disableEffectButton() override;

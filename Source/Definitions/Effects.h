@@ -142,7 +142,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
-    String getDetailedName () override;
+    String getDetailedName() override;
 };
 
 //==============================================================================
@@ -155,7 +155,7 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
-    String getDetailedName () override;
+    String getDetailedName() override;
 };
 
 //==============================================================================
@@ -168,8 +168,24 @@ public:
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
-    String getDetailedName () override;
+    String getDetailedName() override;
 };
 
 //==============================================================================
-
+class HpFilter : public Effect
+{
+public:
+    HpFilter  (ValueTree& v);
+    ~HpFilter ();
+    
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    float levelToHz();
+    String getDetailedName() override;
+    
+private:
+    ScopedPointer<IIRFilter> filterLeft;
+    ScopedPointer<IIRFilter> filterRight;
+    
+    int oldLevel;
+};

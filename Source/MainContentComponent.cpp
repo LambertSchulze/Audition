@@ -43,7 +43,9 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
     
     transportSource.setGain(Decibels::decibelsToGain(-3));
 
-    transport.getEffectToPlay()->processEffect(bufferToFill);
+    if (transport.getEffectToPlay()) {
+        transport.getEffectToPlay()->processEffect(bufferToFill);
+    }
 }
 
 void MainContentComponent::releaseResources()

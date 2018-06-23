@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "../Gui/TransportComponent.h"
 
 class GuiUI
 {
@@ -28,6 +29,7 @@ public:
     virtual void disableFileSettingButtons() =0;
     
     // Transport UI
+    virtual TransportComponent* getTransportComponent() =0;
     virtual void enableOriginalButton() =0;
     virtual void enableEffectButton() =0;
     virtual void disableEffectButton() =0;

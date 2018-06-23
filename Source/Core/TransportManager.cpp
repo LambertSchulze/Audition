@@ -23,9 +23,6 @@ TransportManager::TransportManager (ValueTree& v, AudioTransportSource& ts, GuiU
     transportSource.addChangeListener(this);
     
     if (effectList.isEmpty()) {
-        auto null = ValueTree(IDs::Effect);
-        effectList.add(new NoEffect(null));
-                
         for (int i = 0; i < EFFECTLIST.getNumChildren(); i++) {
             auto e = EFFECTLIST.getChild(i);
 
@@ -63,16 +60,19 @@ TransportManager::TransportManager (ValueTree& v, AudioTransportSource& ts, GuiU
                 case 10:
                     effectList.add(new SideVolumeDown(e));
                     break;
+                case 11:
+                    effectList.add(new HpFilter(e));
+                    break;
                 default:
                     DBG("Couldn't add effect");
                     break;
             }
         }
     }
-    if (effectList.size() != (EFFECTLIST.getNumChildren()+1))
+    if (effectList.size() != (EFFECTLIST.getNumChildren()))
         DBG("you forgot an effect!");
     
-    effectToPlay = effectList[0];
+    effectToPlay = nullptr;
 }
 
 TransportManager::~TransportManager()
@@ -83,21 +83,12 @@ TransportManager::~TransportManager()
 
 void TransportManager::changeListenerCallback(ChangeBroadcaster* source)
 {
-    Component* componentBroadcaster = dynamic_cast<Component*>(source);
-    
     if (source == &transportSource) {
         transportSource.isPlaying() ? setState(PLAYING) : setState(STOPPING);
     }
     
-    else if (componentBroadcaster->getName() == "Transport Component") {
+    else if (source == ui.getTransportComponent()) {
         transportComponentClicked();
-    }
-}
-
-void TransportManager::buttonClicked (Button* button)
-{
-    if (button->getName().startsWith("Overview Screen Button")) {
-        setEffect(button->getName().getTrailingIntValue());
     }
 }
 
@@ -107,7 +98,7 @@ void TransportManager::stateChanged()
     {
         case STARTING_ORIGINAL:
             setTransportSource();
-            effectToPlay = effectList[0];
+            effectToPlay = nullptr;
             transportSource.start();
             setState(PLAYING);
             break;
@@ -139,11 +130,15 @@ void TransportManager::stateChanged()
 }
 
 void TransportManager::effectChanged ()
-{    
-    if (getEffect() == 0) {
+{
+    effectToPlay = effectList[playbackEffect];
+    
+    if (getEffectToPlay() == nullptr) {
         ui.disableEffectButton();
     }
-    else ui.enableEffectButton();    
+    else {
+        ui.enableEffectButton();
+    }
 }
 
 void TransportManager::setTransportSource ()

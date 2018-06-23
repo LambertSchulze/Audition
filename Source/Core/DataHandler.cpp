@@ -44,7 +44,7 @@ void DataHandler::setupProperties()
     }
     
     if (vt[IDs::Version].toString() != "alpha 1.2") {
-        DBG ("Version number incorrect. Creating clean App state");
+        DBG ("Version number incorrect. (Version Num " << vt[IDs::Version].toString() << "). Should be: alpha 1.2");
         vt = ValueTree(IDs::Main);
     }
     
@@ -106,14 +106,18 @@ void DataHandler::setupProperties()
         midVolDown  .setProperty(IDs::Number, 8, nullptr);
         midVolDown  .setProperty(IDs::EffectName, "Mid Vol Down", nullptr);
         midVolDown  .setProperty(IDs::EffectType, "Volume", nullptr);
-        ValueTree sideVolUp      (IDs::Effect);
+        ValueTree sideVolUp     (IDs::Effect);
         sideVolUp   .setProperty(IDs::Number, 9, nullptr);
         sideVolUp   .setProperty(IDs::EffectName, "Side Vol Up", nullptr);
         sideVolUp   .setProperty(IDs::EffectType, "Volume", nullptr);
-        ValueTree sideVolDown    (IDs::Effect);
+        ValueTree sideVolDown   (IDs::Effect);
         sideVolDown .setProperty(IDs::Number, 10, nullptr);
         sideVolDown .setProperty(IDs::EffectName, "Side Vol Down", nullptr);
         sideVolDown .setProperty(IDs::EffectType, "Volume", nullptr);
+        ValueTree hpFilter      (IDs::Effect);
+        hpFilter    .setProperty(IDs::Number, 11, nullptr);
+        hpFilter    .setProperty(IDs::EffectName, "Highpass Filter", nullptr);
+        hpFilter    .setProperty(IDs::EffectType, "Filter", nullptr);
         
         effectList.addChild(noEffect,       -1, nullptr);
         effectList.addChild(sumVolUp,       -1, nullptr);
@@ -126,6 +130,7 @@ void DataHandler::setupProperties()
         effectList.addChild(midVolDown,     -1, nullptr);
         effectList.addChild(sideVolUp,      -1, nullptr);
         effectList.addChild(sideVolDown,    -1, nullptr);
+        effectList.addChild(hpFilter,       -1, nullptr);
         
         for (auto effect : effectList) {
             effect.setProperty(IDs::Level, 1, nullptr);

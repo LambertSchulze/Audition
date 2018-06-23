@@ -32,7 +32,7 @@ public:
     {
         Rectangle<float> buttonArea = button.getLocalBounds().toFloat();
         const int outlineThickness = 2;
-        const int cornerSize = 18;
+        const int cornerSize = buttonArea.getHeight() / 2;
     
         //draw outline
         auto colour = (button.isEnabled()) ?

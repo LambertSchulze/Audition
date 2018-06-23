@@ -105,7 +105,7 @@ public:
     {
         newQuiz();
         
-        TransportManager::instance->setEffect(QUICKQUIZ[IDs::RightEffect]);
+        TransportManager::instance->setEffect((int) QUICKQUIZ[IDs::RightEffect]);
         switchState(State::CHOOSE);
     };
     

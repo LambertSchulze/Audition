@@ -13,14 +13,10 @@
 
 //==============================================================================
 TransportComponent::TransportComponent (String name)
-{
-    Component::setName(name);
-}
+{}
 
 TransportComponent::~TransportComponent()
-{
-    
-}
+{}
 
 void TransportComponent::paint(Graphics& g)
 {
@@ -86,16 +82,16 @@ void TransportComponent::resized()
 }
 
 void TransportComponent::mouseDown (const MouseEvent& event)
-{
+{    
     if (componentState != Disabled && this->getLocalBounds().removeFromLeft(this->getHeight()).contains(event.getMouseDownPosition())) {
         setButtonState(OriginalButtonPressed);
+        sendChangeMessage();
     }
 
     else if (componentState == BothEnabled && this->getLocalBounds().removeFromRight(this->getHeight()).contains(event.getMouseDownPosition())) {
         setButtonState(EffectButtonPressed);
+        sendChangeMessage();
     }
-    
-    sendChangeMessage();
 }
 
 //==============================================================================

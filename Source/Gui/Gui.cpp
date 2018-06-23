@@ -11,6 +11,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "Gui.h"
 #include "../Core/Shapes.h"
+#include "../Core/TransportManager.h"
 #include "../MainContentComponent.h"
 #include "../WindowContainer/TitleScreen.h"
 #include "../WindowContainer/OverviewScreen.h"
@@ -199,6 +200,11 @@ void Gui::disableFileSettingButtons()
     fileSettingButtons[2]->setEnabled(false);
 };
 
+TransportComponent* Gui::getTransportComponent()
+{
+    return &transportComponent;
+}
+
 void Gui::enableOriginalButton()
 {
     transportComponent.setComponentState(TransportComponent::OriginalEnabled);
@@ -270,8 +276,5 @@ void Gui::Register()
     fileSettingButtons[2]->addListener(&(owner->fileManager));
     
     transportComponent.addChangeListener(&(owner->transport));
-    
-    for (auto button : dynamic_cast<OverviewScreen*>(pages[1])->buttonList) {
-        button->addListener(&(owner->transport));
-    }
+    //transportComponent.addChangeListener(TransportManager::instance);
 }
