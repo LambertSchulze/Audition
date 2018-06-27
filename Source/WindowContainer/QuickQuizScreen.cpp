@@ -17,31 +17,6 @@ void QuickQuizState::switchState (int i)
     owner->currentState->updateUI();
 }
 
-void BeginState::newQuiz()
-{
-    game.newQuickQuiz();
-    
-    // select a new File for playback
-//    if ((bool) FILELIST[IDs::Repeat] == true) {
-//        int selectedFile = FILELIST[IDs::SelectedFile];
-//        if (selectedFile == FILELIST.getNumChildren() - 1)
-//            selectedFile = -1;
-//        
-//        FILELIST.setProperty(IDs::SelectedFile, selectedFile + 1, nullptr);
-//    }
-//    
-//    else if ((bool) FILELIST[IDs::Shuffle] == true) {
-//        Random r;
-//        int selectedFile = FILELIST[IDs::SelectedFile];
-//        int newSelection;
-//        do {
-//            newSelection = r.nextInt(FILELIST.getNumChildren());
-//        } while (newSelection == selectedFile);
-//        
-//        FILELIST.setProperty(IDs::SelectedFile, newSelection, nullptr);
-//    }
-}
-
 //==============================================================================
 
 QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
@@ -62,15 +37,19 @@ QuickQuizScreen::QuickQuizScreen (ValueTree& tree)
         choiceButtons[i]->setClickingTogglesState(true);
         choiceButtons[i]->setRadioGroupId(8426);
         choiceButtons[i]->setLookAndFeel(&sblaf);
-    }    
-    choiceButtons[0]->onClick = [this] { setPlayerChoice(0); };
-    choiceButtons[1]->onClick = [this] { setPlayerChoice(1); };
-    choiceButtons[2]->onClick = [this] { setPlayerChoice(2); };
-        
+        choiceButtons[i]->onClick = [this, i] { setPlayerChoice(i); };
+    }
+    
+    playButtons.add(new PlayStopButton("Choice 1"));
+    playButtons.add(new PlayStopButton("Choice 2"));
+    playButtons.add(new PlayStopButton("Choice 3"));
+    for (int i = 0; i < playButtons.size(); i++) {
+        addAndMakeVisible(playButtons[i]);
+    }
+    
     if (!vt.getChildWithName(IDs::QuickQuiz).isValid()) {
         ValueTree qq(IDs::QuickQuiz);
         vt.addChild(qq, -1, nullptr);
-        //DBG("added QuickQuiz Node");
     }
     
     if (stateList.isEmpty())
@@ -98,13 +77,18 @@ QuickQuizScreen::~QuickQuizScreen()
 void QuickQuizScreen::resized()
 {
     auto r (getLocalBounds().withTrimmedBottom(UI::footerHeight * 1.5));
-    auto middle = r.withSizeKeepingCentre(r.getWidth(), UI::choiceButtonHeight);
+    auto middle = r.withSizeKeepingCentre(r.getWidth(), UI::choiceButtonHeight + UI::footerHeight);
+    auto playButtonArea = middle.removeFromBottom(UI::footerHeight);
     
     infoLabel.setBounds(r.removeFromTop(middle.getY()));
     
     choiceButtons[0]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight).translated(- (UI::choiceButtonWidth + 8), 0));
     choiceButtons[1]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight));
     choiceButtons[2]->setBounds(middle.withSizeKeepingCentre(UI::choiceButtonWidth, UI::choiceButtonHeight).translated(+ UI::choiceButtonWidth + 8, 0));
+    
+    playButtons[0]->setBounds(playButtonArea.withSizeKeepingCentre(UI::choiceButtonWidth, UI::footerHeight).translated(-(UI::choiceButtonWidth + 8), 0));
+    playButtons[1]->setBounds(playButtonArea.withSizeKeepingCentre(UI::choiceButtonWidth, UI::footerHeight));
+    playButtons[2]->setBounds(playButtonArea.withSizeKeepingCentre(UI::choiceButtonWidth, UI::footerHeight).translated(+ UI::choiceButtonWidth + 8, 0));
     
     nextButton.setBounds(r.removeFromRight(UI::choiceButtonWidth).removeFromBottom(UI::choiceButtonHeight).reduced(8));
 }

@@ -30,6 +30,7 @@
 #include "../Definitions/Definitions.h"
 #include "../Core/RandomEffects.h"
 #include "../Core/TransportManager.h"
+#include "../Gui/PlayStopButton.h"
 #include "SelectButtonLookAndFeel.h"
 #include "NextButtonLookAndFeel.h"
 
@@ -37,8 +38,7 @@ enum State {BEGIN   = 0,
             CHOOSE  = 1,
             WIN     = 2,
             LOOSE   = 3,
-            END     = 4
-};
+            END     = 4};
 
 class QuickQuizScreen;
 
@@ -48,18 +48,20 @@ class QuickQuizState
 {
 public:
     QuickQuizState (QuickQuizScreen* qqs, ValueTree& tree)
-    : vt(tree), owner(qqs)      {};
+        : vt(tree), owner(qqs)
+    {};
+    
     virtual ~QuickQuizState()   {owner = nullptr;};
     
-    virtual void nextButtonClicked      () = 0;
-    virtual void updateUI               () = 0;
-    virtual void setPlayerChoice        (int) = 0;
+    virtual void nextButtonClicked() = 0;
+    virtual void updateUI() = 0;
+    virtual void setPlayerChoice(int) = 0;
     
 protected:
     ValueTree vt;
     QuickQuizScreen* owner;
     
-    void switchState (int);
+    void switchState(int);
 };
     
 //==============================================================================
@@ -72,19 +74,21 @@ public:
     QuickQuizScreen (ValueTree&);
     ~QuickQuizScreen();
     
-    void paint (Graphics&)          {};
     void resized();
 
     // redirected to QuizStates
     void setPlayerChoice(int num)   {currentState->setPlayerChoice(num);};
     void nextButtonClicked()        {currentState->nextButtonClicked();};
     
-    Label                       infoLabel;
-    TextButton                  nextButton;
-    OwnedArray<TextButton>      choiceButtons;
+    Label infoLabel;
+    TextButton nextButton;
+    OwnedArray<TextButton> choiceButtons;
     
 private:
     ValueTree vt;
+    
+    OwnedArray<PlayStopButton> playButtons;
+    
     OwnedArray<QuickQuizState> stateList;
     QuickQuizState* currentState;
     SelectButtonLookAndFeel sblaf;
@@ -98,12 +102,15 @@ private:
 class BeginState : public QuickQuizState
 {
 public:
-    BeginState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree), game(tree) {};
-    ~BeginState()   {};
+    BeginState (QuickQuizScreen* qqs, ValueTree& tree)
+        : QuickQuizState(qqs, tree), game(tree)
+    {};
+    
+    ~BeginState() {};
     
     void nextButtonClicked() override
     {
-        newQuiz();
+        game.newQuickQuiz();
         
         TransportManager::instance->setEffect((int) QUICKQUIZ[IDs::RightEffect]);
         switchState(State::CHOOSE);
@@ -121,8 +128,6 @@ public:
     
     void setPlayerChoice (int buttonNumber) override {};
     
-    void newQuiz();
-    
 private:
     RandomEffects game;
 };
@@ -130,7 +135,10 @@ private:
 class ChooseState : public QuickQuizState
 {
     public :
-    ChooseState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree)   {};
+    ChooseState (QuickQuizScreen* qqs, ValueTree& tree)
+        : QuickQuizState(qqs, tree)
+    {};
+    
     ~ChooseState() {};
     
     void nextButtonClicked() override
@@ -174,12 +182,18 @@ class ChooseState : public QuickQuizState
 class WinState : public QuickQuizState
 {
 public:
-    WinState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree)   {};
+    WinState (QuickQuizScreen* qqs, ValueTree& tree)
+        : QuickQuizState(qqs, tree), game(tree)
+    {};
+    
     ~WinState() {};
     
     void nextButtonClicked() override
     {
-        switchState(State::BEGIN);
+        game.newQuickQuiz();
+        
+        TransportManager::instance->setEffect((int) QUICKQUIZ[IDs::RightEffect]);
+        switchState(State::CHOOSE);
     };
     
     void updateUI() override
@@ -201,21 +215,27 @@ public:
         owner->choiceButtons[rightButtonNum]->setColour(TextButton::buttonColourId, AuditionColours::green);
     }
     
-    void setPlayerChoice (int buttonNumber) override
-    {
-        
-    };
+    void setPlayerChoice (int buttonNumber) override {};
+    
+private:
+    RandomEffects game;
 };
 
 class LooseState : public QuickQuizState
 {
 public:
-    LooseState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
-    ~LooseState()   {};
+    LooseState (QuickQuizScreen* qqs, ValueTree& tree)
+        : QuickQuizState(qqs, tree), game(tree)
+    {};
+    
+    ~LooseState() {};
     
     void nextButtonClicked() override
     {
-        switchState(State::BEGIN);
+        game.newQuickQuiz();
+        
+        TransportManager::instance->setEffect((int) QUICKQUIZ[IDs::RightEffect]);
+        switchState(State::CHOOSE);
     };
     
     void updateUI() override
@@ -241,19 +261,24 @@ public:
         owner->choiceButtons[choiceButtonNum]->setVisible(true);
         owner->choiceButtons[choiceButtonNum]->setEnabled(false);
         owner->choiceButtons[choiceButtonNum]->setColour(TextButton::buttonColourId, AuditionColours::blue);
+        
+        //owner->
     };
     
-    void setPlayerChoice (int buttonNumber) override
-    {
-        
-    };
+    void setPlayerChoice (int buttonNumber) override {};
+    
+private:
+    RandomEffects game;
 };
 
 class EndState : public QuickQuizState
 {
 public:
-    EndState (QuickQuizScreen* qqs, ValueTree& tree) : QuickQuizState(qqs, tree) {};
-    ~EndState()   {};
+    EndState (QuickQuizScreen* qqs, ValueTree& tree)
+        : QuickQuizState(qqs, tree)
+    {};
+    
+    ~EndState() {};
     
     void nextButtonClicked() override
     {
@@ -261,10 +286,7 @@ public:
     };
     
     void updateUI() override
-    {
-//        TRANSPORT.setProperty(IDs::TransportState, "Stopping", nullptr);
-//        TRANSPORT.removeProperty(IDs::EffectToPlay, nullptr);
-        
+    {        
         owner->infoLabel.setText("End State", dontSendNotification);
         owner->nextButton.setButtonText("new quiz");
         
@@ -276,8 +298,5 @@ public:
         owner->choiceButtons[2]->setEnabled(true);
     };
     
-    void setPlayerChoice (int buttonNumber) override
-    {
-        
-    };
+    void setPlayerChoice (int buttonNumber) override {};
 };
