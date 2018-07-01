@@ -27,6 +27,7 @@ public:
     virtual void selectRowInFileList (int number) =0;
     virtual void enableFileSettingButtons() =0;
     virtual void disableFileSettingButtons() =0;
+    virtual bool isDraggingOverList() =0;
     
     // Transport UI
     virtual TransportComponent* getTransportComponent() =0;

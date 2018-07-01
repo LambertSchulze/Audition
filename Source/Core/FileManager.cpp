@@ -27,26 +27,30 @@ FileManager::FileManager (ValueTree& vt, GuiUI& gui)
         ui.enableFileSettingButtons();
         ui.enableOriginalButton();
     }
-}
+};
 
 FileManager::~FileManager()
-{
-    
-}
+{};
 
 int FileManager::getNumRows()
 {
     return fileTree.getNumChildren();
-}
+};
 
 void FileManager::paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-    if (rowIsSelected) g.fillAll (AuditionColours::blue);
-    
-    else if (rowNumber % 2) g.fillAll (AuditionColours::lightgrey);
+    if (rowNumber % 2) g.fillAll (AuditionColours::lightgrey);
     else {
         g.setColour(AuditionColours::lightgrey);
         g.drawVerticalLine(width - 1, 2, height - 2);
+    }
+    
+    if (rowIsSelected) g.fillAll (AuditionColours::blue);
+    
+    if (ui.isDraggingOverList()) {
+        g.setColour(AuditionColours::blue);
+        g.drawRect(0, 0, 3, height);
+        g.drawRect(width - 3, 0, 3, height);
     }
 }
 
@@ -54,10 +58,8 @@ void FileManager::paintCell (Graphics& g, int rowNumber, int columnId, int width
 {
     g.setColour ((rowIsSelected) ? fllaf.findColour(TableHeaderComponent::highlightColourId) : fllaf.findColour(ListBox::textColourId));
     
-    if (fileTree.getChild(rowNumber).isValid())
-    {
-        if (columnId == 1)
-        {
+    if (fileTree.getChild(rowNumber).isValid()) {
+        if (columnId == 1) {
             auto text = fileTree.getChild(rowNumber).getProperty(IDs::FileName);
             g.drawText (text, 14, 0, width - 4, height, Justification::centredLeft, true);
         }
@@ -66,8 +68,7 @@ void FileManager::paintCell (Graphics& g, int rowNumber, int columnId, int width
 
 Component* FileManager::refreshComponentForCell (int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate)
 {
-    if (columnId == 2)
-    {
+    if (columnId == 2) {
         auto* timeLabel = static_cast<AudioFileListLabelComponent*>(existingComponentToUpdate);
         
         if (timeLabel == nullptr) timeLabel = new AudioFileListLabelComponent(*this);
@@ -107,7 +108,7 @@ void FileManager::selectedRowsChanged (int lastRowSelected)
 
 void FileManager::buttonClicked (Button* button)
 {
-    if (button->getName() == "Add Button")      {addFile();};
+    if (button->getName() == "Add Button")      {openFile();};
     if (button->getName() == "Remove Button")   {removeFile(selectedFile);};
     if (button->getName() == "Clear Button")    {clearFileList();};
 }
@@ -122,28 +123,32 @@ String FileManager::getStartTime (int row) const
     return fileTree.getChild(row)[IDs::FileStart];
 }
 
-void FileManager::addFile()
+void FileManager::openFile()
 {
-    bool empty = (getNumRows() == 0) ? true : false;
+    FileChooser chooser ("Select a file to play...", File::getSpecialLocation(File::userMusicDirectory), "*.wav,*.mp3,*.m4a");
     
-    FileChooser chooser ("Select a Wave file to play...", File::getSpecialLocation(File::userMusicDirectory), "*.wav,*.mp3,*.m4a");
-    
-    if (chooser.browseForMultipleFilesToOpen())
-    {
-        Array<File> newFiles (chooser.getResults());
-        for (int i = 0; i < newFiles.size(); i++)
-        {
-            if (!fileTree.getChildWithProperty(IDs::FilePath, newFiles[i].getFullPathName()).isValid())
-            {
-                ValueTree newFile (IDs::File);
-                newFile.setProperty(IDs::FilePath, newFiles[i].getFullPathName(), nullptr);
-                newFile.setProperty(IDs::FileName, newFiles[i].getFileNameWithoutExtension(), nullptr);
-                newFile.setProperty(IDs::FileStart, "0.00", nullptr);
-                bool isLossless (newFiles[i].getFileExtension() == ".wav");
-                newFile.setProperty(IDs::IsLossless, isLossless, nullptr);
-                
-                fileTree.addChild(newFile, -1, nullptr);
-            }
+    if (chooser.browseForMultipleFilesToOpen()) {
+        Array<File> newFiles = chooser.getResults();
+        
+        for (auto file : newFiles) addFile(file);
+    }
+}
+
+void FileManager::addFile (File file)
+{
+    if (file.exists()) {
+        String filepath = file.getFullPathName();
+        
+        if (!fileTree.getChildWithProperty(IDs::FilePath, filepath).isValid()) {
+            DBG("got here");
+            ValueTree newFile (IDs::File);
+            newFile.setProperty(IDs::FilePath, filepath, nullptr);
+            newFile.setProperty(IDs::FileName, file.getFileNameWithoutExtension(), nullptr);
+            newFile.setProperty(IDs::FileStart, "0.00", nullptr);
+            bool isLossless (filepath.endsWith(".wav"));
+            newFile.setProperty(IDs::IsLossless, isLossless, nullptr);
+        
+            fileTree.addChild(newFile, -1, nullptr);
         }
     }
     
@@ -152,7 +157,7 @@ void FileManager::addFile()
         ui.enableOriginalButton();
     }
 
-    if (empty || (getNumRows() == 1)) {
+    if ((getNumRows() == 0) || (getNumRows() == 1)) {
         TransportManager::instance->setFile(fileTree.getChild(0)[IDs::FilePath]);
         Timer::callAfterDelay(0.1, [this] { ui.selectRowInFileList(0); });
     }

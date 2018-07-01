@@ -14,8 +14,8 @@
 #include "../Gui/ListboxLookAndFeel.h"
 #include "GuiUI.h"
 
-class FileManager  : public TableListBoxModel,
-                     public Button::Listener
+class FileManager : public TableListBoxModel,
+                    public Button::Listener
 {
 public:
     FileManager (ValueTree& vt, GuiUI& gui);
@@ -37,9 +37,10 @@ public:
     String getStartTime (int) const;
     
 //==============================================================================
-    void addFile ();
+    void openFile();
+    void addFile (File file);
     void removeFile (int position);
-    void clearFileList ();
+    void clearFileList();
     
 private:
     ValueTree fileTree;

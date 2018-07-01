@@ -18,6 +18,8 @@ public:
     Effect (ValueTree& effectState);
     virtual ~Effect();
 
+    virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) =0;
+    
     void process (const AudioSourceChannelInfo& bufferToFill);
     virtual void processEffect (const AudioSourceChannelInfo& bufferToFill);
     
@@ -40,6 +42,7 @@ public:
     NoEffect (ValueTree& v);
 	~NoEffect ();
 
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     String getDetailedName () override;
@@ -52,6 +55,7 @@ public:
 	LeftSolo (ValueTree& v);
 	~LeftSolo ();
 	
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     String getDetailedName () override;
@@ -64,6 +68,7 @@ public:
 	RightSolo (ValueTree& v);
 	~RightSolo ();
 	
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     String getDetailedName () override;
@@ -76,6 +81,7 @@ public:
 	Mono (ValueTree& v);
 	~Mono ();
 	
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     String getDetailedName () override;
@@ -88,6 +94,20 @@ public:
     LRSwitched (ValueTree& v);
     ~LRSwitched();
     
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    String getDetailedName () override;
+};
+
+//==============================================================================
+class PhaseInverted : public Effect
+{
+public:
+    PhaseInverted (ValueTree& v);
+    ~PhaseInverted();
+    
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     String getDetailedName () override;
@@ -100,6 +120,7 @@ public:
 	SumVolumeUp  (ValueTree& v);
 	~SumVolumeUp ();
 	
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
@@ -113,6 +134,7 @@ public:
 	SumVolumeDown  (ValueTree& v);
 	~SumVolumeDown ();
 	
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
 	void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
@@ -126,6 +148,7 @@ public:
     MidVolumeUp  (ValueTree& v);
     ~MidVolumeUp ();
     
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
@@ -139,6 +162,7 @@ public:
     MidVolumeDown  (ValueTree& v);
     ~MidVolumeDown ();
     
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
@@ -152,6 +176,7 @@ public:
     SideVolumeUp  (ValueTree& v);
     ~SideVolumeUp ();
     
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
@@ -165,6 +190,7 @@ public:
     SideVolumeDown  (ValueTree& v);
     ~SideVolumeDown ();
     
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToDB();
@@ -172,12 +198,13 @@ public:
 };
 
 //==============================================================================
-class HpFilter : public Effect
+class HpFilter : public Effect      // Filter effect with IIRFilter class
 {
 public:
     HpFilter  (ValueTree& v);
     ~HpFilter ();
     
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override {};
     void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
     
     float levelToHz();
@@ -188,4 +215,21 @@ private:
     ScopedPointer<IIRFilter> filterRight;
     
     int oldLevel;
+};
+
+//==============================================================================
+class LPFilter : public Effect      // Filter effect with IIRFilterAudioSource class
+{
+public:
+    LPFilter    (ValueTree& v, AudioSource* a);
+    ~LPFilter   ();
+    
+    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
+    void processEffect (const AudioSourceChannelInfo& bufferToFill) override;
+    
+    float levelToHz();
+    String getDetailedName() override;
+    
+private:
+    IIRFilterAudioSource filter;
 };

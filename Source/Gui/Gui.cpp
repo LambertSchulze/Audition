@@ -18,7 +18,7 @@
 #include "../WindowContainer/QuickQuizScreen.h"
 
 Gui::Gui (ValueTree& tree)
-: fileList("File List", nullptr), transportComponent("Transport Component")
+: fileList("File List"), transportComponent("Transport Component")
 {
     headerButtons.add(new TextButton{"Overview Screen"});
     headerButtons.add(new TextButton{"QuickQuiz Screen"});
@@ -115,9 +115,8 @@ void Gui::paint(Graphics& g)
     g.fillRect(header);
     
     const int rowHeight (fileList.getRowHeight());
-
     auto buttonrowArea (sidebar.removeFromBottom(UI::fileListButtonRowHeight));
-    auto emptyArea (sidebar.withTrimmedTop(rowHeight * (fileList.getNumRows())));
+    auto emptyArea (sidebar.withTrimmedTop(rowHeight * (fileList.getNumRows() + 1)));
     
     g.setColour(AuditionColours::lightergrey);
     g.fillRect(buttonrowArea.removeFromTop(1));
@@ -125,7 +124,7 @@ void Gui::paint(Graphics& g)
     g.fillRect(sidebar.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(3));
     
     g.setColour(AuditionColours::lightgrey);
-    if (!(fileList.getNumRows() % 2)) g.fillRect(emptyArea.removeFromTop(rowHeight));
+    if (fileList.getNumRows() % 2) g.fillRect(emptyArea.removeFromTop(rowHeight));
     while (!emptyArea.isEmpty()) {
         g.fillRect(emptyArea.removeFromTop(rowHeight).removeFromRight(1).withTrimmedTop(2).withTrimmedBottom(2));
         g.fillRect(emptyArea.removeFromTop(rowHeight));
@@ -133,7 +132,7 @@ void Gui::paint(Graphics& g)
     
     if (fileList.getNumRows() < 1) {
         g.setColour(AuditionColours::lightergrey);
-        g.drawText("Add an audio file to start listening.", 0, (getHeight() / (2*rowHeight))*rowHeight + (3 * rowHeight / 4 ), sidebar.getWidth(), rowHeight, Justification::horizontallyCentred);
+        g.drawText("Add or drag an audio file in here to start listening.", 0, (getHeight() / (2*rowHeight))*rowHeight + (3 * rowHeight / 4 ), sidebar.getWidth(), rowHeight, Justification::horizontallyCentred);
     }
 }
 
@@ -198,6 +197,11 @@ void Gui::disableFileSettingButtons()
 {
     fileSettingButtons[1]->setEnabled(false);
     fileSettingButtons[2]->setEnabled(false);
+};
+
+bool Gui::isDraggingOverList()
+{
+    return fileList.filesAreAbove;
 };
 
 TransportComponent* Gui::getTransportComponent()
@@ -269,6 +273,7 @@ void Gui::Register()
 {
     auto* ptr = this->getParentComponent();
     auto* owner = dynamic_cast<MainContentComponent*>(ptr);
+    
     fileList.setModel(&(owner->fileManager));
     
     fileSettingButtons[0]->addListener(&(owner->fileManager));
@@ -276,5 +281,4 @@ void Gui::Register()
     fileSettingButtons[2]->addListener(&(owner->fileManager));
     
     transportComponent.addChangeListener(&(owner->transport));
-    //transportComponent.addChangeListener(TransportManager::instance);
 }

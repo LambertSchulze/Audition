@@ -13,6 +13,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Core/GuiUI.h"
 #include "../Definitions/Definitions.h"
+#include "AudioFileList.h"
 #include "TransportComponent.h"
 #include "AuditionLookAndFeel.h"
 #include "MainMenuLookAndFeel.h"
@@ -35,6 +36,7 @@ public:
     void selectRowInFileList (int number) override;
     void enableFileSettingButtons() override;
     void disableFileSettingButtons() override;
+    bool isDraggingOverList() override;
     
     TransportComponent* getTransportComponent() override;
     void enableOriginalButton() override;
@@ -59,7 +61,7 @@ public:
     ListboxLookAndFeel fllaf;
     
     OwnedArray<TextButton> headerButtons;
-    TableListBox fileList;
+    AudioFileList fileList;
     OwnedArray<DrawableButton> fileSettingButtons;
     OwnedArray<Drawable> buttonImages;
     ScopedPointer<StretchableLayoutResizerBar> stretchBar;

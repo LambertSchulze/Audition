@@ -63,6 +63,8 @@ TransportManager::TransportManager (ValueTree& v, AudioTransportSource& ts, GuiU
                 case 11:
                     effectList.add(new HpFilter(e));
                     break;
+                case 12: effectList.add(new LPFilter(e, &transportSource));
+                    break;
                 default:
                     DBG("Couldn't add effect");
                     break;

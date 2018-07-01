@@ -14,6 +14,7 @@
 
 #include "Definitions/Definitions.h"
 #include "Gui/Gui.h"
+#include "Gui/AudioFileList.h"
 #include "Core/TransportManager.h"
 #include "Core/FileManager.h"
 
@@ -40,7 +41,8 @@ private:
     TransportManager transport;
     FileManager fileManager;
     
-    friend Gui;
+friend Gui;
+friend AudioFileList;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

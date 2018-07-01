@@ -152,6 +152,29 @@ String LRSwitched::getDetailedName()
 }
 
 //==============================================================================
+PhaseInverted::PhaseInverted (ValueTree& v)
+    : Effect(v)
+{}
+
+PhaseInverted::~PhaseInverted()
+{}
+
+void PhaseInverted::processEffect(const juce::AudioSourceChannelInfo& bufferToFill)
+{
+    float* const leftChannel = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
+    
+    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+    {
+        leftChannel[sample] = leftChannel[sample] * -1;
+    }
+}
+
+String PhaseInverted::getDetailedName()
+{
+    return "Phase inverted on one Channel";
+}
+
+//==============================================================================
 SumVolumeUp::SumVolumeUp  (ValueTree& v)
     : Effect(v)
 {}
@@ -524,5 +547,34 @@ float HpFilter::levelToHz()
 String HpFilter::getDetailedName()
 {
     String output = "Highpass Filter at " + String(levelToHz()) + " Hz";
+    return output;
+}
+
+//==============================================================================
+LPFilter::LPFilter (ValueTree& v, AudioSource* a)
+: Effect(v), filter(a, false)
+{}
+
+LPFilter::~LPFilter()
+{}
+
+void LPFilter::processEffect (const AudioSourceChannelInfo& bufferToFill)
+{
+    filter.getNextAudioBlock(bufferToFill);
+}
+
+void LPFilter::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
+{
+    filter.prepareToPlay(samplesPerBlockExpected, sampleRate);
+}
+
+float LPFilter::levelToHz()
+{
+    return 1000;
+}
+
+String LPFilter::getDetailedName()
+{
+    String output = "Lowpass Filter at " + String(levelToHz()) + " Hz";
     return output;
 }

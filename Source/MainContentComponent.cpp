@@ -35,6 +35,10 @@ MainContentComponent::~MainContentComponent()
 void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay (samplesPerBlockExpected, sampleRate);
+    
+    if (transport.getEffectToPlay()) {
+        transport.getEffectToPlay()->prepareToPlay(samplesPerBlockExpected, sampleRate);
+    }
 }
 
 void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)

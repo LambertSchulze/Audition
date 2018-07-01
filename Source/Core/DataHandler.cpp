@@ -118,6 +118,10 @@ void DataHandler::setupProperties()
         hpFilter    .setProperty(IDs::Number, 11, nullptr);
         hpFilter    .setProperty(IDs::EffectName, "Highpass Filter", nullptr);
         hpFilter    .setProperty(IDs::EffectType, "Filter", nullptr);
+        ValueTree lpFilter      (IDs::Effect);
+        lpFilter    .setProperty(IDs::Number, 12, nullptr);
+        lpFilter    .setProperty(IDs::EffectName, "Lowpass Filter", nullptr);
+        lpFilter    .setProperty(IDs::EffectType, "Filter", nullptr);
         
         effectList.addChild(noEffect,       -1, nullptr);
         effectList.addChild(sumVolUp,       -1, nullptr);
@@ -131,6 +135,7 @@ void DataHandler::setupProperties()
         effectList.addChild(sideVolUp,      -1, nullptr);
         effectList.addChild(sideVolDown,    -1, nullptr);
         effectList.addChild(hpFilter,       -1, nullptr);
+        effectList.addChild(lpFilter,       -1, nullptr);
         
         for (auto effect : effectList) {
             effect.setProperty(IDs::Level, 1, nullptr);
